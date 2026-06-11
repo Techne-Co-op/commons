@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>C6 · Schema Reference Card · CIS · Hub Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* co-op.us design system · token layer (verbatim) */
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;
+--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'Libre Baskerville',Georgia,serif;font-size:16px;line-height:1.85;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);}
+.page{max-width:760px;margin:0 auto;padding:var(--s8) var(--s5);}
+
+header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--s7);gap:var(--s4);}
+h1{font-size:36px;font-weight:700;color:var(--heading);letter-spacing:-.5px;line-height:1.25;}
+.subtitle{font-style:italic;font-size:18px;color:var(--text);margin-top:var(--s2);}
+.version{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);margin-top:var(--s3);line-height:1.9;}
+.mode-toggle{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);background:var(--surface);
+border:1px solid var(--border);border-radius:999px;padding:7px 16px;cursor:pointer;display:flex;align-items:center;gap:var(--s2);flex-shrink:0;
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+.mode-toggle svg{width:15px;height:15px;stroke:currentColor;}
+
+.lede{font-size:19px;line-height:1.7;color:var(--text);margin-bottom:var(--s6);max-width:60ch;}
+
+section{margin-bottom:var(--s8);}
+.label{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.rule{width:48px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s3) 0 var(--s6);}
+p{margin-bottom:20px;}
+p:last-child{margin-bottom:0;}
+em{font-style:italic;}
+code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.85em;color:var(--terra-text);background:var(--terra-dim);padding:2px 6px;border-radius:4px;}
+
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted);
+background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:5px 12px;
+transition:border-color var(--dur-micro) var(--ease);}
+.prov:hover{border-color:var(--terra);}
+.prov .cite{color:var(--terra-text);}
+.prov .sep{color:var(--faint);}
+.chip-row{display:flex;flex-wrap:wrap;gap:var(--s3);margin:var(--s4) 0 0;align-items:center;}
+
+h3{font-size:18px;color:var(--heading);font-weight:700;margin:var(--s6) 0 var(--s4);line-height:1.4;}
+h3 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;color:var(--terra-text);margin-right:var(--s3);font-weight:400;}
+
+.table-scroll{overflow-x:auto;margin:var(--s5) 0;}
+.spec{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;}
+.spec th{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--faint);text-align:left;
+padding:var(--s2) var(--s3);border-bottom:1px solid var(--border-strong);}
+.spec td{padding:var(--s2) var(--s3);border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.7;}
+.spec td:first-child{color:var(--terra-text);white-space:nowrap;}
+
+/* schema card: the record-detail pattern applied to a table */
+.tbl{background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:10px;
+padding:var(--s4) var(--s5);margin-bottom:var(--s4);box-shadow:var(--shadow-1);
+transition:border-color var(--dur-micro) var(--ease),background-color var(--dur-mode) var(--ease);}
+.tbl:hover{border-color:var(--terra);border-left-color:var(--terra);}
+.tbl .thead{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2);}
+.tbl .tname{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;font-weight:500;color:var(--heading);}
+.tbl .tanchor{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;color:var(--muted);}
+.tbl .tanchor .pr{color:var(--terra-text);}
+.tbl .tdesc{font-size:14px;line-height:1.75;margin:0 0 var(--s3);}
+.tbl .tline{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;line-height:1.9;color:var(--text);
+border-top:1px solid var(--border);padding-top:var(--s2);margin-top:var(--s2);}
+.tbl .tline:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.tbl .k{color:var(--faint);letter-spacing:.14em;text-transform:uppercase;font-size:10px;margin-right:var(--s2);}
+.tbl .src{color:var(--terra-text);font-size:10px;letter-spacing:.1em;margin-right:var(--s2);}
+.tbl .tline.prop{color:var(--muted);}
+.envnote{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;color:var(--faint);margin:calc(-1*var(--s2)) 0 var(--s4);}
+
+footer{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--faint);border-top:1px solid var(--border);
+padding-top:var(--s5);text-align:center;}
+
+@media (max-width:560px){h1{font-size:27px;}.lede{font-size:17px;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <h1>Schema Reference Card</h1>
+    <div class="subtitle">The 31 tables, their primitives, their anchors, and exactly what is committed</div>
+    <div class="version">C6 &middot; VERSION 0.1 &middot; DRAFT FOR REVIEW &middot; JUNE 2026<br>REGENHUB, LCA &middot; PREPARED BY NOU &middot; consumed at W0.7, W1.x, W2.1 &middot; repo home: docs/schema-card.md</div>
+    <div class="chip-row">
+      <span class="prov"><span class="cite">CIS PRD v0.2 &sect;06</span><span class="sep">&middot;</span>core tables and primitives</span>
+      <span class="prov"><span class="cite">Hub PRD v0.1 &sect;04</span><span class="sep">&middot;</span>extension tables</span>
+      <span class="prov"><span class="cite">plan v0.1 + CONVENTIONS</span><span class="sep">&middot;</span>envelope and constraints</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);text-decoration:none;letter-spacing:.1em;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+  </div>
+</header>
+
+<p class="lede">A number without provenance is a rumor, and so is a column. This card consolidates every table the PRDs name, and tags each fact with its source so an agent writing migrations never mistakes a proposal for a commitment.</p>
+
+<section id="s01">
+  <div class="label">01 &middot; How to Read This</div>
+  <div class="rule"></div>
+  <p>Each card carries three kinds of line, named by source. A <code>prd</code> line restates what a PRD commits: the table's existence, its REA primitive, its governing anchor, and any behavior the PRD text states outright. A <code>plan</code> line restates what the implementation plan and docs/CONVENTIONS.md commit: the event envelope, constraints, and conventions already adopted in the seed. A line marked <code>proposed</code> is mine: the minimum identity and reference shape a migration needs, offered for adoption and binding on no one. The discipline matters because this card feeds W0.7 and every schema step after it; an agent may build from <code>prd</code> and <code>plan</code> lines directly, and must treat <code>proposed</code> lines as a draft to confirm in the PR.</p>
+  <p>What this card is not: a migration, a column-complete data dictionary, or a substitute for counsel on any field that touches tax, securities, or member rights. Where the PRDs are silent, this card stays close to silent, and section 06 lists the silences worth deciding rather than discovering.</p>
+</section>
+
+<section id="s02">
+  <div class="label">02 &middot; Shared Shape</div>
+  <div class="rule"></div>
+  <p>Two structural commitments apply across the whole schema before any single table is interesting. First, the REA discipline: <em>every table traces to one of the four primitives, and every relationship between tables is an Event</em> (CIS &sect;06). Second, the event envelope from docs/CONVENTIONS.md: every state change is an event row, and tables of kind Event share the envelope columns rather than inventing their own.</p>
+  <div class="tbl">
+    <div class="thead"><span class="tname">event envelope &middot; shared columns</span><span class="tanchor"><span class="pr">plan</span> CONVENTIONS &middot; CIS principle 09</span></div>
+    <p class="tdesc">The audit posture in column form. Mutations on enveloped tables write an audit row via the generic trigger; pgTAP asserts prior-value capture.</p>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>id uuid pk &middot; actor uuid not null &middot; occurred_at timestamptz not null default now() &middot; entity text &middot; entity_id uuid &middot; prior_value jsonb &middot; payload jsonb &middot; citation text not null</div>
+  </div>
+  <div class="tbl">
+    <div class="thead"><span class="tname">identity and reference shape</span><span class="tanchor"><span class="pr">proposed</span> for adoption at W0.7</div></div>
+    <p class="tdesc">The minimum every card below assumes when a <code>proposed</code> line names a reference.</p>
+    <div class="tline prop"><span class="k">proposed</span>uuid primary keys throughout &middot; created_at timestamptz default now() on entity tables &middot; foreign keys written as <code>agent_id -&gt; agents</code> &middot; REA primitive and anchor recorded as a table comment per CONVENTIONS</div>
+  </div>
+  <p class="envnote">cards below omit envelope columns on Event tables and the proposed identity shape; both are implied</p>
+</section>
+
+<section id="s03">
+  <div class="label">03 &middot; Cooperative Core &middot; 19 Tables</div>
+  <div class="rule"></div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">agents</span><span class="tanchor"><span class="pr">prd</span> Agent &middot; natural and legal persons</span></div>
+    <p class="tdesc">The one record a person keeps across every state: hub visitor, hub member, patron member. The system holds the timeline rather than fragmenting it (CIS &sect;09a).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>one agent record across cooperative and hub surfaces; natural and legal persons</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; legal_name &middot; display_name &middot; kind (natural | legal) &middot; auth_user_id -&gt; auth.users nullable (an agent may exist before sign-in)</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">memberships</span><span class="tanchor"><span class="pr">prd</span> Agent / Agreement &middot; draft-bylaws:&sect;1.1&ndash;1.4</span></div>
+    <p class="tdesc">The canonical register: class membership and good standing, the table the ten-day advance member list draws from (CIS &sect;08).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>four classes held as data; good standing status; member list producible ten days ahead of a meeting</div>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>good standing is a derived view, not a stored flag; class semantics await counsel on non-voting classes without blocking representation</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; agent_id -&gt; agents &middot; class (1..4) &middot; admitted_at &middot; status (per lifecycle module; see &sect;06)</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">stock_ledger</span><span class="tanchor"><span class="pr">prd</span> Resource &middot; draft-bylaws:&sect;1.13</span></div>
+    <p class="tdesc">Patron Stock and Preferred Stock issuance, transfers back to the cooperative, redemptions (CIS &sect;08). Conservation lives here first.</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>one-per-member rule and transfer restrictions enforced; Preferred Stock reserved pending the investor framework (CIS &sect;17)</div>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>one Patron share per member as a unique partial constraint at the database; issuance and transfer-back recorded as events; a second issuance must fail under test (W1.2)</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; agent_id -&gt; agents &middot; class (patron | preferred) &middot; issued_at &middot; retired_at nullable &middot; par_value_cents</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">capital_accounts</span><span class="tanchor"><span class="pr">prd</span> Resource &middot; draft-bylaws:&sect;5.1</span></div>
+    <p class="tdesc">The per-member account entity. Balances are not stored here; they derive from the event log (CIS &sect;06, capital_balances_as_of).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>full event history of contributions, allocations, distributions, adjustments; book versus tax distinction tracked; member sees own, administrator sees all (CIS &sect;08)</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; agent_id -&gt; agents &middot; opened_at &middot; closed_at nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">capital_events</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;5.1, &sect;5.3, &sect;5.4</span></div>
+    <p class="tdesc">The double-entry heart of Subchapter K compliance: what enters a balance must leave another (principle 05).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>double-entry with book/tax distinction and balance-conservation tests (W3.1); allocation automation gated on R1, manual entry against the equal default until then (CIS &sect;17)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + account_id -&gt; capital_accounts &middot; kind (contribution | allocation | distribution | adjustment) &middot; amount_book_cents &middot; amount_tax_cents &middot; period</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">agreements</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; bylaws, policies, MAs</span></div>
+    <p class="tdesc">Bylaws, Articles, board policies, membership agreements, investor documents, service contracts, the EE grant, the Hub Membership Agreement: versioned, signed, searchable (CIS &sect;08), and shared with Hub Operations (CIS &sect;09b).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>versioning is event-sourced; each version carries a content hash; binaries live in Storage with bucket policies mirroring table RLS (W0.7, W1.3)</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; kind &middot; title &middot; current_version_id; companion agreement_versions: id &middot; agreement_id &middot; version &middot; content_hash &middot; storage_path &middot; effective_at</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">signatures</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;1.4</span></div>
+    <p class="tdesc">Execution events against agreement versions; the detail view shows an agreement's signature history (W1.4).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>stores signer, version hash, timestamp; in-app click-to-sign with hash binding in alpha; external e-sign deliberately not taken</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + agreement_version_id &middot; signer_agent_id &middot; signed_hash</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">meetings</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;II, &sect;III</span></div>
+    <p class="tdesc">Scheduling, notice, agendas, attendance in person and electronic, minutes; quorum calculated in real time as members join and leave (CIS &sect;08).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>quorum is computed (quorum_for_meeting view) and the underlying rule is shown (CIS &sect;15)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + kind (annual | regular | special | board | committee) &middot; scheduled_at &middot; agenda_agreement_id nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">attendance</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;2.7</span></div>
+    <p class="tdesc">Presence records feeding quorum, distinct from hub event_attendance.</p>
+    <div class="tline prop"><span class="k">proposed</span>envelope + meeting_id &middot; agent_id &middot; mode (in_person | electronic) &middot; joined_at &middot; left_at nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">proxies</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; draft-bylaws:&sect;2.6.4</span></div>
+    <p class="tdesc">A member's standing instruction that another may carry their presence or vote, captured ahead of meetings (CIS &sect;12, meeting lifecycle).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; grantor_agent_id &middot; holder_agent_id &middot; meeting_id nullable (or term-scoped) &middot; granted_at &middot; revoked_at nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">motions</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;2.6, &sect;3.13</span></div>
+    <p class="tdesc">Motion capture with threshold enforcement and outcome determination (CIS &sect;08, Decisions &amp; Votes).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>thresholds always correctly applied; outcome rule cited to the member (CIS &sect;15)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + meeting_id nullable &middot; text &middot; threshold_rule citation &middot; outcome (per vote_outcome view)</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">votes</span><span class="tanchor"><span class="pr">prd</span> Event &middot; Resource &middot; draft-bylaws:&sect;1.6, &sect;1.14.2</span></div>
+    <p class="tdesc">Both an act and a conserved quantity, which is why the PRD types it twice: vote arithmetic is a conservation law enforced in the database (principle 05).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>collection across modalities; immutable once cast (CIS &sect;08); integrity enforced at multiple layers from Phase 03 (CIS &sect;04 S pathway)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + motion_id &middot; voter_agent_id &middot; value (for | against | abstain) &middot; cast_via (meeting | electronic | proxy) &middot; immutability by trigger refusing UPDATE and DELETE</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">consents</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;2.8, &sect;3.15</span></div>
+    <p class="tdesc">Decisions taken by written consent. The alpha admission workflow records the board's admission decision here as a forward-compatible simplification (W1.6).</p>
+    <div class="tline prop"><span class="k">proposed</span>envelope + subject text &middot; body (board | membership | committee_id) &middot; consenting_agent_id &middot; instrument_agreement_id nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">minutes</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; draft-bylaws:&sect;4.5</span></div>
+    <p class="tdesc">Drafted (by Nou, later) and ratified by the Secretary; the ratification is the authoritative act (CIS &sect;11 constraints).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; meeting_id &middot; version_id -&gt; agreement_versions pattern reused &middot; ratified_by &middot; ratified_at nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">notices</span><span class="tanchor"><span class="pr">prd</span> Event &middot; draft-bylaws:&sect;2.4, &sect;X</span></div>
+    <p class="tdesc">Generation with legally required timing windows, delivery tracking, waiver capture; multiple channels for the censorship-resistance posture (CIS &sect;08).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>delivery states queued, sent, delivered recorded as events via provider webhooks; the timing-window computation is a tested pure function (W0.11, W1.8)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + recipient_agent_id &middot; subject &middot; window_rule citation &middot; due_by; companion notice_delivery events: notice_id &middot; channel &middot; state &middot; provider_ref</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">committees</span><span class="tanchor"><span class="pr">prd</span> Agent &middot; draft-bylaws:&sect;3.18</span></div>
+    <p class="tdesc">Committees as agents in their own right, with membership and working materials scoped to the Committee Member role (CIS &sect;07).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; name &middot; charter_agreement_id nullable &middot; formed_at &middot; dissolved_at nullable; membership via role_grants rather than a parallel table</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">policies</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; board-adopted</span></div>
+    <p class="tdesc">Where bylaws are silent, board policy fills the space (principle 03). Structurally an agreements specialization.</p>
+    <div class="tline prop"><span class="k">proposed</span>reuse agreements with kind = policy; adopting consent or motion referenced through the event log rather than a duplicate column</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">tax_records</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; Event &middot; draft-bylaws:&sect;VI</span></div>
+    <p class="tdesc">K-1 preparation data, withholding calculation, fiscal-year reporting, election tracking; outputs feed the accountant, inputs come from capital events (CIS &sect;08).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>tax identifiers encrypted at rest with administrator-only access (CIS &sect;04 P pathway, &sect;14); K-1 generation carries audit-trail provenance</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; agent_id &middot; fiscal_year &middot; kind (k1_prep | withholding | election) &middot; payload jsonb &middot; identifier columns encrypted; encryption method is an open item (&sect;06)</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">benefit_reports</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; draft-bylaws:&sect;XV</span></div>
+    <p class="tdesc">The one record with a guaranteed public view, anchoring the open-source pathway (CIS &sect;08); annual, archived, published to members and the website.</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>public visibility is a floor, not a setting; Guest role reads it (CIS &sect;07)</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; year &middot; version pattern reused &middot; published_at</div>
+  </div>
+
+</section>
+
+<section id="s04">
+  <div class="label">04 &middot; Hub Extensions &middot; 12 Tables</div>
+  <div class="rule"></div>
+  <p>Greenfield tables under the grant, integrating with the core through shared agent records: a hub applicant who later becomes a Patron Member is the same agent across both surfaces (Hub &sect;04). Every policy here cites <code>grant:&sect;n</code> rather than the bylaws.</p>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">hub_applicants</span><span class="tanchor"><span class="pr">prd</span> Agent &middot; grant:&sect;2</span></div>
+    <p class="tdesc">Applicant identity on the hospitality surface, joined to agents so the timeline never fragments.</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; agent_id -&gt; agents &middot; contact minimal per data-minimization (Hub &sect;03 P)</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">hub_applications</span><span class="tanchor"><span class="pr">prd</span> Event &middot; Agreement &middot; grant:&sect;2</span></div>
+    <p class="tdesc">The public application: open to locals, visitors, and digital nomads; selection transparent and fair; decision recorded against criteria with the applicant notified with reason (Hub &sect;06).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>applications collect what selection requires and nothing more (Hub &sect;03 P); applicant sees own application and status only (Hub &sect;05)</div>
+    <div class="tline"><span class="k">committed</span><span class="src">plan</span>the anonymous insert policy on this table is the single deliberate hole in default-deny, with its own probes and a rate-limit watch item (W2.2, D2)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + applicant_id &middot; statement &middot; criteria_version &middot; decision (accepted | declined | waitlist) nullable &middot; decision_reason nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">coworking_seats</span><span class="tanchor"><span class="pr">prd</span> Resource &middot; grant:&sect;2</span></div>
+    <p class="tdesc">The counted promise: a minimum of 10 complimentary seats weekly plus 2 to 3 open seats daily (Hub &sect;02).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>seats held as resources so utilization derives from events, never hand-entered (Hub &sect;07)</div>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; label &middot; kind (complimentary | open) &middot; active_from &middot; active_to nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">coworking_sessions</span><span class="tanchor"><span class="pr">prd</span> Event &middot; grant:&sect;2</span></div>
+    <p class="tdesc">Per-session attendance and the utilization curves the KPI dashboard reads (Hub &sect;06); capture takes under a minute on mobile (W2.3).</p>
+    <div class="tline prop"><span class="k">proposed</span>envelope + seat_id &middot; agent_id &middot; session_date &middot; checked_in_at &middot; checked_out_at nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">hub_events</span><span class="tanchor"><span class="pr">prd</span> Event &middot; grant:&sect;2</span></div>
+    <p class="tdesc">The monthly Ethereum Meetup, mandatory cadence with EE-provided materials, distinguished from additional events: workshops, hackathons, mixers, cross-pollination (Hub &sect;06).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>kind distinction is load-bearing for the events-per-month KPI (Hub &sect;07)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + kind (meetup | workshop | hackathon | social | cross_pollination) &middot; title &middot; held_at &middot; partner_org_id nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">event_attendance</span><span class="tanchor"><span class="pr">prd</span> Event &middot; grant:&sect;2</span></div>
+    <p class="tdesc">Aggregated for reporting; individual records exist only with explicit opt-in (Hub &sect;03 P). Public reports use counts, never name lists.</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>opt-in is structural: an identified row requires a consent flag, and aggregate views are the default surface</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + event_id &middot; agent_id nullable (null = counted, unidentified) &middot; opted_in boolean not null default false</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">event_materials</span><span class="tanchor"><span class="pr">prd</span> Resource &middot; grant:&sect;3</span></div>
+    <p class="tdesc">EE-provided materials versioned alongside locally developed ones (Hub &sect;06, Educational Surface).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; source (ee | local) &middot; title &middot; version pattern reused &middot; linked_event_id nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">educational_displays</span><span class="tanchor"><span class="pr">prd</span> Resource &middot; grant:&sect;2</span></div>
+    <p class="tdesc">Curated displays, learning materials, opportunity listings; tracks which are current, which need rotation, which are linked from the public site (Hub &sect;06).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; kind (display | listing) &middot; title &middot; current boolean &middot; rotated_at nullable &middot; public_url nullable</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">partner_orgs</span><span class="tanchor"><span class="pr">prd</span> Agent &middot; grant:&sect;1</span></div>
+    <p class="tdesc">CROPS-aligned organizations in the region; a lightweight registry for the bridge-building obligation, not a sales pipeline (Hub &sect;06).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; agent_id -&gt; agents (legal person) &middot; alignment_note &middot; first_contact_at</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">kpi_measurements</span><span class="tanchor"><span class="pr">prd</span> Event &middot; grant:&sect;4</span></div>
+    <p class="tdesc">Computed from the event log, not maintained manually; every figure drills to the rows that produced it, the audit trail the EE team can verify independently (Hub &sect;03 S, &sect;07).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>three KPIs with exact computations: events per month &ge; 1; complimentary seats per ISO week &ge; 10; open seats per business day in 2&ndash;3 (Hub &sect;07)</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + kpi (events | comp_seats | open_seats) &middot; period &middot; value numeric &middot; source_query_version; rows written by the scheduled rail as snapshots of the derived views</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">impact_reports</span><span class="tanchor"><span class="pr">prd</span> Agreement &middot; grant:&sect;2</span></div>
+    <p class="tdesc">The monthly narrative: capacity, engagement, two to three highlights, needs; Nou drafts, an organizer approves, it publishes to a stable URL with a portable mirror (Hub &sect;07, W2.6).</p>
+    <div class="tline prop"><span class="k">proposed</span>id &middot; period &middot; version pattern reused &middot; approved_by &middot; published_url</div>
+  </div>
+
+  <div class="tbl">
+    <div class="thead"><span class="tname">grant_tranches</span><span class="tanchor"><span class="pr">prd</span> Event &middot; Agreement &middot; grant:&sect;6</span></div>
+    <p class="tdesc">Tranche tracking against the grant agreement; funds flow through the cooperative treasury rather than a separate budget, tagged at the transaction level (Hub &sect;08, &sect;09c).</p>
+    <div class="tline"><span class="k">committed</span><span class="src">prd</span>second tranche gated on KPI compliance; milestones tracked as events against the agreement record</div>
+    <div class="tline prop"><span class="k">proposed</span>envelope + agreement_id -&gt; agreements (the grant) &middot; tranche (1 | 2) &middot; amount_cents &middot; condition_note &middot; received_at nullable; treasury join lands at W3.7</div>
+  </div>
+
+</section>
+
+<section id="s05">
+  <div class="label">05 &middot; Derived Views</div>
+  <div class="rule"></div>
+  <p>Pure functions of the event log: what makes the ledger auditable, the dashboards consistent, and the security posture defensible (CIS &sect;06). Views are the objects interfaces mostly consume; none stores state.</p>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>view</th><th>source</th><th>reads</th></tr></thead>
+    <tbody>
+      <tr><td>active_members</td><td>prd &middot; CIS &sect;06</td><td>memberships, lifecycle events</td></tr>
+      <tr><td>current_board</td><td>prd &middot; CIS &sect;06</td><td>role_grants, terms</td></tr>
+      <tr><td>capital_balances_as_of</td><td>prd &middot; CIS &sect;06</td><td>capital_events, double-entry sums</td></tr>
+      <tr><td>quorum_for_meeting</td><td>prd &middot; CIS &sect;06</td><td>memberships, attendance, proxies</td></tr>
+      <tr><td>vote_outcome</td><td>prd &middot; CIS &sect;06</td><td>motions, votes, threshold rules</td></tr>
+      <tr><td>monthly_kpi_status</td><td>prd &middot; CIS &sect;06, Hub &sect;04</td><td>hub_events, coworking_sessions, seats</td></tr>
+      <tr><td>seat_utilization_as_of</td><td>prd &middot; CIS &sect;06, Hub &sect;04</td><td>coworking_sessions, coworking_seats</td></tr>
+      <tr><td>event_attendance_summary</td><td>prd &middot; Hub &sect;04</td><td>event_attendance, aggregate only</td></tr>
+      <tr><td>active_partner_orgs</td><td>prd &middot; Hub &sect;04</td><td>partner_orgs, hub_events</td></tr>
+      <tr><td>good_standing (memberships)</td><td>plan &middot; W1.1</td><td>memberships, capital and notice events</td></tr>
+    </tbody>
+  </table></div>
+  <p>The roles layer (a <code>roles</code> registry and <code>role_grants</code> as events, W0.8) and the operational tables the substrate adds for itself (invites, jobs, job_runs, build_status, nou_interactions, error events) are plan commitments outside the PRD's 31 and are carried in their step briefs rather than duplicated here.</p>
+</section>
+
+<section id="s06">
+  <div class="label">06 &middot; Silences Worth Deciding</div>
+  <div class="rule"></div>
+  <p>Five places the PRDs name a behavior but no table, or a table but no shape, surfaced by the act of consolidating. None blocks W0.7; each should be decided at the step that first touches it rather than discovered inside a migration.</p>
+  <p>First, the <em>Conflict &amp; Disclosure module</em> (CIS &sect;08) has no table among the nineteen: director disclosures, recusal tracking, and dispute state need a home, most likely a <code>disclosures</code> table proposed at the W4 boundary. Second, the <em>lifecycle state machine</em> (CIS &sect;08, Phase 04) names states and clocks but no storage; whether status lives on memberships with transitions as events, or in a dedicated table, is a W5.0 authoring question. Third, <em>tax identifier encryption</em> is committed but the mechanism (pgcrypto column encryption versus application-layer envelope) is not; it touches the accountant's workflow and belongs beside W3.5 with a security review. Fourth, <em>notices &sect;X channels</em>: the multi-channel commitment is named while the channel set beyond email is not; schema should hold channel as open text until D-level work names the second rail. Fifth, <em>Preferred Stock fields</em> beyond existence are reserved with the investor framework (CIS &sect;17); the card deliberately proposes none.</p>
+</section>
+
+<footer>
+  CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeToggle');
+  var label = document.getElementById('modeLabel');
+  var icon = document.getElementById('modeIcon');
+  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+  function apply(mode) {
+    root.setAttribute('data-mode', mode);
+    label.textContent = mode;
+    icon.innerHTML = mode === 'dark' ? moon : sun;
+  }
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  apply(prefersLight.matches ? 'light' : 'dark');
+  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
