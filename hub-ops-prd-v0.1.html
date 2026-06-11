@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Hub Operations PRD v0.1 — RegenHub, LCA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #202020;
+  --border: #333333;
+  --terra: #c4956a; --terra-text: #c4956a; --terra-dim: rgba(196,149,106,0.12);
+  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
+  --moss: #6a8a5e; --gold: #c4956a; --rust: #b85c38; --sky: #5a8fa8;
+}
+[data-mode="light"] {
+  --bg: #faf8f5; --surface: #ffffff; --surface2: #f5f2ee;
+  --border: #e2ddd5;
+  --terra: #c4956a; --terra-text: #96704a; --terra-dim: rgba(196,149,106,0.14);
+  --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+  --moss: #4d6b43; --gold: #96704a; --rust: #8f4228; --sky: #3d6e87;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 16px; line-height: 1.85;
+}
+.page { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+
+/* Header */
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 16px;
+}
+h1 { font-size: 36px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 12px; }
+.subtitle { font-style: italic; color: var(--muted); font-size: 17px; line-height: 1.5; margin-bottom: 16px; max-width: 560px; }
+.version-line {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint);
+  margin-bottom: 40px;
+}
+.rule { width: 48px; height: 1px; background: linear-gradient(to right, var(--terra), transparent); margin: 32px 0 40px; }
+
+/* TOC */
+.toc {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px 32px; margin-bottom: 56px;
+}
+.toc-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 20px;
+}
+.toc-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 32px; }
+.toc-list li { display: flex; gap: 10px; align-items: baseline; }
+.toc-num {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--terra-text); flex-shrink: 0;
+}
+.toc-list a { font-size: 14px; color: var(--muted); text-decoration: none; }
+.toc-list a:hover { color: var(--terra-text); }
+
+/* Section headers */
+.section-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 20px; margin-top: 64px;
+}
+h2 { font-size: 26px; font-weight: 700; color: var(--heading); letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 20px; }
+h3 { font-size: 18px; font-weight: 700; color: var(--heading); margin-bottom: 12px; }
+p { margin-bottom: 20px; }
+p:last-child { margin-bottom: 0; }
+
+/* Grant requirement cards */
+.req-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 22px 26px; margin-bottom: 12px;
+}
+.req-card-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+}
+.req-card h3 { margin-bottom: 0; }
+.grant-ref {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra-text);
+  flex-shrink: 0; margin-left: 12px;
+}
+.req-body { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* CROPS cards */
+.ccard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 24px 26px; margin-bottom: 14px;
+  position: relative;
+}
+.ccard-letter {
+  font-family: 'Libre Baskerville', serif; font-size: 40px;
+  font-weight: 700; color: var(--terra); line-height: 1;
+  margin-bottom: 4px;
+}
+.ccard h3 { font-size: 17px; margin-bottom: 16px; }
+.ccard-stage {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint);
+  margin-bottom: 6px; margin-top: 14px;
+}
+.ccard-body { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0; }
+table {
+  width: 100%; border-collapse: collapse;
+  background: var(--surface); border-radius: 10px;
+  overflow: hidden; font-family: 'IBM Plex Mono', monospace;
+}
+th {
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--terra-text); padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid var(--border); background: var(--surface2);
+}
+td {
+  font-size: 13px; color: var(--muted); padding: 12px 16px;
+  border-bottom: 1px solid var(--border); vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+td:first-child { color: var(--text); }
+
+/* Role table */
+.role-table td:nth-child(2) { font-family: 'Libre Baskerville', serif; font-size: 13px; }
+
+/* Module cards */
+.mcard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--terra); border-radius: 8px;
+  padding: 20px 22px; margin-bottom: 10px;
+}
+.mcard-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px;
+}
+.mcard h3 { font-size: 16px; margin-bottom: 0; }
+.mcard-body { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* Integration cards */
+.int-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 24px; margin-bottom: 10px;
+}
+.int-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--terra-text); margin-bottom: 8px;
+}
+.int-card h3 { font-size: 16px; margin-bottom: 10px; }
+.int-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* Open question cards */
+.oq-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 24px; margin-bottom: 10px;
+}
+.oq-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+}
+.oq-card h3 { font-size: 16px; margin-bottom: 0; }
+.phase-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--sky); flex-shrink: 0; margin-left: 12px;
+}
+.oq-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* Heart of the thing */
+.heart-card {
+  background: var(--terra-dim); border: 1px solid rgba(196,149,106,0.25);
+  border-radius: 10px; padding: 28px 32px; margin: 40px 0;
+}
+.heart-card .heart-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 14px;
+}
+.heart-card p {
+  font-style: italic; color: var(--heading); font-size: 16px; line-height: 1.8;
+}
+.heart-card p + p { font-style: normal; color: var(--text); font-size: 15px; margin-top: 16px; }
+
+/* Inline note */
+.note { font-size: 14px; color: var(--muted); font-style: italic; margin: 16px 0 24px; }
+
+/* Footer */
+footer {
+  margin-top: 80px; padding-top: 20px; border-top: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--faint);
+  text-align: center; letter-spacing: 0.1em;
+}
+
+/* Mode button */
+.mode-btn {
+  position: fixed; top: 20px; right: 20px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer;
+}
+.mode-btn:hover { border-color: var(--terra); color: var(--terra-text); }
+
+/* Back link */
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--faint); text-decoration: none; margin-bottom: 40px;
+  letter-spacing: 0.08em;
+}
+.back:hover { color: var(--terra-text); }
+</style>
+</head>
+<body>
+<button class="mode-btn" id="modeBtn">light</button>
+<div class="page">
+
+<a class="back" href="index.html">&#8592; Commons</a>
+
+<header>
+  <div class="eyebrow">RegenHub, LCA &middot; Product Requirements Document</div>
+  <h1>Hub Operations</h1>
+  <p class="subtitle">An augmentation to the Common Information System for tracking Boulder Ethereum Community Hub operations under the Ethereum Everywhere grant.</p>
+  <div class="version-line">Version 0.1 &middot; Draft &middot; May 2026</div>
+</header>
+
+<div class="toc">
+  <div class="toc-label">Contents</div>
+  <ul class="toc-list">
+    <li><span class="toc-num">01</span><a href="#preamble">Preamble</a></li>
+    <li><span class="toc-num">02</span><a href="#mandate">Operational Mandate</a></li>
+    <li><span class="toc-num">03</span><a href="#crops">CROPS as Design Discipline</a></li>
+    <li><span class="toc-num">04</span><a href="#model">Information Model Extensions</a></li>
+    <li><span class="toc-num">05</span><a href="#access">Identity &amp; Access</a></li>
+    <li><span class="toc-num">06</span><a href="#modules">Core Modules</a></li>
+    <li><span class="toc-num">07</span><a href="#kpi">KPI &amp; Reporting Surface</a></li>
+    <li><span class="toc-num">08</span><a href="#lifecycle">Grant Lifecycle</a></li>
+    <li><span class="toc-num">09</span><a href="#integration">Integration with the CIS</a></li>
+    <li><span class="toc-num">10</span><a href="#roadmap">Roadmap</a></li>
+    <li><span class="toc-num">11</span><a href="#open">Open Questions</a></li>
+  </ul>
+</div>
+
+<!-- 01 Preamble -->
+<div class="section-eyebrow" id="preamble">01 &middot; Preamble</div>
+<h2>What this document is.</h2>
+<p>This Product Requirements Document specifies <em>Hub Operations</em>, the operational surface through which RegenHub, LCA tracks the performance of the Boulder Ethereum Community Hub under the Ethereum Everywhere grant agreement. It augments the Common Information System (CIS) by adding the modules, data model extensions, and reporting surfaces required by the grant, and by making the CROPS design discipline that animates Ethereum's 2026 Mandate explicitly load-bearing in the architecture.</p>
+<p>The CIS is the book of record for the cooperative as an entity: members, capital accounts, governance, agreements. Hub Operations is the book of record for the cooperative as a host: applications, sessions, events, attendance, KPIs, and the monthly impact narrative returned to the Ethereum Everywhere team. Most of what Hub Operations needs is already present in the CIS in another form. This document names the extensions and identifies where the new system can ship at a higher CROPS stage than the CIS started at, because greenfield code does not have to retrofit defaults that older surfaces inherited.</p>
+<p>The document is written for organizers building the operational surface, for the Ethereum Everywhere team reviewing how grant funds are deployed, and for <em>Nou</em>, the agent layer that will draft monthly reports, surface KPI movements, and coordinate calendar and outreach. The voice is editorial rather than specification-heavy, consistent with the CIS PRD that this one extends.</p>
+
+<!-- 02 Operational Mandate -->
+<div class="section-eyebrow" id="mandate">02 &middot; Operational Mandate</div>
+<h2>What the grant requires.</h2>
+<p>The Ethereum Everywhere grant of $20,000 USD, payable in two tranches between May 22, 2026 and December 31, 2026, names a specific operational surface that the cooperative agrees to host and report against. The mandate is not abstract. It has counted seats, named cadences, required reports, and a termination condition tied to KPI achievement and brand integrity.</p>
+<p>The system's first responsibility is to make this surface legible to the team operating it, to the membership it touches, and to the Ethereum Everywhere team reviewing its performance. The second responsibility is to do so in a way that makes the cooperative's CROPS posture more advanced after the grant ends than it was when it began.</p>
+
+<div class="req-card">
+  <div class="req-card-header">
+    <h3>Co-working access</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="req-body">A minimum of 10 complimentary co-working seats made available weekly, plus 2–3 open seats daily. Application is publicly available and open to locals, visitors, and digital nomads. Selection is transparent and fair, either first-come or alignment-based. RegenHub administers the application and access; full transparency to the EE team is available on request.</p>
+</div>
+
+<div class="req-card">
+  <div class="req-card-header">
+    <h3>Monthly Ethereum Meetup</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="req-body">A monthly open, inclusive, educational gathering for builders, researchers, students, and enthusiasts. Each session includes a short presentation on Ethereum core values (CROPS plus self-sovereignty), uses materials provided by the EE team, and surfaces onboarding pathways for newcomers.</p>
+</div>
+
+<div class="req-card">
+  <div class="req-card-header">
+    <h3>Additional events</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="req-body">Technical workshops, small hackathons, social gatherings, and cross-pollinated events with other CROPS-aligned organizations in the region. Events draw students and builders from CU Boulder and surrounding institutions.</p>
+</div>
+
+<div class="req-card">
+  <div class="req-card-header">
+    <h3>Branding &amp; educational surface</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="req-body">A floor or section branded as the Ethereum Community Hub, hosting curated displays, learning materials, and listings of jobs, internships, and ecosystem opportunities. Every visual and narrative element doubles as a learning touchpoint connecting local talent to global opportunities.</p>
+</div>
+
+<div class="req-card">
+  <div class="req-card-header">
+    <h3>Monthly impact reporting</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="req-body">A monthly report covering co-working memberships and capacity utilization, event attendance and engagement metrics, key highlights and learnings, and any support or resource needs. The report is the visible artifact of operational coherence.</p>
+</div>
+
+<div class="req-card">
+  <div class="req-card-header">
+    <h3>KPI thresholds</h3>
+    <span class="grant-ref">Grant §4</span>
+  </div>
+  <p class="req-body">Minimum one event per month, at least 10 complimentary seats weekly, and 2–3 open seats daily. KPI compliance gates the second tranche of grant funding ($10,000 USD) due August 31, 2026, and is reviewed continuously through the grant period.</p>
+</div>
+
+<!-- 03 CROPS -->
+<div class="section-eyebrow" id="crops">03 &middot; CROPS as Design Discipline</div>
+<h2>Four organizational intentions, applied to this surface.</h2>
+<p>The CROPS Blueprint, established in a separate strategic brief, traces the four properties of the EF Mandate (Censorship Resistance, Open Source, Privacy, Security) through four stages of organizational integration (Filter, Operating Assumption, System Pattern, Practice). The blueprint's honest read placed RegenHub mostly at Stage 01 across the four properties, with one Stage 03 outlier at the on-chain attestation pattern for the REA event log.</p>
+<p>Hub Operations is a chance to design at Stage 02 and Stage 03 from the first commit. The system is greenfield. Defaults can be set in fresh code rather than retrofitted into existing surfaces. The cells below name what each property requires of <em>this</em> system, expressed as operational requirements rather than as values statements. They become the design discipline against which feature decisions, vendor decisions, and reporting decisions are made.</p>
+
+<div class="ccard">
+  <div class="ccard-letter">CR</div>
+  <h3>Censorship Resistance</h3>
+  <div class="ccard-stage">Operating Assumption</div>
+  <p class="ccard-body">Application data, attendance data, event records, and KPI history are portable by default. No single SaaS provider holds authoritative state. Designs presume any vendor could change policy without warning.</p>
+  <div class="ccard-stage">System Pattern</div>
+  <p class="ccard-body">Authoritative state lives in Supabase with documented export paths. The public application form is self-hostable. Cooperative identity for the Hub is ENS-resolvable, independent of any registrar's enforcement decisions. Critical events optionally attested on-chain.</p>
+</div>
+
+<div class="ccard">
+  <div class="ccard-letter">O</div>
+  <h3>Open Source</h3>
+  <div class="ccard-stage">Operating Assumption</div>
+  <p class="ccard-body">Default is publication. Selection criteria, KPI definitions, monthly report templates, and the schema itself are public artifacts. Internal deliberations remain private; everything that touches members or the public surface is open.</p>
+  <div class="ccard-stage">System Pattern</div>
+  <p class="ccard-body">Application form code is open-source. Selection criteria are versioned in a public repository. Monthly reports are auto-published to a stable URL. The KPI dashboard has a public read-only view. The grant agreement's "transparent and fair" requirement is enforced by architecture, not by attestation.</p>
+</div>
+
+<div class="ccard">
+  <div class="ccard-letter">P</div>
+  <h3>Privacy</h3>
+  <div class="ccard-stage">Operating Assumption</div>
+  <p class="ccard-body">Member data minimization is the default. Applications collect what selection requires and nothing more. Attendance is aggregated for reporting; individual records exist only with explicit opt-in. Privacy is the starting point of any data conversation, not a setting toggled afterward.</p>
+  <div class="ccard-stage">System Pattern</div>
+  <p class="ccard-body">Schema-level minimization is structural. Public reports use aggregate counts, not name lists. Verifiable credentials are evaluated for repeat-visitor patterns where the use case warrants. Member contact details, alignment statements, and attendance histories are governed by Article 18 of the bylaws applied at the row level.</p>
+</div>
+
+<div class="ccard">
+  <div class="ccard-letter">S</div>
+  <h3>Security</h3>
+  <div class="ccard-stage">Operating Assumption</div>
+  <p class="ccard-body">Threat modeling is part of every design conversation, not a separate review. Compromise is treated as eventual rather than hypothetical. Backup, recovery, and audit are architectural concerns from the first schema, not operational additions later.</p>
+  <div class="ccard-stage">System Pattern</div>
+  <p class="ccard-body">Grant funds flow through a multi-sig treasury controlled by named signers. Application and attendance data are protected by row-level security at the database, not only at the interface. KPI measurements have audit trails the EE team can verify independently. The REA event log doubles as a tamper-evident security artifact.</p>
+</div>
+
+<p>The four properties do not advance at the same rate, and Hub Operations is not exempt from that asymmetry. Open source is the easiest to default to and likely to reach Stage 04 fastest. Privacy requires the most deliberate architectural work and will be slowest to reach Stage 03 in a system that handles application data. Security needs continuous attention to avoid oscillating back to Stage 01 under deadline pressure. Censorship resistance is most contingent on early infrastructure choices, which is why the application-form open-sourcing decision is named explicitly above rather than left to default.</p>
+
+<!-- 04 Information Model Extensions -->
+<div class="section-eyebrow" id="model">04 &middot; Information Model Extensions</div>
+<h2>New entities the schema must hold.</h2>
+<p>The CIS information model already covers agents, agreements, events, and resources at the cooperative level. Hub Operations adds entities that describe the hospitality surface specifically. All extensions follow the REA discipline established in the CIS: every record is an Agent, an Event, a Resource, or an Agreement, and every event references the parties and resources it acts upon.</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Entity</th><th>REA Type</th><th>Source</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>hub_applications</td><td>Event · Agreement</td><td>grant §2</td></tr>
+    <tr><td>hub_applicants</td><td>Agent</td><td>grant §2</td></tr>
+    <tr><td>coworking_seats</td><td>Resource</td><td>grant §2</td></tr>
+    <tr><td>coworking_sessions</td><td>Event</td><td>grant §2</td></tr>
+    <tr><td>hub_events</td><td>Event</td><td>grant §2</td></tr>
+    <tr><td>event_attendance</td><td>Event</td><td>grant §2</td></tr>
+    <tr><td>event_materials</td><td>Resource</td><td>grant §3</td></tr>
+    <tr><td>educational_displays</td><td>Resource</td><td>grant §2</td></tr>
+    <tr><td>partner_orgs</td><td>Agent</td><td>grant §1</td></tr>
+    <tr><td>kpi_measurements</td><td>Event</td><td>grant §4</td></tr>
+    <tr><td>impact_reports</td><td>Agreement</td><td>grant §2</td></tr>
+    <tr><td>grant_tranches</td><td>Event · Agreement</td><td>grant §6</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Derived views compose these entities into the surfaces the interfaces consume: <em>monthly_kpi_status</em>, <em>seat_utilization_as_of</em>, <em>event_attendance_summary</em>, <em>active_partner_orgs</em>. Like the CIS, derived views are pure functions of the event log; the log is what makes the system auditable and the dashboards consistent.</p>
+<p>Where Hub Operations entities reference cooperative entities, the CIS schema is authoritative. A hub applicant who later becomes a Patron Member of the cooperative is the same agent record, with their hub history preserved as a continuous timeline rather than a separate file.</p>
+
+<!-- 05 Identity & Access -->
+<div class="section-eyebrow" id="access">05 &middot; Identity &amp; Access</div>
+<h2>Roles extending the CIS access model.</h2>
+<p>The CIS defines eleven roles for the cooperative's internal life. Hub Operations adds three more roles that describe the hospitality surface, plus one institutional partner role for the Ethereum Everywhere team. Every role inherits the CIS confidentiality discipline, in particular the row-level enforcement under Article 18.</p>
+
+<div class="table-wrap">
+<table class="role-table">
+  <thead>
+    <tr><th>Role</th><th>Scope</th><th>Source</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Hub Applicant</td>
+      <td>Own application and selection status. No access to other applicants' records or to attendee data.</td>
+      <td>grant §2</td>
+    </tr>
+    <tr>
+      <td>Hub Visitor</td>
+      <td>Access to public educational materials, opportunity listings, event calendar. No member records.</td>
+      <td>grant §2</td>
+    </tr>
+    <tr>
+      <td>Hub Member</td>
+      <td>Co-working access, event registration, own attendance history. Distinct from cooperative Patron Member; may be one, both, or neither.</td>
+      <td>grant §2</td>
+    </tr>
+    <tr>
+      <td>EE Liaison</td>
+      <td>Read access to KPI dashboard, monthly reports, aggregate utilization. No access to individual applicant or attendee records without justification.</td>
+      <td>grant §3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>The distinction between Hub Member and cooperative Patron Member matters for both governance and CROPS posture. A Hub Member uses the space and attends events without participating in the cooperative's democratic life. The cooperative's bylaws govern Patron Members; a separate Hub Membership Agreement governs Hub Members. The information model holds them as distinct memberships against the same agent record where applicable, never conflated.</p>
+
+<!-- 06 Core Modules -->
+<div class="section-eyebrow" id="modules">06 &middot; Core Modules</div>
+<h2>The functional surface Hub Operations covers.</h2>
+<p>Eight modules together cover the hospitality surface required by the grant. Each is grounded in a section of the grant agreement and integrates with one or more CIS modules where the surfaces overlap. None is optional, each is phased, and the system is operational at every intermediate state.</p>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Application &amp; Access</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="mcard-body">Public application form, selection workflow, seat allocation. Open to locals, visitors, and digital nomads. Selection process visible: criteria documented, decision recorded against criteria, applicant notified with reason. Integrates with CIS Onboarding when an applicant becomes a cooperative member.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Co-working Sessions</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="mcard-body">Capacity utilization tracking against the 10 weekly complimentary seats and 2–3 daily open seats. Per-session attendance, aggregate utilization curves, peak capacity events. Surfaces directly into KPI dashboard and monthly report.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Events</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="mcard-body">Event scheduling, registration, attendance capture, materials linkage. Distinguishes monthly Ethereum Meetup (mandatory cadence, EE-provided materials) from additional events (workshops, hackathons, mixers, cross-pollination). Integrates with CIS Meetings module where governance overlaps.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Educational Surface</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="mcard-body">Curated displays, learning materials, opportunity listings (jobs, internships, grants). Tracks which materials are current, which need rotation, and which are linked from the public Hub site. EE-provided materials versioned alongside locally-developed ones.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Cross-Pollination</h3>
+    <span class="grant-ref">Grant §1</span>
+  </div>
+  <p class="mcard-body">Registry of CROPS-aligned organizations in the region, joint events held, ecosystem partners introduced to local builders. Supports the bridge-building obligation in the grant. Lightweight CRM for partner relationships, not a sales pipeline.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>KPI &amp; Performance</h3>
+    <span class="grant-ref">Grant §4</span>
+  </div>
+  <p class="mcard-body">Running dashboard of the three named KPIs: events per month, weekly comp seat capacity, daily open seat capacity. Computed from the event log, not maintained manually. Public read-only view available; full detail to administrators and the EE Liaison.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Impact Reporting</h3>
+    <span class="grant-ref">Grant §2</span>
+  </div>
+  <p class="mcard-body">Monthly report generation covering capacity utilization, event engagement, key highlights and learnings, and resource needs. Nou drafts from the event log; an organizer reviews and approves; the report publishes to a stable URL and is delivered to the EE team.</p>
+</div>
+
+<div class="mcard">
+  <div class="mcard-header">
+    <h3>Grant Lifecycle</h3>
+    <span class="grant-ref">Grant §6</span>
+  </div>
+  <p class="mcard-body">Tranche tracking, KPI compliance verification, milestone calendar. Surfaces the August 31 KPI review ahead of the second tranche. Integrates with CIS Treasury &amp; Distributions when tranche funds enter the cooperative treasury.</p>
+</div>
+
+<!-- 07 KPI & Reporting -->
+<div class="section-eyebrow" id="kpi">07 &middot; KPI &amp; Reporting Surface</div>
+<h2>How performance becomes legible.</h2>
+<p>The grant names three KPIs and one reporting cadence. The system's job is to make them computed rather than reported, in the sense that a member of the team should not have to assemble the numbers each month. The numbers are derived continuously from the event log; the report narrates them.</p>
+<p>The KPI dashboard has three audiences. The internal team uses it daily to keep the floor staffed and the calendar full. The membership uses it as a live indicator of how the Hub is being used. The Ethereum Everywhere team uses it to verify KPI compliance ahead of the August 31 tranche review and at any later checkpoint. Each audience sees the same underlying data; what differs is the depth of the drill-down available.</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>KPI</th><th>Threshold</th><th>Computation</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Events per month</td>
+      <td>Minimum 1</td>
+      <td>count(hub_events) where month = current</td>
+    </tr>
+    <tr>
+      <td>Weekly comp seats</td>
+      <td>At least 10</td>
+      <td>sum(coworking_seats.complimentary) per ISO week</td>
+    </tr>
+    <tr>
+      <td>Daily open seats</td>
+      <td>2 to 3</td>
+      <td>avg(coworking_seats.open) per business day</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>The monthly impact report follows a stable template: capacity utilization paragraph, event engagement paragraph, two to three named highlights with brief context, and a section for support or resource needs. Nou drafts the report from the event log on the first of each month. An organizer reviews, edits, and approves. The report publishes to a stable URL under the cooperative's domain and is delivered to the EE team by the agreed channel.</p>
+<p>The reporting surface is itself a CROPS instrument. Open source: the report template and the queries that compute its numbers are public. Privacy: aggregate metrics, no individual attendee names without consent. Censorship resistance: published to a stable URL the cooperative controls, mirrored to a portable format. Security: the report's underlying numbers carry an audit trail to the event log entries that produced them.</p>
+
+<!-- 08 Grant Lifecycle -->
+<div class="section-eyebrow" id="lifecycle">08 &middot; Grant Lifecycle</div>
+<h2>From execution to sustainability.</h2>
+<p>The grant has a defined arc: $10,000 USD on execution, $10,000 USD on August 31, 2026 contingent on KPI achievement, and a closure on December 31, 2026 with an explicit obligation to continue community activities at a minimum level afterward. The system tracks the arc as a sequence of events against the grant agreement, treating grant funds as a flow through the cooperative treasury rather than as a separate budget.</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Milestone</th><th>Date</th><th>Trigger</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Tranche 1 received</td><td>Upon execution</td><td>grant letter signed</td></tr>
+    <tr><td>First monthly report</td><td>End of June 2026</td><td>June operational data</td></tr>
+    <tr><td>KPI compliance review</td><td>Mid-August 2026</td><td>3-month KPI history</td></tr>
+    <tr><td>Tranche 2 disbursement</td><td>August 31, 2026</td><td>KPI threshold met</td></tr>
+    <tr><td>Final monthly report</td><td>End of December 2026</td><td>grant period closes</td></tr>
+    <tr><td>Sustainability assessment</td><td>January 2027</td><td>post-grant operating model</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>The sustainability assessment is the most consequential milestone in this list. The grant is explicit that the EE team intends the kick-off support to bring the Hub to a point where community activity continues through routine operations and volunteer contributions, rather than ongoing EF funding. The system's job is to surface, throughout the grant period, which activities depend on grant cash, which on member labor, and which on existing operating revenue. By mid-November, the answer to "what continues without the grant" should be visible from the data, not improvised in a meeting.</p>
+
+<!-- 09 Integration with the CIS -->
+<div class="section-eyebrow" id="integration">09 &middot; Integration with the CIS</div>
+<h2>One cooperative, two operational surfaces.</h2>
+<p>Hub Operations is not a parallel cooperative or a separate entity. It is one operational surface inside RegenHub, LCA, alongside the membership and governance surface that the CIS holds. The two share an information model, a stack, an identity layer, and a reporting voice. They are presented separately because the CIS has a five-phase roadmap that predates the grant, and Hub Operations has a seven-month operational arc that begins May 22, 2026.</p>
+
+<div class="int-card">
+  <div class="int-label">a</div>
+  <h3>Shared agents</h3>
+  <p>An agent who is a Hub Visitor today, a Hub Member next month, and a cooperative Patron Member next year is one agent record across all three states. The system holds the timeline rather than fragmenting it across three databases.</p>
+</div>
+
+<div class="int-card">
+  <div class="int-label">b</div>
+  <h3>Shared agreement repository</h3>
+  <p>The grant letter, the Hub Membership Agreement, the cooperative bylaws, and any cross-pollination MoUs all live in the CIS Agreements Repository. Hub Operations references them; it does not maintain a separate document store.</p>
+</div>
+
+<div class="int-card">
+  <div class="int-label">c</div>
+  <h3>Shared treasury</h3>
+  <p>Grant tranches enter the cooperative treasury under CIS Treasury &amp; Distributions. Hub-specific expenditures are tagged at the transaction level so the monthly report can show grant deployment without a separate ledger.</p>
+</div>
+
+<div class="int-card">
+  <div class="int-label">d</div>
+  <h3>Shared CROPS posture</h3>
+  <p>The CROPS design discipline applies to both surfaces. Hub Operations is the system where Stage 02 and Stage 03 patterns can be set in greenfield code; the CIS will inherit the patterns established here as it matures past Stage 01 in the corresponding modules.</p>
+</div>
+
+<!-- 10 Roadmap -->
+<div class="section-eyebrow" id="roadmap">10 &middot; Roadmap</div>
+<h2>Phased delivery aligned to the grant arc.</h2>
+<p>The roadmap maps Hub Operations modules onto the grant timeline. Each phase is operational at completion: a member of the team can run the Hub against the system as it stands, even before later phases ship.</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Phase</th><th>Window</th><th>Surface</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>01 · Open the doors</td>
+      <td>May 22 to June 15, 2026</td>
+      <td>Application form, seat allocation, attendance capture, basic event registration. KPI dashboard in read-only form.</td>
+    </tr>
+    <tr>
+      <td>02 · First report</td>
+      <td>June 15 to July 5, 2026</td>
+      <td>Impact report template, Nou-drafted first monthly report, public publication. Cross-pollination registry stood up.</td>
+    </tr>
+    <tr>
+      <td>03 · Compliance check</td>
+      <td>July 5 to August 31, 2026</td>
+      <td>KPI compliance verification surface for the EE Liaison, audit trail on every KPI measurement, second tranche disbursement.</td>
+    </tr>
+    <tr>
+      <td>04 · Sustainability signals</td>
+      <td>September to November 2026</td>
+      <td>Operating model dashboard distinguishing grant-funded from member-funded activity. Educational surface mature.</td>
+    </tr>
+    <tr>
+      <td>05 · Closure &amp; continuity</td>
+      <td>December 2026 onward</td>
+      <td>Final report, sustainability assessment, transition of grant-funded activities into routine operations.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="heart-card">
+  <div class="heart-label">The heart of the thing</div>
+  <p>The Hub is a CROPS practice ground.</p>
+  <p>The grant pays for ten seats and a meetup. What it actually funds is a chance to practice the four properties together at a scale small enough to learn from and visible enough to mean something. A monthly Ethereum Meetup that opens with a clear, lived account of what censorship resistance, open source, privacy, and security mean in the Hub's own operations is doing something different from a meetup that recites the acronym.</p>
+  <p>The information system makes that practice legible. It surfaces where each property currently lives in the operational surface, where it is reaching, and where it has not yet arrived. The members and visitors who pass through the Hub, and the EE team reading the monthly report, are watching CROPS move through the four stages in real time on a small enough surface that the movement is observable. That observability is itself a contribution to the broader Mandate, separate from any single technical artifact.</p>
+</div>
+
+<!-- 11 Open Questions -->
+<div class="section-eyebrow" id="open">11 &middot; Open Questions</div>
+<h2>What remains unresolved.</h2>
+<p>Several decisions affect the shape of Hub Operations but cannot be resolved by this PRD alone. Each requires a working decision before the corresponding phase ships.</p>
+
+<div class="oq-card">
+  <div class="oq-header">
+    <h3>Application form host</h3>
+    <span class="phase-tag">Phase 01</span>
+  </div>
+  <p>A self-hosted form (e.g., Formbricks against Supabase) advances censorship resistance and open source posture but adds maintenance load. A managed form (Tally, Typeform) ships faster but introduces a Stage 01 chokepoint. Decision pending and named explicitly in the CROPS read.</p>
+</div>
+
+<div class="oq-card">
+  <div class="oq-header">
+    <h3>Hub Membership Agreement</h3>
+    <span class="phase-tag">Phase 01</span>
+  </div>
+  <p>A short member agreement governs Hub Members distinct from cooperative Patron Members. Draft pending, with review by Pote Law Firm. Until ratified, Hub access proceeds against an interim acceptable-use policy.</p>
+</div>
+
+<div class="oq-card">
+  <div class="oq-header">
+    <h3>On-chain attestation scope for Hub events</h3>
+    <span class="phase-tag">Phase 02+</span>
+  </div>
+  <p>Whether monthly meetups, KPI achievements, or impact reports merit on-chain attestation is open. Connects to the CIS open question on attestation scope. Worth resolving once the first quarter of operational data is in hand.</p>
+</div>
+
+<div class="oq-card">
+  <div class="oq-header">
+    <h3>EE Liaison interface</h3>
+    <span class="phase-tag">Phase 03</span>
+  </div>
+  <p>Whether the EE Liaison reviews KPIs through a dedicated dashboard view, a recurring email digest, or a shared Notion page is open. The choice has CROPS implications: open source favors a public dashboard; security favors a scoped credential.</p>
+</div>
+
+<div class="oq-card">
+  <div class="oq-header">
+    <h3>Verifiable Cities adjacency</h3>
+    <span class="phase-tag">Phase 04</span>
+  </div>
+  <p>The Verifiable Cities use-case lab thread is potentially a natural Stage 03 locus for the privacy property. Whether the Hub becomes a pilot context, a participating member of someone else's pilot, or a referrer is undecided. Affects what privacy primitives Hub Operations adopts in late 2026.</p>
+</div>
+
+<div class="oq-card">
+  <div class="oq-header">
+    <h3>Sustainability funding model</h3>
+    <span class="phase-tag">Phase 04 to 05</span>
+  </div>
+  <p>The grant is explicit that ongoing EF funding may not be available. What replaces it (paid memberships, sponsorships, hub fees on third-party events, additional grants) is unresolved. The sustainability dashboard surfaces the question; it does not answer it.</p>
+</div>
+
+<p class="note">None of these block Phase 01. They become blocking at the phase where their scope first becomes material. The PRD should be revisited whenever one is resolved, both to reflect the decision and to carry forward its implications for later phases.</p>
+
+<footer>Co-op.us &middot; RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</footer>
+
+</div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeBtn');
+  var stored = localStorage.getItem('commons-mode');
+  if (stored) root.setAttribute('data-mode', stored);
+  function current() { return root.getAttribute('data-mode') || 'dark'; }
+  btn.textContent = current() === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    localStorage.setItem('commons-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>
