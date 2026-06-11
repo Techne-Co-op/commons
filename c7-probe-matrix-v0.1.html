@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>C7 · Probe Matrix · CIS · Hub Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);overflow:hidden;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+button:focus-visible,input:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+.app{height:100vh;display:flex;flex-direction:column;}
+.top{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s5);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.top h1{font-family:'Libre Baskerville',Georgia,serif;font-size:19px;font-weight:700;color:var(--heading);letter-spacing:-.3px;white-space:nowrap;}
+.top .sub{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
+.top .grow{flex:1;}
+.seg{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--surface);}
+.seg button{padding:5px 13px;font-size:11.5px;color:var(--muted);letter-spacing:.06em;transition:color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.seg button[aria-pressed="true"]{color:var(--terra-text);background:var(--terra-dim);}
+.mode-toggle{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 13px;display:flex;align-items:center;gap:var(--s2);
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle svg{width:14px;height:14px;stroke:currentColor;}
+.main{flex:1;display:grid;grid-template-columns:200px minmax(0,1fr) 400px;gap:var(--s4);padding:var(--s4) var(--s5) var(--s3);min-height:0;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;min-height:0;
+transition:background-color var(--dur-mode) var(--ease);}
+.phead{padding:var(--s3) var(--s4) 0;}
+.plabel{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.prule{width:40px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s2) 0 var(--s3);}
+.pscroll{overflow:auto;padding:0 var(--s4) var(--s4);min-height:0;scrollbar-width:thin;}
+/* rail */
+.rolebtn,.grpbtn{width:100%;text-align:left;border:1px solid var(--border);border-radius:8px;padding:5px var(--s3);margin-bottom:6px;background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.rolebtn:hover,.grpbtn:hover{border-color:var(--terra);}
+.rolebtn[aria-pressed="true"],.grpbtn[aria-pressed="true"]{border-color:var(--terra);background:var(--terra-dim);}
+.rolebtn .ra{font-size:10px;letter-spacing:.14em;color:var(--terra-text);margin-right:var(--s2);}
+.rolebtn .rn{color:var(--text);font-size:11.5px;}
+.railnote{font-size:10px;color:var(--faint);line-height:1.7;margin:var(--s2) 0 var(--s3);}
+/* legend + tiles */
+.gbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;padding:var(--s3) var(--s4);}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;}
+.lg .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.lg.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.lg.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.lg.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.gnote{font-size:10px;color:var(--faint);}
+.gbar .grow{flex:1;}
+.zbtn{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 10px;background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.zbtn:hover{border-color:var(--terra);color:var(--terra-text);}
+/* matrix */
+.mwrap{overflow:auto;flex:1;min-height:0;padding:0 var(--s4) var(--s4);scrollbar-width:thin;}
+table.mx{border-collapse:separate;border-spacing:2px;}
+table.mx th{position:sticky;top:0;background:var(--surface);z-index:2;font-weight:400;font-size:9.5px;letter-spacing:.1em;color:var(--muted);padding:4px 2px;}
+table.mx th.rt{writing-mode:vertical-rl;transform:rotate(180deg);height:74px;vertical-align:bottom;}
+table.mx th:hover{color:var(--terra-text);cursor:pointer;}
+table.mx td.tn{position:sticky;left:0;background:var(--surface);z-index:1;font-size:10.5px;color:var(--heading);padding:2px 8px 2px 2px;white-space:nowrap;cursor:pointer;}
+table.mx td.tn:hover{color:var(--terra-text);}
+table.mx td.tn .grp{color:var(--faint);font-size:8.5px;letter-spacing:.14em;display:block;}
+.cell{width:34px;height:22px;border-radius:5px;font-size:9px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;
+border:1px solid transparent;transition:border-color var(--dur-micro) var(--ease),opacity var(--dur-micro) var(--ease);}
+.cell.s-ok{color:var(--ok);background:var(--ok-dim);}
+.cell.s-info{color:var(--info);background:var(--info-dim);}
+.cell.s-warn{color:var(--warn);background:var(--warn-dim);}
+.cell.none{color:var(--faint);background:var(--bg);}
+.cell:hover{border-color:var(--terra);}
+.cell.sel{border-color:var(--terra);box-shadow:0 0 0 1px var(--terra);}
+.cell.dim,tr.dim .cell,th.dim,td.dim{opacity:.25;}
+.grphead td{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra-text);padding:10px 2px 2px;position:sticky;left:0;background:var(--surface);}
+/* detail */
+.det .dhead{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2);}
+.det .did{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-text);}
+.det h2{font-family:'Libre Baskerville',Georgia,serif;font-size:16.5px;font-weight:700;color:var(--heading);line-height:1.4;}
+.det .plain{font-family:'Libre Baskerville',Georgia,serif;font-style:italic;font-size:13.5px;color:var(--text);line-height:1.75;margin:var(--s2) 0 var(--s3);}
+.det .blk{margin-bottom:var(--s4);}
+.det .bk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.det .bv{font-size:11.5px;line-height:1.8;color:var(--text);}
+.det .bv.serif{font-family:'Libre Baskerville',Georgia,serif;font-size:13px;}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid;}
+.chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.chip.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.chip.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.chip.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-size:10.5px;color:var(--muted);background:var(--bg);
+border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:4px 10px;}
+.prov .cite{color:var(--terra-text);}
+.det pre{font-size:10.5px;line-height:1.7;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;
+padding:var(--s3);overflow:auto;max-height:300px;}
+.linkish{color:var(--terra-text);border-bottom:1px solid transparent;}
+.linkish:hover{border-bottom-color:var(--terra);}
+.foot{font-size:10px;color:var(--faint);text-align:center;padding:var(--s2) var(--s5) var(--s3);border-top:1px solid var(--border);}
+.viewseg{display:none;}
+@media (max-width:980px){
+ body{overflow:auto;}.app{height:100dvh;}
+ .main{grid-template-columns:1fr;overflow:hidden;}
+ .panel{display:none;}
+ body[data-view="rail"] .panel.rail,body[data-view="mx"] .panel.mid,body[data-view="detail"] .panel.det{display:flex;}
+ .viewseg{display:flex;margin:0 var(--s5) var(--s3);}
+ .viewseg button{flex:1;}
+ .top h1{font-size:16px;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body data-lens="plain" data-view="mx">
+<div class="app">
+<div class="top">
+  <div><a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-decoration:none;letter-spacing:.1em;display:block;margin-bottom:3px;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a><h1>Probe Matrix</h1><div class="sub">c7 &middot; role &times; table access expectations &middot; test design for ci:rls-audit</div></div>
+  <div class="grow"></div>
+  <div class="seg" role="group" aria-label="Source filter">
+    <button data-sf="all" aria-pressed="true">all</button>
+    <button data-sf="ok" aria-pressed="false">committed</button>
+    <button data-sf="info" aria-pressed="false">derived</button>
+    <button data-sf="warn" aria-pressed="false">proposed</button>
+  </div>
+  <div class="seg" role="group" aria-label="Reading lens">
+    <button id="lensPlain" aria-pressed="true">plain</button>
+    <button id="lensTech" aria-pressed="false">technical</button>
+  </div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</div>
+
+<div class="seg viewseg" role="group" aria-label="View">
+  <button data-v="rail" aria-pressed="false">roles</button>
+  <button data-v="mx" aria-pressed="true">matrix</button>
+  <button data-v="detail" aria-pressed="false">detail</button>
+</div>
+
+<div class="main">
+  <div class="panel rail">
+    <div class="phead"><div class="plabel">Roles</div><div class="prule"></div></div>
+    <div class="pscroll" id="rail"></div>
+  </div>
+  <div class="panel mid">
+    <div class="gbar" id="gbar"></div>
+    <div class="mwrap" id="mwrap"></div>
+  </div>
+  <div class="panel det">
+    <div class="phead"><div class="plabel" id="detLabel">Detail</div><div class="prule"></div></div>
+    <div class="pscroll det" id="detail"></div>
+  </div>
+</div>
+<div class="foot">seeded from CIS PRD v0.2 &sect;07, Hub PRD v0.1 &sect;05, plan v0.1, C6 schema card &middot; repo home docs/probe-matrix.json &middot; ci:rls-audit generates pgTAP from these cells &middot; co-op.us &middot; regenhub, lca &middot; 2026</div>
+</div>
+
+<script>
+/* ---------- roles · CIS §07 + Hub §05 ---------- */
+const ROLES=[
+ {a:"GST",n:"Guest",p:"anon",c:"draft-bylaws:\u00a7XV",d:"Public-facing materials only: benefit report, principles, aggregate figures."},
+ {a:"APL",n:"Applicant",p:"applicant-1",c:"draft-bylaws:\u00a71.4",d:"Own application and signed agreements. No access to member records."},
+ {a:"PAT",n:"Patron Member",p:"member-a / member-b",c:"draft-bylaws:\u00a71.2, \u00a71.7, \u00a72.9, \u00a718.1",d:"Own records always; aggregate and membership list on request; meeting materials for meetings they attend."},
+ {a:"INV",n:"Investor Member",p:"investor-1",c:"draft-bylaws:\u00a71.3, \u00a72.6.2",d:"Own records always; class-specific voting where required. Fields beyond existence await the investor framework (CIS \u00a717)."},
+ {a:"SUS",n:"Suspended Member",p:"suspended-1",c:"draft-bylaws:\u00a71.10.1",d:"Read own records. No voting, no participation in management."},
+ {a:"FOR",n:"Former Member",p:"former-1",c:"draft-bylaws:\u00a71.11",d:"Historical access to own records, including in-progress redemption schedule."},
+ {a:"DIR",n:"Director",p:"director-1",c:"draft-bylaws:\u00a7III",d:"Member access plus board materials, board minutes, committee reports."},
+ {a:"OFF",n:"Officer",p:"officer-treasurer / officer-secretary",c:"draft-bylaws:\u00a7IV",d:"Role-specific authority: Treasurer over financial records, Secretary over minutes and registers, President over contracts."},
+ {a:"CMT",n:"Committee Member",p:"committee-1",c:"draft-bylaws:\u00a73.18",d:"Director access plus full committee working materials."},
+ {a:"ADM",n:"Administrator",p:"admin-1",c:"policy",d:"Operational access for onboarding, support, data stewardship. Does not create substantive decisions."},
+ {a:"NOU",n:"Agent (Nou)",p:"nou via gateway as member-a",c:"principle 01",d:"Scoped impersonation: inherits the permissions of the invoking user, never more. All actions logged."},
+ {a:"HAP",n:"Hub Applicant",p:"hubapplicant-1",c:"grant:\u00a72",d:"Own application and selection status. No access to attendee records."},
+ {a:"HVI",n:"Hub Visitor",p:"anon (hub surface)",c:"grant:\u00a72",d:"Public educational materials, opportunity listings, event calendar."},
+ {a:"HMB",n:"Hub Member",p:"hubmember-1",c:"grant:\u00a72",d:"Co-working access, event registration, own attendance history. Distinct from Patron Member."},
+ {a:"LIA",n:"EE Liaison",p:"liaison-1",c:"grant:\u00a73",d:"Read access to KPI dashboard, monthly reports, aggregate utilization. No individual applicant or attendee records without justification."}
+];
+const RIX={};ROLES.forEach((r,i)=>RIX[r.a]=i);
+/* scopes */
+const SCOPES={
+ none:{g:"\u00b7",w:"no access",pp:"sees nothing here"},
+ own:{g:"own",w:"own rows only",pp:"can see only what is theirs"},
+ agg:{g:"agg",w:"aggregates via view",pp:"sees totals, never individuals"},
+ att:{g:"att",w:"attended-meeting scope",pp:"sees materials for meetings they attend"},
+ all:{g:"all",w:"full read",pp:"can read every row"},
+ pub:{g:"pub",w:"public read",pp:"open without sign-in"},
+ mir:{g:"=usr",w:"mirrors invoker",pp:"exactly what the asking person could see"},
+ rol:{g:"role",w:"officer-specific",pp:"depends which officer"}
+};
+/* src codes: prd | plan | drv | prop  -> confidence class */
+const SRC={prd:{cls:"ok",w:"stated \u00b7 prd"},plan:{cls:"ok",w:"adopted \u00b7 plan"},drv:{cls:"info",w:"derived"},prop:{cls:"warn",w:"proposed"}};
+
+/* ---------- tables ---------- */
+/* cell value: [scope, src, cite, note?]  · defaults: every role none [drv, default-deny W0.6] */
+const DD=["none","drv","plan W0.6 \u00b7 default-deny baseline"];
+const MEMB=["PAT","INV","SUS","FOR","DIR","OFF","CMT"]; /* member-class roles incl. governance roles */
+const GOVR=["PAT","INV","DIR","OFF","CMT"];             /* members in good standing + governance */
+function C(over){const c={};ROLES.forEach(r=>c[r.a]=DD);for(const k in over)c[k]=over[k];
+ c.NOU=["mir","prd","principle 01","inherits the invoking user; probed pairwise against every persona"];return c;}
+function fan(roles,val){const o={};roles.forEach(r=>o[r]=val);return o;}
+
+const T=[
+/* core 19 */
+{t:"agents",g:"core",anchor:"Agent \u00b7 natural and legal persons",
+ w:["self-edit of own contact fields under member session [prd W1.5]; creation via admission workflow or service role [drv]","prd/drv"],
+ cells:C(Object.assign(
+  fan(GOVR,["own","prd","\u00a71.2 own records; list via member_directory view \u00a71.7","direct rows: self only; the directory view carries the member list"]),
+  {SUS:["own","prd","\u00a71.10.1"],FOR:["own","prd","\u00a71.11"],APL:["own","prd","\u00a71.4"],
+   ADM:["all","prd","policy \u00b7 onboarding and stewardship"],
+   OFF:["rol","prd","\u00a7IV \u00b7 Secretary over registers","Secretary: all; other officers: own + directory"],
+   HAP:["own","drv","shared agent record, Hub \u00a704"],HMB:["own","drv","shared agent record, Hub \u00a704"]}))},
+{t:"memberships",g:"core",anchor:"Agent/Agreement \u00b7 draft-bylaws:\u00a71.1\u20131.4",
+ w:["state changes are lifecycle events, never direct updates [plan]; admission via W1.6 workflow [plan]","plan"],
+ cells:C(Object.assign(
+  fan(GOVR,["own","prd","\u00a71.2; list on request \u00a71.7","self row; member list via directory view"]),
+  {SUS:["own","prd","\u00a71.10.1"],FOR:["own","prd","\u00a71.11"],
+   ADM:["all","prd","policy"],OFF:["rol","prd","\u00a7IV Secretary registers","Secretary: all"],
+   HMB:["none","drv","distinct membership, Hub \u00a705","hub membership lives on hub tables"]}))},
+{t:"stock_ledger",g:"core",anchor:"Resource \u00b7 draft-bylaws:\u00a71.13",
+ w:["issuance and transfer-back as events via workflow; one-per-member constraint at the database [plan W1.2]","plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","DIR","CMT"],["own","drv","\u00a71.2 own records always"]),
+  {SUS:["own","prd","\u00a71.10.1"],FOR:["own","prd","\u00a71.11 \u00b7 redemption schedule"],
+   ADM:["all","drv","stewardship"],OFF:["rol","prd","\u00a7IV Treasurer financial records","Treasurer: all"]}))},
+{t:"capital_accounts",g:"core",anchor:"Resource \u00b7 draft-bylaws:\u00a75.1",
+ w:["accounts opened by admission workflow; no direct member writes [drv]","drv"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["own","prd","CIS \u00a708 \u00b7 member-facing view shows personal balance","aggregates via capital views, principle 07"]),
+  {SUS:["own","prd","\u00a71.10.1"],FOR:["own","prd","\u00a71.11"],
+   DIR:["agg","prd","P pathway Phase 02 \u00b7 visibility scoped to the member; aggregate views serve governance"],
+   CMT:["agg","drv","same scope as Director"],
+   OFF:["rol","prd","\u00a7IV Treasurer","Treasurer: all; others: aggregate"],
+   ADM:["all","prd","CIS \u00a708 \u00b7 administrator view shows all"]}))},
+{t:"capital_events",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a75.1, \u00a75.3, \u00a75.4",
+ w:["double-entry inserts via allocation and distribution workflows; manual allocation entry pre-R1 by Treasurer/admin session [plan W3.3]; immutable thereafter [drv]","plan/drv"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["own","prd","CIS \u00a708 \u00b7 full event history of own account"]),
+  {SUS:["own","prd","\u00a71.10.1"],FOR:["own","prd","\u00a71.11"],
+   DIR:["agg","prd","P Phase 02"],CMT:["agg","drv","as Director"],
+   OFF:["rol","prd","\u00a7IV Treasurer","Treasurer: all"],ADM:["all","prd","CIS \u00a708"]}))},
+{t:"agreements",g:"core",anchor:"Agreement \u00b7 bylaws, policies, MAs",
+ w:["versions appended via repository workflow; President executes contracts [prd \u00a7IV]","prd"],
+ cells:C(Object.assign(
+  fan(GOVR,["all","prd","principle 07 \u00b7 any member can see what governs them","governance instruments; personal MAs of others restricted by kind [drv]"]),
+  {APL:["own","prd","\u00a71.4 \u00b7 own signed agreements"],SUS:["own","drv","\u00a71.10.1 narrows to own + what governs them; flagged F3"],
+   FOR:["own","prd","\u00a71.11 historical"],ADM:["all","drv","stewardship"],
+   HMB:["all","drv","what governs them: hub AUP, HMA, grant","hub-governing instruments only [drv]"],
+   HAP:["own","prd","\u00a71.4 analog under grant \u00a72"],GST:["none","drv","public surface is benefit_reports + published policies via site"],
+   HVI:["none","drv","as Guest"],LIA:["all","drv","grant + hub instruments only","scoped to grant-related kinds"]}))},
+{t:"signatures",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a71.4",
+ w:["insert own signature event under member session against a version hash [plan W1.4]; no update or delete [drv]","plan"],
+ cells:C(Object.assign(
+  fan(GOVR,["own","prd","\u00a71.4"]),
+  {APL:["own","prd","\u00a71.4"],SUS:["own","drv","\u00a71.10.1"],FOR:["own","prd","\u00a71.11"],
+   ADM:["all","drv","stewardship"],OFF:["rol","prd","\u00a7IV Secretary registers","Secretary: all"]}))},
+{t:"meetings",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a7II, \u00a7III",
+ w:["scheduled via governance workflow; notices fire per \u00a72.4 [prd]","prd"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["att","prd","\u00a72.9 \u00b7 materials for meetings they attend","schedule rows readable to members [drv]; materials attended-scoped; tension F2"]),
+  {DIR:["all","prd","\u00a7III board materials"],CMT:["all","prd","\u00a73.18 + Director access"],
+   OFF:["all","drv","officers serve the body"],ADM:["all","drv","operations"],
+   SUS:["none","drv","\u00a71.10.1 \u00b7 no participation in management; flagged F3"],FOR:["none","prop","historical access via request path \u00a718.1; not direct rows"]}))},
+{t:"attendance",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a72.7",
+ w:["insert own join/leave under member session; electronic capture by system [drv]","drv"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["own","drv","own presence; quorum via view"]),
+  {DIR:["all","drv","board oversight of quorum record"],CMT:["all","drv","as Director"],
+   OFF:["rol","prd","\u00a7IV Secretary","Secretary: all"],ADM:["all","drv","operations"],
+   SUS:["own","drv","\u00a71.10.1"],FOR:["own","drv","\u00a71.11 historical"]}))},
+{t:"proxies",g:"core",anchor:"Agreement \u00b7 draft-bylaws:\u00a72.6.4",
+ w:["grantor creates and revokes own proxy [drv]","drv"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["own","drv","grantor or holder sees the instrument"]),
+  {DIR:["all","drv","quorum integrity"],OFF:["rol","prd","\u00a7IV Secretary","Secretary: all"],
+   CMT:["all","drv","as Director"],ADM:["all","drv","operations"]}))},
+{t:"motions",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a72.6, \u00a73.13",
+ w:["member files own motion via workflow; Nou may draft, the member files [prd CIS \u00a711]","prd"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["all","drv","\u00a715 \u00b7 outcome and rule cited to members; decided motions open","live board-only motions board-scoped [prop]"]),
+  {DIR:["all","prd","\u00a7III"],CMT:["all","prd","\u00a73.18"],OFF:["all","drv","officers serve the body"],
+   ADM:["all","drv","operations, no substantive creation"],SUS:["none","drv","\u00a71.10.1; flagged F3"],
+   FOR:["none","prop","historical decisions that affected them via request path; F5 adjacent"]}))},
+{t:"votes",g:"core",anchor:"Event \u00b7 Resource \u00b7 draft-bylaws:\u00a71.6, \u00a71.14.2",
+ w:["insert own ballot once per motion under member session; immutable once cast: UPDATE and DELETE refused by trigger [prd CIS \u00a708, plan]","prd/plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["own","prd","vote privacy where bylaws permit, P Phase 03","own ballot; outcomes via vote_outcome view"]),
+  {DIR:["own","prd","vote privacy applies to directors too"],CMT:["own","drv","as members"],
+   OFF:["own","drv","as members"],SUS:["none","prd","\u00a71.10.1 \u00b7 no voting"],FOR:["none","drv","\u00a71.11"],
+   ADM:["none","prop","individual ballots sealed from administrators; tallies via view; pending \u00a71.6 reading, flagged F4"]}))},
+{t:"consents",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a72.8, \u00a73.15",
+ w:["consenting party inserts own consent event via workflow [drv]","drv"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["all","drv","decided consents open to members, principle 07"]),
+  {DIR:["all","prd","\u00a7III"],CMT:["all","prd","\u00a73.18"],OFF:["all","drv","serve the body"],
+   ADM:["all","drv","operations"],SUS:["none","drv","\u00a71.10.1"],FOR:["none","prop","request path"]}))},
+{t:"minutes",g:"core",anchor:"Agreement \u00b7 draft-bylaws:\u00a74.5",
+ w:["Nou drafts; the Secretary ratifies; ratification is the authoritative act [prd CIS \u00a711]","prd"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["all","prd","principle 07 \u00b7 meeting minutes accessible without friction","board minutes: ratified open [drv]; see F2"]),
+  {DIR:["all","prd","\u00a7III board minutes"],CMT:["all","prd","\u00a73.18 committee minutes"],
+   OFF:["rol","prd","\u00a7IV Secretary","Secretary: all + write path"],ADM:["all","drv","stewardship"],
+   SUS:["none","drv","\u00a71.10.1; flagged F3"],FOR:["none","prop","request path"],
+   GST:["none","drv","not the public surface; benefit report is"]}))},
+{t:"notices",g:"core",anchor:"Event \u00b7 draft-bylaws:\u00a72.4, \u00a7X",
+ w:["generated by workflow with timing-window function [plan W1.8]; delivery events via provider webhook [plan W0.11]","plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["own","drv","recipient sees own notices and delivery states"]),
+  {SUS:["own","drv","\u00a71.10.1 \u00b7 still noticed"],FOR:["own","drv","\u00a71.11 where applicable"],
+   APL:["own","drv","applicant notices"],DIR:["all","drv","governance oversight"],
+   OFF:["rol","prd","\u00a7IV Secretary","Secretary: all"],ADM:["all","drv","operations"],CMT:["all","drv","as Director"]}))},
+{t:"committees",g:"core",anchor:"Agent \u00b7 draft-bylaws:\u00a73.18",
+ w:["formed by board action; membership via role_grants [plan W0.8]","plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV"],["all","drv","existence and charters open, principle 07","working materials committee-scoped"]),
+  {DIR:["all","prd","\u00a7III committee reports"],CMT:["all","prd","\u00a73.18 full working materials of own committee"],
+   OFF:["all","drv","serve the body"],ADM:["all","drv","operations"],SUS:["none","drv","\u00a71.10.1"]}))},
+{t:"policies",g:"core",anchor:"Agreement \u00b7 board-adopted",
+ w:["adopted by board action recorded in the event log [drv per C6]","drv"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","DIR","OFF","CMT"],["all","prd","principle 07 \u00b7 board policies accessible without friction"]),
+  {SUS:["all","drv","what governs them still governs them; narrow reading flagged F3"],
+   FOR:["none","prop","request path"],ADM:["all","drv","operations"],
+   HMB:["all","drv","hub-governing policies only"],GST:["none","drv","published versions reach the site, not the table"]}))},
+{t:"tax_records",g:"core",anchor:"Agreement \u00b7 Event \u00b7 draft-bylaws:\u00a7VI",
+ w:["written by allocation and reporting workflows; identifiers encrypted at rest [prd]; member K-1s delivered out of band [drv]","prd/drv"],
+ cells:C(Object.assign(
+  {},
+  {ADM:["all","prd","P Phase 02 \u00b7 administrator-only access"],
+   OFF:["rol","prd","\u00a7IV Treasurer over financial records","Treasurer: all; Secretary and President: none"],
+   PAT:["none","prd","P Phase 02 \u00b7 even own rows are table-closed; delivery is out of band"],
+   INV:["none","prd","as Patron"],SUS:["none","prd","as Patron"],FOR:["none","prd","as Patron"],
+   DIR:["none","prd","aggregate tax posture via reports, not rows"],CMT:["none","prd","as Director"]}))},
+{t:"benefit_reports",g:"core",anchor:"Agreement \u00b7 draft-bylaws:\u00a7XV",
+ w:["generated annually via W6 workflow; board review precedes publication [prd CIS \u00a712]","prd"],
+ cells:C(Object.assign(
+  fan(["GST","APL","PAT","INV","SUS","FOR","DIR","OFF","CMT","ADM","HAP","HVI","HMB","LIA"],
+   ["pub","prd","\u00a7XV \u00b7 the one guaranteed public view"])))},
+/* hub 12 */
+{t:"hub_applicants",g:"hub",anchor:"Agent \u00b7 grant:\u00a72",
+ w:["created by the application path; minimal fields per data-minimization [prd Hub \u00a703]","prd"],
+ cells:C({HAP:["own","prd","grant:\u00a72"],ADM:["all","drv","selection stewardship"],
+  LIA:["none","prd","grant:\u00a73 \u00b7 no individual applicant records without justification"]})},
+{t:"hub_applications",g:"hub",anchor:"Event \u00b7 Agreement \u00b7 grant:\u00a72",
+ w:["anonymous insert on declared columns only: the single sanctioned hole in default-deny, with its own probes and a rate-limit watch item [plan W2.2]; decisions recorded against criteria [prd]","plan/prd"],
+ cells:C({HAP:["own","prd","grant:\u00a72 \u00b7 own application and selection status"],
+  ADM:["all","drv","selection stewardship"],
+  LIA:["none","prd","grant:\u00a73"],
+  GST:["none","plan","insert-only for anon; SELECT denied [W2.2]","the asymmetric cell: anon may write one row shape, read nothing"],
+  HVI:["none","plan","as Guest on this table"]})},
+{t:"coworking_seats",g:"hub",anchor:"Resource \u00b7 grant:\u00a72",
+ w:["seat registry maintained by operators [drv]","drv"],
+ cells:C(Object.assign(
+  fan(["HMB","HVI","PAT","INV","DIR","OFF","CMT","LIA"],["all","drv","capacity registry holds no personal data; visibility serves the KPI posture"]),
+  {ADM:["all","drv","operations"]}))},
+{t:"coworking_sessions",g:"hub",anchor:"Event \u00b7 grant:\u00a72",
+ w:["check-in/out under hub-member session; under a minute on mobile [plan W2.3]","plan"],
+ cells:C({HMB:["own","prd","grant:\u00a72 \u00b7 own attendance history"],
+  ADM:["all","drv","operations"],LIA:["agg","prd","grant:\u00a73 \u00b7 aggregate utilization"],
+  PAT:["agg","drv","membership sees live use as an indicator, Hub \u00a707"],DIR:["agg","drv","as members"]})},
+{t:"hub_events",g:"hub",anchor:"Event \u00b7 grant:\u00a72",
+ w:["scheduled by operators; meetup cadence is grant-mandatory [prd]","prd"],
+ cells:C(Object.assign(
+  fan(["GST","APL","PAT","INV","SUS","FOR","DIR","OFF","CMT","ADM","HAP","HVI","HMB","LIA"],
+   ["pub","prd","grant:\u00a72 \u00b7 event calendar is a public surface"])))},
+{t:"event_attendance",g:"hub",anchor:"Event \u00b7 grant:\u00a72",
+ w:["registration under session; identified rows require opted_in true [prd Hub \u00a703]; unidentified counts otherwise","prd"],
+ cells:C({HMB:["own","prd","grant:\u00a72 \u00b7 own attendance history"],
+  ADM:["all","drv","operations"],LIA:["agg","prd","grant:\u00a73 \u00b7 aggregates, never names"],
+  PAT:["agg","drv","counts via summary view"],DIR:["agg","drv","as members"]})},
+{t:"event_materials",g:"hub",anchor:"Resource \u00b7 grant:\u00a73",
+ w:["versioned alongside local materials [prd Hub \u00a706]","prd"],
+ cells:C(Object.assign(
+  fan(["GST","APL","PAT","INV","SUS","FOR","DIR","OFF","CMT","ADM","HAP","HVI","HMB","LIA"],
+   ["pub","prd","grant:\u00a72 \u00b7 learning materials are the public educational surface"])))},
+{t:"educational_displays",g:"hub",anchor:"Resource \u00b7 grant:\u00a72",
+ w:["rotation tracked by operators [prd Hub \u00a706]","prd"],
+ cells:C(Object.assign(
+  fan(["GST","APL","PAT","INV","SUS","FOR","DIR","OFF","CMT","ADM","HAP","HVI","HMB","LIA"],
+   ["pub","prd","grant:\u00a72 \u00b7 displays and opportunity listings are public"])))},
+{t:"partner_orgs",g:"hub",anchor:"Agent \u00b7 grant:\u00a71",
+ w:["registry maintained by operators; lightweight, not a pipeline [prd Hub \u00a706]","prd"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","DIR","OFF","CMT","HMB"],["all","plan","W2.7 \u00b7 visible to members"]),
+  {ADM:["all","drv","operations"],LIA:["all","drv","bridge-building oversight under grant:\u00a71"]}))},
+{t:"kpi_measurements",g:"hub",anchor:"Event \u00b7 grant:\u00a74",
+ w:["snapshot rows written by the scheduled rail from derived views; never hand-entered [prd Hub \u00a707]","prd"],
+ cells:C(Object.assign(
+  fan(["GST","HVI","HMB","PAT","INV","DIR","OFF","CMT","HAP","APL"],["agg","prd","Hub \u00a707 \u00b7 public read-only KPI view; table rows drill for authorized roles"]),
+  {LIA:["all","prd","grant:\u00a73 \u00b7 full detail with audit drill-down"],ADM:["all","prd","Hub \u00a707"]}))},
+{t:"impact_reports",g:"hub",anchor:"Agreement \u00b7 grant:\u00a72",
+ w:["Nou drafts on the first; organizer approves; publishes to a stable URL with portable mirror [prd Hub \u00a707, plan W2.6]","prd/plan"],
+ cells:C(Object.assign(
+  fan(["GST","APL","PAT","INV","SUS","FOR","DIR","OFF","CMT","ADM","HAP","HVI","HMB","LIA"],
+   ["pub","prd","Hub \u00a707 \u00b7 published to a stable URL"])))},
+{t:"grant_tranches",g:"hub",anchor:"Event \u00b7 Agreement \u00b7 grant:\u00a76",
+ w:["milestones and receipts recorded as events against the grant agreement [prd Hub \u00a708]; treasury join at W3.7","prd"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","DIR","CMT"],["all","drv","grant deployment legible to members, Hub \u00a709c"]),
+  {OFF:["rol","prd","\u00a7IV Treasurer","Treasurer: all"],ADM:["all","drv","operations"],
+   LIA:["all","prd","grant:\u00a73 \u00b7 compliance review ahead of tranche 2"]}))},
+/* substrate 8 */
+{t:"invites",g:"substrate",anchor:"plan W0.5 \u00b7 alpha allowlist",
+ w:["created by administrators; consumed by the auth hook [plan W0.5]","plan"],
+ cells:C({ADM:["all","plan","W0.5"]})},
+{t:"roles / role_grants",g:"substrate",anchor:"plan W0.8 \u00b7 CIS \u00a707 represented as data",
+ w:["grants are events, written by governance actions [plan W0.8]","plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","DIR","OFF","CMT"],["own","drv","own grants; board composition via current_board view, principle 07","role definitions readable: what governs them"]),
+  {ADM:["all","plan","W0.8"],OFF:["rol","prd","\u00a7IV Secretary registers","Secretary: all"],
+   SUS:["own","drv","\u00a71.10.1"],FOR:["own","drv","historical"]}))},
+{t:"jobs / job_runs",g:"substrate",anchor:"plan W0.10 \u00b7 two rails",
+ w:["heartbeat and run events written by the rails themselves [plan W0.10]","plan"],
+ cells:C({ADM:["all","plan","W0.10"],DIR:["agg","prop","operational health summary for the board; rows admin-only"]})},
+{t:"build_status",g:"substrate",anchor:"plan W0.18 \u00b7 the mirror",
+ w:["written only by the status-mirror ingest function [plan W0.18]","plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","DIR","OFF","CMT","HMB"],["all","plan","W0.18 \u00b7 the /build panel is for members"]),
+  {ADM:["all","plan","W0.18"],SUS:["all","prop","reading the build is not participation in management"],GST:["none","prop","member surface in alpha; could open later"]}))},
+{t:"nou_interactions",g:"substrate",anchor:"plan W1.7 \u00b7 CIS \u00a711 logging",
+ w:["written only by the gateway: prompt, citation set, response [plan W1.7]","plan"],
+ cells:C({ADM:["all","plan","W1.7 \u00b7 interim retain-all admin-only, named as interim (CIS \u00a717)"],
+  PAT:["own","prop","a member reading their own interaction log; pending the retention decision"],
+  INV:["own","prop","as Patron"],DIR:["own","prop","as Patron"]})},
+{t:"error_events",g:"substrate",anchor:"plan W0.17 \u00b7 the sink",
+ w:["written by the error-sink function only [plan W0.17]","plan"],
+ cells:C({ADM:["all","plan","W0.17 \u00b7 admin-only events table"]})},
+{t:"notice_delivery",g:"substrate",anchor:"plan W0.11 \u00b7 provider webhooks",
+ w:["written by the webhook receiver only [plan W0.11]","plan"],
+ cells:C(Object.assign(
+  fan(["PAT","INV","SUS","FOR","APL"],["own","drv","delivery states of own notices"]),
+  {ADM:["all","plan","W0.11"],OFF:["rol","prd","\u00a7IV Secretary","Secretary: all"],DIR:["all","drv","oversight"]}))},
+{t:"agreement_versions",g:"substrate",anchor:"plan W0.7 \u00b7 version pattern",
+ w:["appended by the repository workflow; content hash required [plan W0.7]","plan"],
+ cells:C({/* follows agreements */
+  PAT:["all","drv","follows agreements visibility"],INV:["all","drv","follows agreements"],
+  DIR:["all","drv","follows agreements"],OFF:["all","drv","follows agreements"],CMT:["all","drv","follows agreements"],
+  APL:["own","drv","versions of own signed agreements"],SUS:["own","drv","follows agreements narrow"],
+  FOR:["own","drv","historical"],ADM:["all","drv","stewardship"],HMB:["all","drv","hub-governing only"],
+  HAP:["own","drv","follows agreements"],LIA:["all","drv","grant instruments"]})},
+];
+
+/* ---------- findings ---------- */
+const FINDINGS=[
+ ["F1","The cooperative application has no table.","The Applicant role (\u00a71.4) is defined against an application record that none of the nineteen core tables holds; hub_applications is grant-scoped. Routed to a C6 addendum and the W1.6 brief: either a coop_applications table or an explicit reuse decision, before admission ships."],
+ ["F2","Minutes versus attended materials.","Principle 07 makes meeting minutes accessible without friction; \u00a72.9 scopes meeting materials to attendees. Encoded here as: ratified minutes member-open, pre-meeting materials attended-scoped. Confirm at W4.0."],
+ ["F3","The suspended member's reading rights.","\u00a71.10.1 says read own records; \u00a718.1 grants members information rights. The matrix encodes the narrow reading (own + what governs them) and marks every affected cell. Counsel confirms at R1."],
+ ["F4","Ballots and administrators.","Individual votes are encoded as sealed from administrators, tallies via view only, pending a reading of \u00a71.6 vote privacy. Decide before W4.2 builds the votes table."],
+ ["F5","Investor cells are placeholders.","Investor Member mirrors Patron scopes except class-specific voting (\u00a72.6.2); richer treatment awaits the investor framework (CIS \u00a717). Cells marked accordingly."]
+];
+
+/* ---------- state + derived ---------- */
+const S={lens:"plain",sf:"all",role:null,grp:null,sel:null};
+function srcCls(s){return SRC[s].cls;}
+let counts={ok:0,info:0,warn:0,total:0};
+T.forEach(t=>ROLES.forEach(r=>{const c=t.cells[r.a];counts.total++;counts[srcCls(c[1])]++;}));
+
+/* ---------- render rail ---------- */
+function rRail(){
+ const el=document.getElementById("rail");
+ let h='<div class="railnote">click a role to focus its column \u00b7 click again to clear</div>';
+ ROLES.forEach(r=>{h+=`<button class="rolebtn" data-r="${r.a}" aria-pressed="${S.role===r.a}"><span class="ra">${r.a}</span><span class="rn">${r.n}</span></button>`;});
+ h+='<div class="railnote" style="margin-top:var(--s3)">groups</div>';
+ [["core","core \u00b7 19"],["hub","hub \u00b7 12"],["substrate","substrate \u00b7 8"]].forEach(([g,t])=>{
+  h+=`<button class="grpbtn" data-g="${g}" aria-pressed="${S.grp===g}">${t}</button>`;});
+ h+=`<button class="grpbtn" data-f="1" style="margin-top:var(--s3)">findings \u00b7 ${FINDINGS.length}</button>`;
+ h+=`<button class="grpbtn" data-j="1">machine view \u00b7 json</button>`;
+ el.innerHTML=h;
+ el.querySelectorAll(".rolebtn").forEach(b=>b.onclick=()=>{S.role=S.role===b.dataset.r?null:b.dataset.r;S.sel=null;rAll();showRole(b.dataset.r);});
+ el.querySelectorAll(".grpbtn[data-g]").forEach(b=>b.onclick=()=>{S.grp=S.grp===b.dataset.g?null:b.dataset.g;rAll();});
+ const fb=el.querySelector("[data-f]");if(fb)fb.onclick=()=>{S.sel=null;rAll();showFindings();setMobile("detail");};
+ const jb=el.querySelector("[data-j]");if(jb)jb.onclick=()=>{S.sel=null;rAll();showJson();setMobile("detail");};
+}
+/* ---------- gbar ---------- */
+function rGbar(){
+ const pc=n=>Math.round(100*n/counts.total);
+ document.getElementById("gbar").innerHTML=
+ `<span class="lg ok"><span class="dot"></span>committed ${counts.ok} \u00b7 ${pc(counts.ok)}%</span>
+  <span class="lg info"><span class="dot"></span>derived ${counts.info} \u00b7 ${pc(counts.info)}%</span>
+  <span class="lg warn"><span class="dot"></span>proposed ${counts.warn} \u00b7 ${pc(counts.warn)}%</span>
+  <span class="gnote">${counts.total} cells \u00b7 scopes: \u00b7 none &middot; own &middot; agg &middot; att &middot; all &middot; pub &middot; =usr mirrors invoker &middot; role officer-specific</span>
+  <span class="grow"></span><span class="gnote">cells are read scopes; write rules live on each table</span>`;
+}
+/* ---------- matrix ---------- */
+function rMx(){
+ const el=document.getElementById("mwrap");
+ let h='<table class="mx"><thead><tr><th></th>';
+ ROLES.forEach(r=>{h+=`<th class="rt${S.role&&S.role!==r.a?" dim":""}" data-r="${r.a}" title="${r.n}">${r.a}</th>`;});
+ h+='</tr></thead><tbody>';
+ let lastG=null;
+ T.forEach((t,ti)=>{
+  if(S.grp&&t.g!==S.grp)return;
+  if(t.g!==lastG){lastG=t.g;h+=`<tr class="grphead"><td colspan="${ROLES.length+1}">${t.g}</td></tr>`;}
+  h+=`<tr><td class="tn" data-t="${ti}">${t.t}</td>`;
+  ROLES.forEach(r=>{
+   const c=t.cells[r.a];const sc=SCOPES[c[0]];const cls=srcCls(c[1]);
+   const dimSf=S.sf!=="all"&&cls!==S.sf;const dimR=S.role&&S.role!==r.a;
+   const seld=S.sel&&S.sel[0]===ti&&S.sel[1]===r.a;
+   const none=c[0]==="none";
+   h+=`<td><button class="cell ${none?"none":"s-"+cls}${dimSf||dimR?" dim":""}${seld?" sel":""}" data-t="${ti}" data-r="${r.a}"
+     aria-label="${t.t} \u00d7 ${r.a}: ${sc.w}, ${SRC[c[1]].w}">${sc.g}</button></td>`;});
+  h+='</tr>';});
+ h+='</tbody></table>';
+ el.innerHTML=h;
+ el.querySelectorAll(".cell").forEach(b=>b.onclick=()=>{S.sel=[+b.dataset.t,b.dataset.r];rAll();showCell();setMobile("detail");});
+ el.querySelectorAll("th.rt").forEach(th=>th.onclick=()=>{S.role=S.role===th.dataset.r?null:th.dataset.r;S.sel=null;rAll();showRole(th.dataset.r);});
+ el.querySelectorAll("td.tn").forEach(td=>td.onclick=()=>{S.sel=null;rAll();showTable(+td.dataset.t);setMobile("detail");});
+}
+/* ---------- detail views ---------- */
+const det=()=>document.getElementById("detail");
+const dlab=t=>document.getElementById("detLabel").textContent=t;
+function probeSpec(scope,role,t){
+ const p=ROLES[RIX[role]].p;
+ switch(scope){
+  case "none":return `as ${p}: SELECT on ${t} returns zero rows (or permission denied). Cross-id probes return zero.`;
+  case "own":return `as ${p}: SELECT returns only rows where the subject is ${p}; probing another persona's id returns zero rows.`;
+  case "agg":return `as ${p}: direct SELECT on ${t} denied or empty; the governing view returns aggregate rows carrying no personal identifiers.`;
+  case "att":return `as ${p}: rows joined to meetings with own attendance return; rows for unattended meetings return zero.`;
+  case "all":return `as ${p}: SELECT returns the full fixture set for ${t} (count asserted against seed).`;
+  case "pub":return `as anon: SELECT on the declared public columns of ${t} succeeds; undeclared columns are absent from the view.`;
+  case "mir":return `pairwise: every probe in this column equals the invoking persona's result; run the full suite once as each persona through the gateway and diff.`;
+  case "rol":return `officer sub-roles asserted separately: see the cell note for which officer holds which scope.`;
+ }}
+function showCell(){
+ const [ti,ra]=S.sel;const t=T[ti];const r=ROLES[RIX[ra]];const c=t.cells[ra];const sc=SCOPES[c[0]];const src=SRC[c[1]];
+ dlab(`Detail \u00b7 ${t.t} \u00d7 ${ra}`);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${t.t} \u00d7 ${r.n}</span>
+   <span class="chip ${src.cls}"><span class="dot"></span>${src.w}</span></div>
+  <h2>${sc.w}</h2>
+  ${S.lens==="plain"?`<p class="plain">${r.n} ${sc.pp} in ${t.t}.</p>`:""}
+  <div class="blk"><div class="bk">citation</div><span class="prov"><span class="cite">${c[2]}</span></span></div>
+  ${c[3]?`<div class="blk"><div class="bk">note</div><div class="bv serif">${c[3]}</div></div>`:""}
+  ${S.lens==="tech"?`<div class="blk"><div class="bk">probe expectation \u00b7 pgTAP</div><div class="bv">${probeSpec(c[0],ra,t.t)}</div></div>`:""}
+  <div class="blk"><div class="bk">write rules \u00b7 ${t.t}</div><div class="bv">${t.w[0]} <span style="color:var(--faint)">[${t.w[1]}]</span></div></div>
+  <div class="blk"><div class="bk">table anchor</div><div class="bv">${t.anchor}</div></div>
+  <div class="blk"><div class="bk">role brief</div><div class="bv serif">${r.d}</div>
+   <div class="bv" style="color:var(--faint)">persona: ${r.p} \u00b7 ${r.c}</div></div>
+  ${src.cls==="warn"?`<div class="blk"><div class="bk">adoption</div><div class="bv serif">A proposed cell binds no one. Adoption is a PR editing docs/probe-matrix.json with an organizer review; the cell turns committed there, not here.</div></div>`:""}`;
+}
+function showRole(ra){
+ if(!ra)return showDefault();
+ const r=ROLES[RIX[ra]];dlab(`Detail \u00b7 role ${ra}`);
+ let tally={none:0,own:0,agg:0,att:0,all:0,pub:0,mir:0,rol:0};
+ T.forEach(t=>tally[t.cells[ra][0]]++);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${ra}</span></div><h2>${r.n}</h2>
+  <p class="plain">${r.d}</p>
+  <div class="blk"><div class="bk">authority</div><span class="prov"><span class="cite">${r.c}</span></span></div>
+  <div class="blk"><div class="bk">persona</div><div class="bv">${r.p}</div></div>
+  <div class="blk"><div class="bk">scope tally across ${T.length} tables</div>
+   <div class="bv">${Object.entries(tally).filter(([k,v])=>v).map(([k,v])=>`${SCOPES[k].g} ${v}`).join(" \u00b7 ")}</div></div>
+  <div class="blk"><div class="bv serif">The column is focused in the matrix; every cell carries its own citation and probe.</div></div>`;
+}
+function showTable(ti){
+ const t=T[ti];dlab(`Detail \u00b7 ${t.t}`);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${t.g}</span></div><h2>${t.t}</h2>
+  <div class="blk"><div class="bk">anchor</div><span class="prov"><span class="cite">${t.anchor}</span></span></div>
+  <div class="blk"><div class="bk">write rules</div><div class="bv">${t.w[0]} <span style="color:var(--faint)">[${t.w[1]}]</span></div></div>
+  <div class="blk"><div class="bk">read scopes</div><div class="bv">${ROLES.map(r=>{const c=t.cells[r.a];return c[0]==="none"?null:`${r.a} ${SCOPES[c[0]].g}`;}).filter(Boolean).join(" \u00b7 ")||"none beyond defaults"}</div></div>
+  <div class="blk"><div class="bv serif">Click any cell in this row for its citation and probe.</div></div>`;
+}
+function showFindings(){
+ dlab("Detail \u00b7 findings");
+ det().innerHTML=`<div class="dhead"><span class="did">findings</span></div>
+  <h2>What the matrix surfaced</h2>
+  <p class="plain">Consolidating forced five calls the PRDs do not make. Each is encoded the cautious way and marked; none is settled here.</p>`+
+  FINDINGS.map(f=>`<div class="blk"><div class="bk">${f[0]} \u00b7 ${f[1]}</div><div class="bv serif">${f[2]}</div></div>`).join("");
+}
+function showJson(){
+ dlab("Detail \u00b7 machine view");
+ const data={roles:ROLES.map(r=>({abbr:r.a,name:r.n,persona:r.p,authority:r.c})),
+  tables:T.map(t=>({table:t.t,group:t.g,anchor:t.anchor,writes:t.w[0],writes_src:t.w[1],
+   cells:Object.fromEntries(ROLES.map(r=>{const c=t.cells[r.a];return[r.a,{scope:c[0],src:c[1],cite:c[2],note:c[3]||null}];}))}))};
+ det().innerHTML=`<div class="dhead"><span class="did">docs/probe-matrix.json</span></div>
+  <h2>Machine view</h2>
+  <p class="plain">The same cells as data. In the repository this file is the source; ci:rls-audit generates one pgTAP assertion per cell from it, and this instrument renders it.</p>
+  <pre>${JSON.stringify(data,null,1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>`;
+}
+function showDefault(){
+ dlab("Detail");
+ det().innerHTML=`
+  <div class="dhead"><span class="did">how to read this</span></div>
+  <h2>Every cell is a promise with a test</h2>
+  <p class="plain">Rows are tables, columns are the fifteen roles, and each cell names how much of a table a role may read: nothing, their own rows, aggregates, attended meetings, everything, or the public surface. Color carries confidence, not permission: moss cells restate what the PRDs or the seed already commit, slate cells are consequences I derived from stated rules, clay cells are proposals awaiting adoption.</p>
+  <div class="blk"><div class="bk">the review that matters</div><div class="bv serif">Filter to proposed and walk the clay. Each adoption is a PR editing docs/probe-matrix.json; ci:rls-audit then holds the database to every cell, one pgTAP assertion each, forever after.</div></div>
+  <div class="blk"><div class="bk">two columns to know</div><div class="bv serif">NOU is uniform by construction: the agent inherits the invoking user and is probed pairwise against every persona. GST on hub_applications is the one asymmetric cell in the system: anonymous insert allowed, read denied.</div></div>
+  <div class="blk"><div class="bk">provenance</div>
+   <span class="prov"><span class="cite">CIS \u00a707 \u00b7 Hub \u00a705 \u00b7 plan v0.1 \u00b7 C6</span></span></div>`;
+}
+/* ---------- shell ---------- */
+function rAll(){rRail();rGbar();rMx();}
+document.querySelectorAll("[data-sf]").forEach(b=>b.onclick=()=>{S.sf=b.dataset.sf;
+ document.querySelectorAll("[data-sf]").forEach(x=>x.setAttribute("aria-pressed",x===b));rMx();});
+const lp=document.getElementById("lensPlain"),lt=document.getElementById("lensTech");
+function setLens(l){S.lens=l;document.body.dataset.lens=l;lp.setAttribute("aria-pressed",l==="plain");lt.setAttribute("aria-pressed",l==="tech");
+ if(S.sel)showCell();}
+lp.onclick=()=>setLens("plain");lt.onclick=()=>setLens("tech");
+document.querySelectorAll(".viewseg button").forEach(b=>b.onclick=()=>setMobile(b.dataset.v,true));
+function setMobile(v,force){if(!window.matchMedia("(max-width:980px)").matches&&!force)return;
+ document.body.dataset.view=v;document.querySelectorAll(".viewseg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));}
+(function(){var root=document.documentElement,btn=document.getElementById("modeToggle"),label=document.getElementById("modeLabel"),icon=document.getElementById("modeIcon");
+var moon='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+var sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+function apply(m){root.setAttribute("data-mode",m);label.textContent=m;icon.innerHTML=m==="dark"?moon:sun;}
+var pl=window.matchMedia("(prefers-color-scheme: light)");apply(pl.matches?"light":"dark");
+pl.addEventListener("change",e=>apply(e.matches?"light":"dark"));
+btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark"));})();
+rAll();showDefault();
+</script>
+</body>
+</html>
