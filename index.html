@@ -4,135 +4,553 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<title>Commons — RegenHub, LCA · Techne</title>
+<title>Common Information System — RegenHub, LCA · Techne</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f0f0f; --surface: #1a1a1a;
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface-2: #202020;
   --border: #333333;
   --terra: #c4956a; --terra-text: #c4956a; --terra-dim: rgba(196,149,106,0.12);
+  --ok: #7ab87a; --ok-dim: rgba(122,184,122,0.10);
+  --info: #6b9fd4; --info-dim: rgba(107,159,212,0.10);
   --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
 }
 [data-mode="light"] {
-  --bg: #faf8f5; --surface: #ffffff;
+  --bg: #faf8f5; --surface: #ffffff; --surface-2: #f4f1ec;
   --border: #e2ddd5;
   --terra: #c4956a; --terra-text: #96704a; --terra-dim: rgba(196,149,106,0.14);
+  --ok: #4e9050; --ok-dim: rgba(78,144,80,0.10);
+  --info: #3d6fa3; --info-dim: rgba(61,111,163,0.10);
   --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { background: var(--bg); }
+html { background: var(--bg); scroll-behavior: smooth; }
 body {
   background: var(--bg); color: var(--text);
   font-family: 'Libre Baskerville', Georgia, serif;
   font-size: 16px; line-height: 1.85;
 }
+
+/* ── nav ── */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.site-nav-inner {
+  max-width: 720px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 44px;
+}
+.nav-brand {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--terra-text);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em; color: var(--faint); text-decoration: none;
+  transition: color 120ms;
+}
+.nav-links a:hover { color: var(--terra-text); }
+
+/* ── layout ── */
 .page { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
-header { margin-bottom: 56px; }
+
+/* ── type ── */
 .eyebrow {
   font-family: 'IBM Plex Mono', monospace; font-size: 11px;
   letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
   margin-bottom: 16px;
 }
-h1 { font-size: 30px; font-weight: 700; color: var(--heading); letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 10px; }
-.sub { font-style: italic; color: var(--muted); font-size: 16px; }
-.rule { width: 48px; height: 1px; background: linear-gradient(to right, var(--terra), transparent); margin: 32px 0 40px; }
+h1 {
+  font-size: 34px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 14px;
+}
+h2 {
+  font-size: 20px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.2px; line-height: 1.3; margin-bottom: 10px;
+}
+h3 {
+  font-size: 15px; font-weight: 700; color: var(--heading); margin-bottom: 6px;
+}
+.tagline {
+  font-style: italic; color: var(--muted); font-size: 17px;
+  line-height: 1.65; margin-bottom: 32px;
+}
+p { margin-bottom: 16px; }
+a.inline { color: var(--terra-text); text-decoration: none; }
+a.inline:hover { text-decoration: underline; }
+code {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  color: var(--text); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 3px;
+  padding: 1px 5px;
+}
+.rule {
+  width: 48px; height: 1px;
+  background: linear-gradient(to right, var(--terra), transparent);
+  margin: 44px 0;
+}
 
+/* ── section ── */
+.section { margin-bottom: 72px; scroll-margin-top: 56px; }
+.section-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--faint);
+  margin-bottom: 20px;
+}
+
+/* ── REA pillars ── */
+.pillars {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 28px 0;
+}
+.pillar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 2px solid var(--terra); border-radius: 8px; padding: 18px 18px 16px;
+}
+.pillar-letter {
+  font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 500;
+  color: var(--terra-text); line-height: 1; margin-bottom: 9px;
+}
+.pillar-name {
+  font-size: 13px; font-weight: 700; color: var(--heading); margin-bottom: 7px;
+}
+.pillar-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+/* ── doc groups ── */
+.doc-group { margin-bottom: 36px; }
+.doc-group-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--faint);
+  padding-bottom: 9px; border-bottom: 1px solid var(--border); margin-bottom: 10px;
+}
 .doc-list { display: flex; flex-direction: column; gap: 2px; }
 .doc-item {
-  display: flex; align-items: baseline; gap: 16px;
+  display: flex; align-items: flex-start; gap: 16px;
   background: var(--surface); border: 1px solid var(--border);
-  border-left: 2px solid var(--terra);
-  border-radius: 8px; padding: 14px 18px;
-  text-decoration: none; color: inherit;
-  transition: border-color 160ms ease;
+  border-left: 2px solid var(--terra); border-radius: 8px; padding: 14px 18px;
+  text-decoration: none; color: inherit; transition: border-color 160ms ease;
 }
 .doc-item:hover { border-color: var(--terra); }
 .doc-item:hover .doc-title { color: var(--terra-text); }
+.doc-body { flex: 1; }
 .doc-meta {
   font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-  color: var(--faint); white-space: nowrap; flex-shrink: 0;
+  color: var(--faint); white-space: nowrap; flex-shrink: 0; margin-top: 2px;
 }
 .doc-title { font-size: 15px; font-weight: 700; color: var(--heading); line-height: 1.35; }
-.doc-desc { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.6; }
+.doc-desc { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.65; }
 
+/* ── wave grid ── */
+.wave-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
+  gap: 8px; margin: 22px 0 4px;
+}
+.wave-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 2px solid var(--border);
+  border-radius: 6px; padding: 11px 13px;
+}
+.wave-card.needs-action { border-left-color: var(--terra); }
+.wave-card.gated { border-left-color: var(--faint); opacity: 0.7; }
+.wave-id {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500;
+  color: var(--terra-text); margin-bottom: 4px;
+}
+.wave-card.gated .wave-id { color: var(--faint); }
+.wave-name { font-size: 12.5px; color: var(--heading); margin-bottom: 4px; }
+.wave-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--faint); }
+
+/* ── decision register ── */
+.decision-list { display: flex; flex-direction: column; gap: 3px; margin-top: 14px; }
+.decision-item {
+  display: flex; align-items: baseline; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 2px solid var(--border);
+  border-radius: 6px; padding: 9px 14px;
+}
+.decision-item.resolved { border-left-color: var(--ok); }
+.d-id {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--faint); white-space: nowrap; flex-shrink: 0; min-width: 28px;
+}
+.d-title { font-size: 13px; color: var(--text); flex: 1; }
+.d-status {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.08em; white-space: nowrap; flex-shrink: 0;
+  color: var(--faint);
+}
+.d-status.resolved { color: var(--ok); }
+.d-unblock {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--terra-text);
+  background: var(--terra-dim); border-radius: 3px; padding: 1px 6px;
+  white-space: nowrap; flex-shrink: 0; align-self: center;
+}
+
+/* ── repo tree ── */
+.repo-tree {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 20px 22px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  line-height: 2.0; overflow-x: auto; white-space: pre;
+}
+.repo-tree .dir { color: var(--terra-text); }
+.repo-tree .file { color: var(--text); }
+.repo-tree .cmt { color: var(--faint); }
+
+/* ── mode button ── */
+.mode-btn {
+  position: fixed; top: 11px; right: 20px; z-index: 200;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 5px 12px; cursor: pointer; transition: border-color 120ms, color 120ms;
+}
+.mode-btn:hover { border-color: var(--terra); color: var(--terra-text); }
+
+/* ── footer ── */
 footer {
   margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--border);
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--faint);
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
 }
+footer a { color: var(--faint); text-decoration: none; }
+footer a:hover { color: var(--terra-text); }
 
-.mode-btn {
-  position: fixed; top: 20px; right: 20px;
-  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted);
-  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
-  padding: 6px 14px; cursor: pointer;
+/* ── responsive ── */
+@media (max-width: 560px) {
+  .pillars { grid-template-columns: 1fr; }
+  .wave-grid { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  h1 { font-size: 26px; }
 }
-.mode-btn:hover { border-color: var(--terra); color: var(--terra-text); }
 </style>
 </head>
 <body>
-<button class="mode-btn" id="modeBtn">light</button>
-<div class="page">
 
-  <header>
-    <div class="eyebrow">RegenHub, LCA · Techne &middot; Commons</div>
+<button class="mode-btn" id="modeBtn">light</button>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="#top">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="#what">What</a></li>
+      <li><a href="#documents">Documents</a></li>
+      <li><a href="#build">Build</a></li>
+      <li><a href="#repo">Repository</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page" id="top">
+
+  <header style="margin-bottom: 48px;">
+    <div class="eyebrow">RegenHub, LCA &middot; Techne &middot; Boulder, Colorado</div>
     <h1>Common Information System</h1>
-    <div class="sub">Planning and reference documents for the CIS private alpha</div>
+    <div class="tagline">The cooperative&rsquo;s shared knowledge layer &mdash; private alpha build workspace</div>
   </header>
 
   <div class="rule"></div>
 
-  <div class="doc-list">
+  <!-- ────────────── WHAT ────────────── -->
+  <section class="section" id="what">
+    <div class="section-label">What it is</div>
 
-    <a class="doc-item" href="builders-collection-map-v0.1.html">
-      <div>
-        <div class="doc-title">The Builder's Collection &middot; Map</div>
-        <div class="doc-desc">Navigational layer (C0) for the full artifact series that lets agents build the CIS. Maps C1&ndash;C10 with status, sequencing rationale, and the gap analysis that motivated each piece.</div>
+    <h2>A cooperative needs to know itself</h2>
+
+    <p>The Common Information System is RegenHub&rsquo;s answer to a simple problem: cooperatives make decisions together, but they can only make good decisions if they share an accurate picture of what is happening. The CIS is that picture &mdash; a structured record of the co-op&rsquo;s resources, activities, agreements, and members, kept in one place and accessible to everyone with a legitimate reason to see it.</p>
+
+    <p>This is not an app for doing work. It is the layer that remembers what has been done: who the members are, what agreements they have signed, how much patronage each person has earned, what the Hub&rsquo;s grant has funded, what the co-op owes and is owed. When a member asks &ldquo;what is my account?&rdquo; the CIS answers. When a grant funder asks &ldquo;what events happened?&rdquo; the CIS answers.</p>
+
+    <p>The CIS is built on <em>REA accounting</em> &mdash; a framework developed for cooperative and networked organizations. REA stands for Resources, Events, and Agents. These three types cover everything an economic system needs to record.</p>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-letter">R</div>
+        <div class="pillar-name">Resources</div>
+        <div class="pillar-desc">What the co-op holds or exchanges: money, services, labor, time, digital credits. Every resource has a type, a custodian, and a history.</div>
       </div>
-      <div class="doc-meta">v0.1 &middot; Jun 2026</div>
-    </a>
-
-    <a class="doc-item" href="cis-build-roadmap-instrument-v0.2.html">
-      <div>
-        <div class="doc-title">CIS &middot; Build Roadmap Instrument</div>
-        <div class="doc-desc">Interactive ledger index and dependency tree. 56 entries spanning D1–D10, R1–R2, W0–W6, G1, and P1. Index view, tree view, plain/technical lens, wave filtering, and upstream/downstream highlight on select.</div>
+      <div class="pillar">
+        <div class="pillar-letter">E</div>
+        <div class="pillar-name">Events</div>
+        <div class="pillar-desc">What happens: a member works a shift, a payment arrives, an agreement is signed, patronage is allocated. Events are the source of truth &mdash; they do not change after the fact.</div>
       </div>
-      <div class="doc-meta">v0.2 &middot; Jun 2026</div>
-    </a>
-
-    <a class="doc-item" href="hub-ops-prd-v0.1.html">
-      <div>
-        <div class="doc-title">Hub Operations · Product Requirements Document</div>
-        <div class="doc-desc">CIS augmentation for Boulder Ethereum Community Hub under the Ethereum Everywhere grant. 8 modules, 12 schema entities, 3 KPIs, 5-phase roadmap aligned to the May 22–Dec 31, 2026 grant arc.</div>
+      <div class="pillar">
+        <div class="pillar-letter">A</div>
+        <div class="pillar-name">Agents</div>
+        <div class="pillar-desc">Who participates: members, the cooperative itself, external partners, the Hub, grant funders. Each agent holds roles that define what they can see and do.</div>
       </div>
-      <div class="doc-meta">v0.1 &middot; May 2026</div>
-    </a>
+    </div>
 
-    <a class="doc-item" href="cis-prd-v0.2.html">
-      <div>
-        <div class="doc-title">CIS · Product Requirements Document</div>
-        <div class="doc-desc">Full specification: CROPS discipline, REA ontology, 19 cooperative core tables + 9 Hub Ops extension tables, 15 roles, 13 modules, 6-phase roadmap. The canonical reference for the private alpha build.</div>
+    <p>From these three types the CIS derives everything else: capital accounts, patronage calculations, grant reports, role-based access controls, governance records. None of it depends on a central authority certifying what happened &mdash; the events speak for themselves.</p>
+
+    <h3 style="margin-top: 28px;">Why now</h3>
+    <p style="margin-top: 8px;">Two facts make the CIS urgent. The cooperative was filed February 6, 2026 and has immediate obligations: member capital accounts, bylaw compliance, records that counsel can rely on. At the same time, RegenHub received an Ethereum Everywhere grant ($20,000, running May through December 2026) to operate the Boulder Ethereum Community Hub &mdash; and that grant requires honest reporting on real events. The CIS is how those reports become trustworthy rather than improvised.</p>
+
+    <h3 style="margin-top: 28px;">What this repository is</h3>
+    <p style="margin-top: 8px;">This is the build workspace. Everything needed to construct the CIS private alpha lives here: the full specification, a step-by-step build plan with 67 ordered milestones, an operating contract for the agents doing the work, and decision records that unlock the build tree. The build is designed for humans and AI agents working together under an explicit contract &mdash; <a class="inline" href="AGENTS.md">AGENTS.md</a> &mdash; that defines what agents may do, what they may not do, and when to stop and ask rather than invent.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ────────────── DOCUMENTS ────────────── -->
+  <section class="section" id="documents">
+    <div class="section-label">Document library</div>
+
+    <h2>Specifications, planning, and build artifacts</h2>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Five primary documents organized by purpose. Start with the CIS PRD if you are new to the system. Use the roadmap instrument to trace the build sequence.</p>
+
+    <div class="doc-group">
+      <div class="doc-group-label">Governing specifications</div>
+      <div class="doc-list">
+
+        <a class="doc-item" href="cis-prd-v0.2.html">
+          <div class="doc-body">
+            <div class="doc-title">CIS &middot; Product Requirements Document</div>
+            <div class="doc-desc">The canonical specification for the entire system. Covers the CROPS cooperative discipline, REA ontology, 19 cooperative core tables plus 9 Hub Ops extension tables, 15 roles, 13 modules, and a 6-phase roadmap from substrate through full interface. The source of truth for every build decision.</div>
+          </div>
+          <div class="doc-meta">v0.2 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="hub-ops-prd-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">Hub Operations &middot; Product Requirements Document</div>
+            <div class="doc-desc">Specifies the CIS surface that serves the Boulder Ethereum Community Hub and its Ethereum Everywhere grant. 8 modules, 12 REA entities, 3 KPIs (attendance throughput, sponsor conversion, member activation), a 5-phase roadmap, and the compliance requirements running through December 2026.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; May 2026</div>
+        </a>
+
       </div>
-      <div class="doc-meta">v0.2 &middot; Jun 2026</div>
-    </a>
+    </div>
 
-    <a class="doc-item" href="cis-hubops-private-alpha-implementation-plan-v0.1.html">
-      <div>
-        <div class="doc-title">CIS · Hub Operations · Private Alpha Implementation Plan</div>
-        <div class="doc-desc">Assessment of the PRDs against the constrained substrate (GitHub Pages + Supabase). Wave ledger W0–W6, decision and ratification items D1–D10, R1–R2, alpha gate G1.</div>
+    <div class="doc-group">
+      <div class="doc-group-label">Build planning and navigation</div>
+      <div class="doc-list">
+
+        <a class="doc-item" href="cis-hubops-private-alpha-implementation-plan-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">CIS &middot; Hub Operations &middot; Private Alpha Implementation Plan</div>
+            <div class="doc-desc">The serialized execution plan: how to build the CIS on the constrained substrate of GitHub Pages and Supabase. Defines the wave ledger (W0&ndash;W6), the ten decision items (D1&ndash;D10) and two ratification items (R1&ndash;R2) that govern the build, and the alpha gate (G1). Every downstream artifact derives from this document.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="cis-build-roadmap-instrument-v0.2.html">
+          <div class="doc-body">
+            <div class="doc-title">Build Roadmap Instrument</div>
+            <div class="doc-desc">Interactive companion to the implementation plan. Browse all ledger entries in index or SVG dependency-tree view, filter by wave, switch between plain and technical lenses, and trace upstream &amp; downstream dependencies on selection. The fastest way to understand the build sequence and what blocks what.</div>
+          </div>
+          <div class="doc-meta">v0.2 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="builders-collection-map-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">The Builder&rsquo;s Collection &middot; Map</div>
+            <div class="doc-desc">The C0&ndash;C10 artifact series that equips agents and humans to execute the build: the operating contract (C1), executable milestone ledger (C2), verification definitions (C3), conventions and fixtures (C4), decision briefs (C5), and forthcoming schema references, probe matrices, and authoring guides (C6&ndash;C10). What has shipped and what comes next.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
       </div>
-      <div class="doc-meta">v0.1 &middot; Jun 2026</div>
-    </a>
+    </div>
 
-  </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ────────────── BUILD ────────────── -->
+  <section class="section" id="build">
+    <div class="section-label">Build status</div>
+
+    <h2>67 milestones across 6 waves</h2>
+
+    <p>The build is organized into waves &mdash; discrete phases where each wave&rsquo;s work is completed and verified before the next begins. All milestones are currently pending. The build tree unlocks when the open decision items below are recorded by the organizers.</p>
+
+    <div class="wave-grid">
+      <div class="wave-card needs-action">
+        <div class="wave-id">D1&ndash;D10</div>
+        <div class="wave-name">Decisions</div>
+        <div class="wave-count">9 open &middot; 1 resolved</div>
+      </div>
+      <div class="wave-card">
+        <div class="wave-id">R1&ndash;R2</div>
+        <div class="wave-name">Ratifications</div>
+        <div class="wave-count">2 pending</div>
+      </div>
+      <div class="wave-card needs-action">
+        <div class="wave-id">W0</div>
+        <div class="wave-name">Substrate</div>
+        <div class="wave-count">repo &amp; CI foundation</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">W1</div>
+        <div class="wave-name">Shared core</div>
+        <div class="wave-count">REA schema &amp; RLS</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">W2</div>
+        <div class="wave-name">Hub Ops</div>
+        <div class="wave-count">grant surface</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">G1</div>
+        <div class="wave-name">Alpha gate</div>
+        <div class="wave-count">human review</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">W3</div>
+        <div class="wave-name">Capital</div>
+        <div class="wave-count">patronage accounts</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">W4</div>
+        <div class="wave-name">Governance</div>
+        <div class="wave-count">bylaws &amp; voting</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">W5</div>
+        <div class="wave-name">Lifecycle</div>
+        <div class="wave-count">member onboarding</div>
+      </div>
+      <div class="wave-card gated">
+        <div class="wave-id">W6</div>
+        <div class="wave-name">Full interface</div>
+        <div class="wave-count">member portal</div>
+      </div>
+    </div>
+
+    <p style="font-size: 13px; color: var(--faint); margin-top: 10px; margin-bottom: 32px;">Milestones are stored as validated YAML in <code>milestones/</code>. The <a class="inline" href="cis-build-roadmap-instrument-v0.2.html">roadmap instrument</a> is the interactive view of the full dependency graph.</p>
+
+    <h3>Decision register</h3>
+    <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. D3 is the key unlock: it is already resolved by fact (this repository is public and live), but a formal record in <code>docs/decisions/D3.md</code> is needed to open W0.1 and unblock the full build tree.</p>
+
+    <div class="decision-list">
+      <div class="decision-item">
+        <span class="d-id">D1</span>
+        <span class="d-title">Agent conduct and scope</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D2</span>
+        <span class="d-title">Milestone schema versioning policy</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item resolved">
+        <span class="d-id">D3</span>
+        <span class="d-title">Repository visibility and naming</span>
+        <span class="d-status resolved">resolved &middot; public</span>
+        <span class="d-unblock">unlocks W0.1</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D4</span>
+        <span class="d-title">Branch protection configuration</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D5</span>
+        <span class="d-title">Supabase project provisioning</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D6</span>
+        <span class="d-title">RLS enforcement approach</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D7</span>
+        <span class="d-title">Vocabulary quarantine register</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D8</span>
+        <span class="d-title">Bot token and Actions allowance</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D9</span>
+        <span class="d-title">Synthetic persona fixture approach</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">D10</span>
+        <span class="d-title">Alpha gate criteria and reviewers</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">R1</span>
+        <span class="d-title">Bylaw alignment ratification</span>
+        <span class="d-status">open</span>
+      </div>
+      <div class="decision-item">
+        <span class="d-id">R2</span>
+        <span class="d-title">Grant compliance ratification</span>
+        <span class="d-status">open</span>
+      </div>
+    </div>
+
+    <p style="font-size: 13px; color: var(--faint); margin-top: 14px;">Full deliberation briefs with proposed defaults are in <code>docs/decisions/</code> in the repository. Agents may improve the briefs; only organizers may record outcomes.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ────────────── REPO ────────────── -->
+  <section class="section" id="repo">
+    <div class="section-label">Repository</div>
+
+    <h2>Structure and contracts</h2>
+    <p>The repository is organized so that both humans and agents can navigate without ambiguity. Every directory has a defined role. Every file is either a milestone, a decision, a contract, a specification, or part of the build infrastructure that validates them.</p>
+
+    <div class="repo-tree"><span class="cmt"># Techne-Co-op/commons  ·  github.com/Techne-Co-op/commons</span>
+<span class="dir">.</span>
+├── <span class="file">AGENTS.md</span>            <span class="cmt"># operating contract — read first, every session</span>
+├── <span class="file">GOVERNANCE.md</span>        <span class="cmt"># contribution rules and PR process</span>
+├── <span class="file">README.md</span>            <span class="cmt"># bootstrap sequence and orientation</span>
+│
+├── <span class="dir">milestones/</span>           <span class="cmt"># 67 schema-valid YAML milestone files</span>
+│   ├── <span class="file">schema.json</span>      <span class="cmt"># milestone field definitions</span>
+│   ├── <span class="file">index.json</span>       <span class="cmt"># machine-readable ledger index</span>
+│   ├── <span class="file">STATUS.md</span>        <span class="cmt"># human-readable status table (generated)</span>
+│   └── <span class="file">W0.1.yaml … P1.1.yaml</span>
+│
+├── <span class="dir">docs/</span>
+│   ├── <span class="file">CONVENTIONS.md</span>   <span class="cmt"># RLS, DDL, naming rules, vocabulary quarantine</span>
+│   ├── <span class="file">SECRETS.md</span>       <span class="cmt"># secret custody reference (names only, no values)</span>
+│   ├── <span class="file">VERIFICATION.md</span>  <span class="cmt"># CI job contracts — what each check asserts</span>
+│   ├── <span class="file">citations.md</span>     <span class="cmt"># load-bearing citation register</span>
+│   └── <span class="dir">decisions/</span>       <span class="cmt"># D1–D10, R1–R2 deliberation briefs</span>
+│       └── <span class="file">D1.md … R2.md</span>
+│
+├── <span class="dir">scripts/</span>
+│   ├── <span class="file">validate.py</span>      <span class="cmt"># milestone validator: acyclicity + gating</span>
+│   └── <span class="file">gen_seed.py</span>      <span class="cmt"># seed generator</span>
+│
+├── <span class="dir">.github/</span>
+│   ├── <span class="dir">workflows/</span>       <span class="cmt"># milestone-validate CI workflow</span>
+│   └── <span class="file">PULL_REQUEST_TEMPLATE.md</span>
+│
+└── <span class="cmt"># HTML documents  ·  served via GitHub Pages</span>
+    ├── <span class="file">index.html</span>                                   <span class="cmt"># this page</span>
+    ├── <span class="file">cis-prd-v0.2.html</span>
+    ├── <span class="file">hub-ops-prd-v0.1.html</span>
+    ├── <span class="file">cis-build-roadmap-instrument-v0.2.html</span>
+    ├── <span class="file">builders-collection-map-v0.1.html</span>
+    └── <span class="file">cis-hubops-private-alpha-implementation-plan-v0.1.html</span></div>
+
+    <p style="margin-top: 18px; font-size: 14px; color: var(--muted);">The <code>milestones/</code> ledger is validated on every pull request by <code>scripts/validate.py</code>, which checks schema compliance, graph acyclicity, and gating consistency. A milestone may not be marked <em>done</em> unless its upstream dependencies are verified. The validator runs on the CI workflow before any merge.</p>
+
+    <p style="font-size: 14px; color: var(--muted);">Source repository: <a href="https://github.com/Techne-Co-op/commons" style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--terra-text); text-decoration:none;">github.com/Techne-Co-op/commons</a></p>
+  </section>
 
   <footer>
     <span>Techne-Co-op/commons</span>
-    <span>github.com/Techne-Co-op/commons</span>
+    <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+    <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
   </footer>
 
 </div>
+
 <script>
 (function () {
   var root = document.documentElement;
