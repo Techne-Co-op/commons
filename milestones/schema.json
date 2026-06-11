@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RegenHub CIS milestone entry (front matter)",
+  "type": "object",
+  "required": ["id","title","wave","kind","owner","status","detail","depends_on","decision_refs","success_state","verification"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^(W[0-6]\\.\\d{1,2}|D\\d{1,2}|R\\d|G\\d|P\\d)$"},
+    "title": {"type": "string", "minLength": 3},
+    "wave": {"enum": ["D","R","W0","W1","W2","G","W3","W4","W5","W6","P"]},
+    "kind": {"enum": ["step","decision","ratification","gate","practice"]},
+    "owner": {"type": "string", "minLength": 2},
+    "status": {"enum": ["pending","in_progress","blocked","review","done","verified"]},
+    "detail": {"enum": ["briefed","seeded"]},
+    "depends_on": {"type": "array", "items": {"type": "string"}},
+    "decision_refs": {"type": "array", "items": {"type": "string", "pattern": "^[DR]\\d{1,2}$"}},
+    "activates": {"type": "array", "items": {"type": "string"}},
+    "requires_steps": {"type": "array", "items": {"type": "string"}},
+    "requires_decisions": {"type": "array", "items": {"type": "string"}},
+    "success_state": {"type": "string", "minLength": 10},
+    "verification": {"type": "string", "minLength": 2},
+    "blocked_reason": {"type": "string"}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "blocked"}}}, "then": {"required": ["blocked_reason"]}},
+    {"if": {"properties": {"kind": {"const": "gate"}}}, "then": {"required": ["requires_steps","requires_decisions"]}}
+  ]
+}

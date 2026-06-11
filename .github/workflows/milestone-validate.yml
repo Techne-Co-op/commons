@@ -1,0 +1,32 @@
+name: milestone-validate
+on:
+  push:
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r scripts/requirements.txt
+      - run: python scripts/validate.py
+      # Ledger exhaustiveness: code changes must travel with a milestone touch.
+      - name: ledger exhaustiveness
+        if: github.event_name == 'pull_request'
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          CHANGED=$(git diff --name-only "$BASE"...HEAD)
+          echo "$CHANGED"
+          if echo "$CHANGED" | grep -Eq '^(supabase|apps|design|scripts)/' && \
+             ! echo "$CHANGED" | grep -q '^milestones/'; then
+            echo "::error::code changed without a milestone status change"; exit 1; fi
+      # On main, commit the regenerated board. NOTE: with branch protection on,
+      # allow github-actions[bot] to push, or route this through a PR instead.
+      - name: commit status board (main only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config user.name "milestone-validate"
+          git config user.email "actions@users.noreply.github.com"
+          git add milestones/index.json milestones/STATUS.md
+          git diff --cached --quiet || (git commit -m "chore(ledger): regenerate status board" && git push)
