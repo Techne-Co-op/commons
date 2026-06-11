@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>CIS · Hub Operations · Private Alpha Implementation Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* co-op.us design system · token layer (verbatim) */
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface-raised: #232220;
+  --border: #333333; --border-strong: #4a4a4a;
+  --terra: #c4956a; --terra-text: #c4956a;
+  --terra-dim: rgba(196, 149, 106, 0.12); --terra-glow: rgba(196, 149, 106, 0.06);
+  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
+  --ok: #94ae84; --ok-dim: rgba(148, 174, 132, 0.14);
+  --info: #8da3b5; --info-dim: rgba(141, 163, 181, 0.14);
+  --warn: #c0705c; --warn-dim: rgba(192, 112, 92, 0.14);
+  --shadow-1: none; --shadow-2: none;
+  --dur-mode: 400ms; --dur-micro: 160ms; --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-mode="dark"]) {
+    color-scheme: light;
+    --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+    --border: #e2ddd5; --border-strong: #c9c2b8;
+    --terra: #c4956a; --terra-text: #96704a;
+    --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+    --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+    --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+    --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+    --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+    --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08); --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+  }
+}
+[data-mode="light"] {
+  color-scheme: light;
+  --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+  --border: #e2ddd5; --border-strong: #c9c2b8;
+  --terra: #c4956a; --terra-text: #96704a;
+  --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+  --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+  --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+  --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+  --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+  --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08); --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+}
+[data-mode="dark"] { color-scheme: dark; }
+
+/* base · document grammar */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 16px; line-height: 1.85;
+  transition: background-color var(--dur-mode) var(--ease), color var(--dur-mode) var(--ease);
+}
+.page { max-width: 760px; margin: 0 auto; padding: var(--s8) var(--s5); }
+
+header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--s7); gap: var(--s4); }
+h1 { font-size: 36px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; line-height: 1.25; }
+.subtitle { font-style: italic; font-size: 18px; color: var(--text); margin-top: var(--s2); }
+.version { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--muted); margin-top: var(--s3); line-height: 1.9; }
+.mode-toggle {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 7px 16px; cursor: pointer; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0;
+  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.mode-toggle:hover { border-color: var(--terra); color: var(--terra-text); }
+.mode-toggle:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+.mode-toggle svg { width: 15px; height: 15px; stroke: currentColor; }
+
+.lede { font-size: 19px; line-height: 1.7; color: var(--text); margin-bottom: var(--s6); max-width: 60ch; }
+
+/* section grammar */
+section { margin-bottom: var(--s8); }
+.label {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+}
+.rule { width: 48px; height: 1px; background: linear-gradient(to right, var(--terra), transparent); margin: var(--s3) 0 var(--s6); }
+p { margin-bottom: 20px; }
+p:last-child { margin-bottom: 0; }
+em { font-style: italic; }
+a { color: var(--terra-text); text-decoration: none; transition: color var(--dur-micro) var(--ease); }
+a:hover { text-decoration: underline; }
+code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.85em;
+  color: var(--terra-text); background: var(--terra-dim); padding: 2px 6px; border-radius: 4px;
+}
+
+/* contents */
+.toc { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; line-height: 2.2; color: var(--muted); margin-bottom: var(--s8); }
+.toc a { color: var(--muted); }
+.toc a:hover { color: var(--terra-text); text-decoration: none; }
+.toc .n { color: var(--terra-text); margin-right: var(--s3); }
+
+/* provenance chip */
+.prov {
+  display: inline-flex; align-items: baseline; gap: var(--s2);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--terra);
+  border-radius: 6px; padding: 5px 12px;
+  transition: border-color var(--dur-micro) var(--ease);
+}
+.prov:hover { border-color: var(--terra); }
+.prov .cite { color: var(--terra-text); }
+.prov .sep { color: var(--faint); }
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin: var(--s4) 0 0; align-items: center; }
+
+/* subsection heads */
+h3 { font-size: 18px; color: var(--heading); font-weight: 700; margin: var(--s6) 0 var(--s4); line-height: 1.4; }
+h3 .n {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;
+  letter-spacing: 0.16em; color: var(--terra-text); margin-right: var(--s3); font-weight: 400;
+}
+.wave-note { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--muted); margin: calc(-1 * var(--s3)) 0 var(--s4); }
+
+/* spec tables */
+.table-scroll { overflow-x: auto; margin: var(--s5) 0; }
+.spec { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; }
+.spec th {
+  font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 400;
+  color: var(--faint); text-align: left; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border-strong);
+}
+.spec td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.7; }
+.spec td:first-child { color: var(--terra-text); }
+.spec.firstcol-nowrap td:first-child { white-space: nowrap; }
+
+/* mono panels: repo tree, schema */
+pre.block {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.8;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: var(--s4) var(--s5); margin: var(--s5) 0;
+  overflow-x: auto; box-shadow: var(--shadow-1);
+  transition: background-color var(--dur-mode) var(--ease);
+}
+pre.block .c { color: var(--faint); }
+pre.block .k { color: var(--terra-text); }
+.caption { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--faint); margin: calc(-1 * var(--s3)) 0 var(--s5); }
+
+/* dependency flow · document rendering, no state colors */
+.flow { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; margin: var(--s5) 0; }
+.fdec { color: var(--muted); line-height: 2; margin-bottom: var(--s4); }
+.fdec .k { color: var(--terra-text); }
+.fnode {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: var(--s3) var(--s4); transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-mode) var(--ease);
+}
+.fnode:hover { border-color: var(--terra); }
+.fnode .fid { display: block; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terra-text); margin-bottom: 2px; }
+.fnode .ftitle { color: var(--heading); }
+.fnode .fgate { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+.fnode.gate { border: 1px dashed rgba(196, 149, 106, 0.45); background: linear-gradient(135deg, var(--surface), var(--terra-glow)); }
+.farrow { text-align: center; color: var(--faint); line-height: 1; padding: var(--s2) 0; }
+.fsplit { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); align-items: start; margin-top: var(--s2); }
+.fcol .farrow:first-child { padding-top: 0; }
+
+/* decision and gate ledger */
+.ditem { margin-bottom: var(--s5); }
+.ditem .did {
+  display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--terra-text); margin-bottom: var(--s1);
+}
+.ditem p { font-size: 15px; margin: 0; }
+
+/* step entry · machine surface in mono, brief in serif */
+.step {
+  background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--terra);
+  border-radius: 10px; padding: var(--s4) var(--s5); margin-bottom: var(--s4);
+  box-shadow: var(--shadow-1);
+  transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-mode) var(--ease);
+}
+.step:hover { border-color: var(--terra); border-left-color: var(--terra); }
+.step .shead { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; margin-bottom: var(--s2); }
+.step .sid { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terra-text); }
+.step .stitle { font-size: 16px; font-weight: 700; color: var(--heading); }
+.step .smeta { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.9; color: var(--text); margin-bottom: var(--s2); }
+.step .smeta .k { color: var(--faint); }
+.step .smeta .sep { color: var(--faint); padding: 0 var(--s1); }
+.step .ssuccess { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.8; color: var(--text); border-top: 1px solid var(--border); padding-top: var(--s2); margin-bottom: var(--s3); }
+.step .ssuccess .k { color: var(--faint); }
+.step .sbody { font-size: 14.5px; line-height: 1.8; margin: 0; }
+.step .sbody em { color: var(--heading); }
+
+footer {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: var(--faint);
+  border-top: 1px solid var(--border); padding-top: var(--s5); text-align: center;
+}
+
+@media (max-width: 560px) {
+  h1 { font-size: 27px; }
+  .lede { font-size: 17px; }
+  .fsplit { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <h1>Common Information System &middot; Hub Operations</h1>
+    <div class="subtitle">Private Alpha Implementation Assessment and Plan</div>
+    <div class="version">VERSION 0.1 &middot; DRAFT FOR REVIEW &middot; JUNE 2026<br>REGENHUB, LCA &middot; PREPARED BY NOU &middot; instrument output; every decision node below is reserved to organizers</div>
+    <div class="chip-row">
+      <span class="prov"><span class="cite">CIS PRD v0.2</span><span class="sep">&middot;</span>draft<span class="sep">&middot;</span>may 2026<span class="sep">&middot;</span>read in full</span>
+      <span class="prov"><span class="cite">Hub Operations PRD v0.1</span><span class="sep">&middot;</span>draft<span class="sep">&middot;</span>may 2026<span class="sep">&middot;</span>read in full</span>
+    </div>
+  </div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</header>
+
+<p class="lede">Where this plan departs from the PRDs, the departure is named in section 02 and traced to the substrate constraint Todd set: GitHub Pages and Supabase as principal infrastructure, other platforms only as critically needed.</p>
+
+<nav class="toc">
+  <a href="#s01"><span class="n">01</span>Frame and exclusions</a><br>
+  <a href="#s02"><span class="n">02</span>Assessment: the PRDs against the constrained substrate</a><br>
+  <a href="#s03"><span class="n">03</span>Version control as the milestone system</a><br>
+  <a href="#s04"><span class="n">04</span>Dependency tree</a><br>
+  <a href="#s05"><span class="n">05</span>Decision and ratification ledger</a><br>
+  <a href="#s06"><span class="n">06</span>Step ledger</a><br>
+  <a href="#s07"><span class="n">07</span>G1: the alpha gate</a><br>
+  <a href="#s08"><span class="n">08</span>Operating the ledger</a>
+</nav>
+
+<section id="s01">
+  <div class="label">01 &middot; Frame and Exclusions</div>
+  <div class="rule"></div>
+  <p>The organizing frame below is mine, and it is replaceable. I have kept the PRDs' own phase structure (CIS Phases 01&ndash;06, Hub Phases 01&ndash;05) as the module grouping, because the PRDs are the authoritative specification. I have re-sequenced delivery into <em>waves</em>, which are dependency strata rather than calendar periods, per the no-time-estimates constraint. Three ledger species sit alongside the work steps: <em>decisions</em> (D-series, human-owned), <em>ratification gates</em> (R-series, counsel-involved), and <em>release gates</em> (G-series, composite). The alternate four-group lens (Membership/Identity, Capital/Value Flow, Governance/Decision, Records/Public Surface) maps onto waves W1/W3, W3, W4, and W6 respectively; I did not use it as the index because the PRD phases carry the CROPS stage targets that the roadmap is evaluated against (CIS &sect;16).</p>
+  <p>What this plan deliberately excludes, so the omission is visible rather than silent: counsel work product (bylaws ratification, Hub Membership Agreement review) is <em>indexed as gates but not planned</em>; Coordination Games infrastructure is a separate system and out of scope; the Xero general-ledger mirror, ENS resolvability, and on-chain attestation are deferred beyond alpha and indexed; CIS Phase 06 (Practice) is cultural work that cannot be assigned to a software agent and is indexed as a human milestone; and the PRD's Make.com orchestration layer is <em>demoted to an augmentation candidate</em>, which is the single largest departure from the written stack and is argued in 2.2.</p>
+</section>
+
+<section id="s02">
+  <div class="label">02 &middot; Assessment: the PRDs Against the Constrained Substrate</div>
+  <div class="rule"></div>
+
+  <h3><span class="n">2.1</span>What the PRDs require, in essence</h3>
+  <p>The CIS is the book of record for the cooperative as an entity: a single authoritative Supabase state with three faces (ledger, member portal, Nou), an REA information model of 19 core tables, 13 cooperative modules across five build phases plus a cultural sixth, 11 internal roles enforced at the row level under draft-bylaws &sect;18.1, and the CROPS pathway as the design discipline each phase is graded against (CIS &sect;03&ndash;&sect;08, &sect;16). Hub Operations is the book of record for the cooperative as a host: 12 extension tables, 8 modules, 4 additional roles, three computed KPIs, a monthly impact report drafted by Nou and approved by a human, and a grant arc whose second tranche is gated on KPI compliance (Hub &sect;02, &sect;04&ndash;&sect;08). The two surfaces share agents, agreements, treasury, and CROPS posture; Hub Operations is greenfield and is meant to set Stage 02&ndash;03 patterns that the CIS inherits (CIS &sect;09, Hub &sect;09).</p>
+  <p>The combined schema surface is 31 tables, all tracing to the four REA primitives, with derived views as pure functions of the event log. Conservation, traceability, and audit live in the database, not the interface (CIS principles 04, 05, 09). That property is what makes the constrained substrate viable at all, as 2.3 explains.</p>
+
+  <h3><span class="n">2.2</span>Stack delta</h3>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>PRD layer (CIS &sect;13)</th><th>PRD role</th><th>Constrained implementation</th><th>Disposition</th></tr></thead>
+    <tbody>
+      <tr><td>Supabase</td><td>System of record, RLS</td><td>Retained and expanded: Postgres + RLS (record), Auth (identity), Edge Functions (the only secrets boundary), Storage (agreement binaries, exports), Realtime (quorum, KPI), pg_cron + pg_net (schedules, webhooks)</td><td>Retained, role enlarged</td></tr>
+      <tr><td>Front-end (tool pending)</td><td>Renders, does not own</td><td>Static site built in CI, deployed to GitHub Pages; talks to Supabase directly with the anon key under RLS</td><td>Resolved by constraint; framework choice is D1</td></tr>
+      <tr><td>Make.com</td><td>Orchestrates, does not decide</td><td>Absorbed: pg_cron for schedules, Edge Functions + webhooks for event-driven sends, GitHub Actions cron as the out-of-database second rail</td><td>Demoted to augmentation candidate (D5)</td></tr>
+      <tr><td>Claude API</td><td>Nou; augments, does not act alone</td><td>Retained, reachable only through an Edge Function gateway that forwards the invoking user's JWT, so scoped impersonation is structural</td><td>Retained</td></tr>
+      <tr><td>Mercury</td><td>Payment rail, external</td><td>Retained; read-only API ingestion of transactions into the event log; never system of record (CIS CR pathway, Phase 02)</td><td>Retained, read-only in alpha</td></tr>
+      <tr><td>Xero</td><td>Reference GL mirror</td><td>Deferred beyond alpha</td><td>Deferred</td></tr>
+      <tr><td>Base (chain)</td><td>Confirms, does not replace</td><td>Deferred; attestation scope and key custody are an open PRD question (CIS &sect;17)</td><td>Deferred, gated on D8</td></tr>
+      <tr><td>(unnamed in stack table) Email delivery</td><td>Notices with timing windows, delivery tracking (CIS &sect;08 Notices)</td><td>Critically needed augmentation: one transactional email provider called from an Edge Function, with delivery webhooks recorded as notice events</td><td>Augmentation, D4</td></tr>
+      <tr><td>Application form host</td><td>Open question in both PRDs</td><td>Third path the constraint makes natural: a static form on Pages writing through an RLS-scoped anonymous insert policy. Self-hosted in the strongest sense, no new vendor, open-source by default</td><td>Proposed default for D2</td></tr>
+    </tbody>
+  </table></div>
+  <p>The Make.com demotion deserves its reasoning stated plainly. The PRD's own CR pathway treats every vendor as a chokepoint to be analyzed and names the walkaway test as the Phase 05 criterion (CIS &sect;04). Make.com appears in the PRD as orchestration only: it holds no state and makes no decisions. Everything assigned to it (notice sends, reminders, scheduled jobs, cross-system glue) is expressible in pg_cron, Edge Functions, and Actions workflows, which are already in the principal substrate. Removing it removes a Stage 01 chokepoint at the cost of more first-party code, and the cost is the right kind: code in a public repository advances the O pathway, while a Make.com scenario library does not export cleanly. The adoption trigger that would reverse this is defined under D5 and recorded in the chokepoint analysis, so the demotion is a documented decision, not folklore.</p>
+
+  <h3><span class="n">2.3</span>What GitHub Pages actually imposes</h3>
+  <p>Pages is static hosting: no server runtime, no request-time secrets, no custom response headers, no server-side redirects. Four consequences follow, and the first is the one that shapes everything.</p>
+  <p>First, <em>row-level security is the entire authorization perimeter.</em> The Supabase anon key ships in the public bundle by design; it is safe exactly to the extent that every table is default-deny with explicit, correct policies. This is not a weakening of the PRD; it is the PRD's principle 06 ("privacy is a property of the record, not the screen") taken at its word, with no screen left to hide behind. It does, however, convert RLS completeness from a quality goal into a hard release gate, so the plan makes the automated RLS audit a required CI check that no wave can merge past (W0.6).</p>
+  <p>Second, <em>the application shell is public.</em> Pages on the current plan publishes publicly; a truly private static shell requires either an enterprise plan or a proxy in front, both of which are augmentations. The honest reading: in this alpha, "private" means private <em>data</em> (auth-gated, invite-only, RLS-enforced) rather than a secret artifact. The CIS open-source pathway already commits the schema and eventually the front-end code to publication (O Phase 01 and Phase 03), so a public shell is on-pathway rather than a concession. The residual exposure is that outsiders can see that an alpha exists and what its screens are shaped like. Whether that is acceptable is D6, with the proxy augmentation named as the alternative.</p>
+  <p>Third, <em>server-side work moves to two rails.</em> Anything needing secrets or privileged writes (Nou's Claude key, email provider key, Mercury token, service-role operations) lives in Edge Functions; anything needing schedules lives in pg_cron with GitHub Actions cron as the independent fallback rail. Two rails is deliberate: the Reliability requirement (CIS &sect;14) asks that no single vendor failure invalidate state, and a scheduled export that runs from Actions still fires if the database's own scheduler is the thing that failed.</p>
+  <p>Fourth, small mechanics: SPA routing needs a 404.html fallback or hash routing; build-time environment injection replaces runtime configuration; a meta-tag CSP substitutes for header CSP; the alpha site carries noindex. Each appears as an explicit success condition in W0.12 rather than as tribal knowledge.</p>
+
+  <h3><span class="n">2.4</span>What "production in private alpha" means here</h3>
+  <p>One Supabase project designated production-of-record from the first migration (local development through the Supabase CLI; no second hosted environment in alpha, which is named as an accepted risk in 2.5). One public repository, one Pages site on a cooperative subdomain. Real members under invite-only auth; synthetic data only until the moment of first real onboarding, which is itself a gated step. The alpha gate G1 (section 07) defines the verified step set that constitutes "deployed."</p>
+
+  <h3><span class="n">2.5</span>Risk register</h3>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>Risk</th><th>Where it bites</th><th>Mitigation in plan</th></tr></thead>
+    <tbody>
+      <tr><td>Incomplete RLS with a public anon key</td><td>Any table</td><td>W0.6 default-deny template, rls-audit CI gate, anonymous probe suite on every migration</td></tr>
+      <tr><td>Single hosted environment</td><td>Schema mistakes hit production</td><td>Shadow-database verification in CI (W0.4), tested restore (W0.14), migrations only via PR</td></tr>
+      <tr><td>Bylaws unratified while system encodes them</td><td>Citation drift, &sect;18.1 access semantics</td><td>D7 draft-citation register; R1 gates <em>activation</em> of formula automation, not its build (the PRD itself ships manual allocation against the equal default, CIS &sect;17)</td></tr>
+      <tr><td>Grant KPI surface lags the grant arc</td><td>Tranche 2 review (Hub &sect;08)</td><td>W2 is the first module wave after the shared core; KPI views computed, not entered (Hub &sect;07)</td></tr>
+      <tr><td>Email deliverability for legally timed notices</td><td>draft-bylaws &sect;2.4 windows</td><td>D4 provider with webhook receipts recorded as events; multi-channel posture deferred but schema-ready</td></tr>
+      <tr><td>Subchapter K vocabulary contamination</td><td>Schema and UI copy</td><td>grammar-lint CI rule (W0.16) forbidding Subchapter T terms in RegenHub surfaces</td></tr>
+      <tr><td>Agent overreach</td><td>Any privileged step</td><td>Owner field on every step; D and R items are human-only; Nou gateway inherits invoker permissions structurally (W1.7)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s03">
+  <div class="label">03 &middot; Version Control as the Milestone System</div>
+  <div class="rule"></div>
+  <p>The repository is the milestone system. There is no separate tracker: every step in section 06 is a file, every status change is a commit, and the audit trail of the build is the git history itself. This satisfies "organize, serialize, and index in a version control system" by construction, and it makes the build auditable with the same gesture that makes it trackable.</p>
+
+  <h3><span class="n">3.1</span>Repository topology</h3>
+  <p>One public monorepo (visibility is D3; the proposed default is public from the first commit, which is the CIS O-pathway Phase 01 posture). Layout:</p>
+<pre class="block">/README.md                  <span class="c">what this is, how to read the ledger</span>
+/GOVERNANCE.md              <span class="c">ledger rules, status semantics, conventions (this section, verbatim)</span>
+/milestones/                <span class="c">the ledger: one file per step</span>
+    /D/  /R/  /G/  /W0/ &hellip; /W6/  /P/
+    index.json              <span class="c">generated: full graph, statuses, edges</span>
+    STATUS.md               <span class="c">generated: human-readable progress board</span>
+/supabase/
+    /migrations/            <span class="c">timestamped SQL, the only path to schema change</span>
+    /functions/             <span class="c">Edge Functions (nou-gateway, email-send, mercury-ingest, error-sink, &hellip;)</span>
+    /tests/                 <span class="c">pgTAP suites: rls-audit, conservation, probes</span>
+    seed.sql                <span class="c">synthetic fixtures only</span>
+/apps/portal/               <span class="c">static front-end (framework per D1)</span>
+/design/                    <span class="c">co-op.us tokens as CSS, base components</span>
+/docs/
+    chokepoint-analysis.md  <span class="c">CR Phase 01 artifact (CIS &sect;04)</span>
+    export-paths.md         <span class="c">per-table export documentation (CR commitment)</span>
+    citations.md            <span class="c">draft-bylaws section register (D7)</span>
+    runbooks/               <span class="c">restore drill, walkaway groundwork</span>
+/scripts/                   <span class="c">ledger validator, status generator</span>
+/.github/workflows/         <span class="c">milestone-validate, db-verify, rls-audit, grammar-lint,
+                            portal-build, pages-deploy, exports-cron, status-mirror</span></pre>
+
+  <h3><span class="n">3.2</span>Milestone file schema</h3>
+  <p>Every ledger entry is a markdown file with YAML front matter. The front matter is the machine surface; the body is the agent brief.</p>
+<pre class="block"><span class="c">---</span>
+<span class="k">id:</span> W1.02                <span class="c"># unique, immutable</span>
+<span class="k">title:</span> memberships table and class model
+<span class="k">wave:</span> W1
+<span class="k">owner:</span> agent             <span class="c"># agent | human | counsel</span>
+<span class="k">status:</span> pending          <span class="c"># pending | in_progress | blocked | review | done | verified</span>
+<span class="k">depends_on:</span> [W0.07, W0.06]
+<span class="k">decision_refs:</span> []        <span class="c"># D-items this step consumes</span>
+<span class="k">bylaw_refs:</span> [draft-bylaws:1.1-1.4, draft-bylaws:18.1]
+<span class="k">prd_refs:</span> [CIS &sect;06, CIS &sect;08 Member Directory]
+<span class="k">success_state:</span> &gt;
+  One-sentence, testable condition.
+<span class="k">verification:</span> ci:db-verify   <span class="c"># ci:&lt;job&gt; | human:&lt;role&gt; | counsel</span>
+<span class="k">artifacts:</span> [supabase/migrations/*_memberships.sql]
+<span class="c">---</span>
+Context. Why this exists, what it touches, what it must not touch.
+Action. What the executing agent does, concretely.
+Notes. Simplifications taken, tensions left open.</pre>
+  <p>Body sections are the contextual information each directed agent needs; for waves W0&ndash;W2 this document seeds them in full (section 06), and for W3&ndash;W6 the first step of each wave is the authoring of the remaining briefs, so detail is produced at the boundary where it is real rather than invented here.</p>
+
+  <h3><span class="n">3.3</span>Status semantics and gating</h3>
+  <p><code>pending &rarr; in_progress &rarr; review &rarr; done &rarr; verified</code>, with <code>blocked</code> available from any state when a <code>decision_ref</code> or dependency is unmet (the blocking reason is recorded in the file). Two rules carry the audit property. A step may not leave <code>pending</code> until every entry in <code>depends_on</code> is <code>verified</code>. And <code>done</code> (work merged) is distinct from <code>verified</code> (success state demonstrated): <code>verified</code> requires either the named CI job green on the merged commit, or for <code>human:</code>/<code>counsel</code> verification, an approving PR review by the named role recorded on the status-flip commit. Only <code>verified</code> unlocks dependents. Status changes happen <em>only</em> by editing the milestone file in the same PR as the work, so the graph state and the code state can never diverge.</p>
+
+  <h3><span class="n">3.4</span>The validator and the near-real-time board</h3>
+  <p>A <code>milestone-validate</code> workflow runs on every push and PR: it parses all front matter, enforces the schema, asserts the dependency graph is acyclic, asserts the gating rules above, and regenerates <code>index.json</code> and <code>STATUS.md</code> (committed by the workflow on main). A <code>status-mirror</code> job then POSTs <code>index.json</code> to a Supabase <code>build_status</code> table via Edge Function. The portal's <code>/build</code> panel renders that table over Realtime, which closes the loop the legibility thesis asks for: the cooperative's information system displays the live state of its own construction, to the same members it is being built for. Near real time, in practice, means every merge.</p>
+
+  <h3><span class="n">3.5</span>Commit, branch, and PR conventions</h3>
+  <p>Branches: <code>step/W1.02-memberships</code>. Commits: <code>type(W1.02): subject</code> with conventional types. Every PR template requires the step id, the success-state evidence (CI link or reviewer), and the status flip in the milestone file. Branch protection on main requires <code>milestone-validate</code>, <code>db-verify</code>, <code>rls-audit</code>, <code>grammar-lint</code>, and <code>portal-build</code> green. One step per PR as the norm; a PR touching code without touching a milestone file fails validation, which keeps the ledger exhaustive.</p>
+</section>
+
+<section id="s04">
+  <div class="label">04 &middot; Dependency Tree</div>
+  <div class="rule"></div>
+  <p>Fine-grained edges live in each step's <code>depends_on</code> and are machine-validated; the coarse structure is:</p>
+  <div class="flow">
+    <div class="fdec"><span class="k">decision inputs</span> &nbsp; D3 &rarr; W0.1 &nbsp;&middot;&nbsp; D1, D6 &rarr; W0.12 &nbsp;&middot;&nbsp; D4 &rarr; W0.11 &nbsp;&middot;&nbsp; D7 &rarr; W0.6</div>
+    <div class="fnode"><span class="fid">W0</span><span class="ftitle">substrate</span></div>
+    <div class="farrow">&darr;</div>
+    <div class="fnode"><span class="fid">W1</span><span class="ftitle">shared core</span></div>
+    <div class="fsplit">
+      <div class="fcol">
+        <div class="farrow">&darr;</div>
+        <div class="fnode"><span class="fid">W2</span><span class="ftitle">hub operations</span><span class="fgate">activation &#9665;&#8943; R2 hub member agreement</span></div>
+        <div class="farrow">&darr;</div>
+        <div class="fnode gate"><span class="fid">G1</span><span class="ftitle">alpha gate</span><span class="fgate">requires W0 all &middot; W1.1&ndash;1.8 &middot; W2.1&ndash;2.6 &middot; D1 D2 D3 D4 D6 D7</span></div>
+      </div>
+      <div class="fcol">
+        <div class="farrow">&darr;</div>
+        <div class="fnode"><span class="fid">W3</span><span class="ftitle">capital</span><span class="fgate">activation &#9665;&#8943; R1 bylaws ratified &middot; detail &#9665;&#8943; D10</span></div>
+        <div class="farrow">&darr;</div>
+        <div class="fnode"><span class="fid">W4</span><span class="ftitle">governance</span><span class="fgate">activation &#9665;&#8943; R1 &middot; attestation &#9665;&#8943; D8</span></div>
+        <div class="farrow">&darr;</div>
+        <div class="fnode"><span class="fid">W5</span><span class="ftitle">lifecycle</span></div>
+        <div class="farrow">&darr;</div>
+        <div class="fnode"><span class="fid">W6</span><span class="ftitle">full interface</span></div>
+        <div class="farrow">&darr;</div>
+        <div class="fnode"><span class="fid">P1</span><span class="ftitle">practice &middot; human</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="caption">machine-readable edges live in each step's depends_on, validated by ci:milestone-validate; the mermaid source remains in the markdown plan</p>
+  <p>Dotted edges (&#9665;&#8943;) are <em>activation</em> gates: they do not block building, only switching certain behavior from manual or interim mode to automated or final mode, mirroring the PRDs' own posture that open questions block at the phase where they first become material (CIS &sect;17, Hub &sect;11).</p>
+</section>
+
+<section id="s05">
+  <div class="label">05 &middot; Decision and Ratification Ledger</div>
+  <div class="rule"></div>
+  <p>Every item here is human-owned. Defaults are proposals only; I have flagged where I extended the PRD's option set so the extension is a visible choice rather than a smuggled one.</p>
+
+  <div class="ditem"><span class="did">D1 &middot; front-end framework</span><p>Owner: organizers. The PRD leaves the tool open with criteria: portability, accessibility, mobile-first, Supabase compatibility, design-system fidelity, plus the chokepoint test (CIS &sect;17). Proposed default: a static-first framework with islands of interactivity (Astro is the type specimen; a Vite + React SPA is the alternative). The criteria favor static-first because Pages serves HTML, the design system is typographic and editorial, and less client JS is less surface. Blocks W0.12 onward.</p></div>
+  <div class="ditem"><span class="did">D2 &middot; application form host</span><p>Owner: organizers. The PRDs frame this as Formbricks (self-host) versus Tally/Typeform (managed chokepoint) (Hub &sect;11). The constraint adds a third option not in the PRD, and I am naming that addition explicitly: a static form on Pages inserting through a narrowly scoped anonymous RLS policy into <code>hub_applications</code>. No new vendor, open-source by default, advances CR and O simultaneously. Proposed default: the native path, with Formbricks as the fallback if form complexity outgrows it. Blocks W2.2 and CIS admission (W1.6) inherits the pattern (CIS &sect;17).</p></div>
+  <div class="ditem"><span class="did">D3 &middot; repository visibility and naming</span><p>Owner: organizers. Proposed default: public from first commit, which is the O-pathway Phase 01 commitment ("the schema itself is published," CIS &sect;04) made literal. Hard rule either way: no secrets, no member PII, synthetic seeds only. Blocks W0.1.</p></div>
+  <div class="ditem"><span class="did">D4 &middot; transactional email provider</span><p>Owner: organizers. One provider with API send and delivery webhooks (Resend, Postmark, and SES are the candidate class; no endorsement implied). Required because notices carry legally timed windows and delivery tracking (CIS &sect;08, draft-bylaws &sect;2.4) and Supabase's built-in mail covers auth flows only. Blocks W0.11, therefore W1.8.</p></div>
+  <div class="ditem"><span class="did">D5 &middot; make.com adoption trigger</span><p>Owner: organizers. Proposed default: not adopted in alpha. Reversal trigger, to be recorded in <code>docs/chokepoint-analysis.md</code> if invoked: a required integration whose first-party Edge Function cost exceeds reasonable effort and whose data remains exportable. Until invoked, the PRD's Make.com responsibilities route to pg_cron, Edge Functions, and Actions.</p></div>
+  <div class="ditem"><span class="did">D6 &middot; alpha access posture</span><p>Owner: organizers. Proposed default: accept the public static shell; privacy enforced at data layer; noindex; invite-only auth allowlist. Alternative: a proxy with access control in front of Pages, named as an augmentation. Blocks the public exposure of W0.12.</p></div>
+  <div class="ditem"><span class="did">D7 &middot; section addressing scheme</span><p>Owner: organizers with counsel awareness. Pre-ratification, every bylaw citation in policies, schema comments, and UI uses the <code>draft-bylaws:&sect;x.y</code> prefix against a register in <code>docs/citations.md</code>; ratification (R1) triggers a single sweep that drops the prefix and freezes addresses. This keeps cite-as-you-enforce honest before the text is final. Blocks W0.6's citation convention.</p></div>
+  <div class="ditem"><span class="did">D8 &middot; attestation scope and key custody</span><p>Owner: working group per CIS &sect;17. Deferred; blocks only the optional attestation extensions in W4 and W6.</p></div>
+  <div class="ditem"><span class="did">D9 &middot; EE liaison interface form</span><p>Owner: organizers with EE team. Dashboard view versus digest versus shared page; CROPS implications cut both ways (Hub &sect;11). Proposed default: scoped read-only dashboard credential, with the public KPI view satisfying the open-source pull. Blocks W2.9's liaison surface.</p></div>
+  <div class="ditem"><span class="did">D10 &middot; lease-entity question</span><p>Owner: board. Whether West or the LCA holds the third-floor lease affects how facility obligations enter the ledger (CIS &sect;17). Blocks specific W3 treasury detail steps only; indexed so the dependency is visible.</p></div>
+  <div class="ditem"><span class="did">R1 &middot; bylaws ratification</span><p>Owner: counsel and membership (Pote Law Firm, Yev Muchnik named reviewers). Activates: allocation-formula automation (until then, manual allocation entry against the equal default, exactly as CIS &sect;17 specifies), citation freeze (D7 sweep), and final &sect;18.1 role semantics. Does not block any build step.</p></div>
+  <div class="ditem"><span class="did">R2 &middot; hub membership agreement</span><p>Owner: counsel (Pote review per Hub &sect;11). Until ratified, Hub access proceeds against the interim acceptable-use policy, recorded as an agreement-repository entry so the interim state is itself on the record.</p></div>
+  <div class="ditem"><span class="did">G1 &middot; alpha gate</span><p>Composite; defined in section 07.</p></div>
+  <div class="ditem"><span class="did">P1 &middot; practice phase</span><p>Owner: membership. CIS Phase 06 is deliberately not a development phase (CIS &sect;16); indexed so the ledger does not pretend the work ends when the architecture does.</p></div>
+</section>
+
+<section id="s06">
+  <div class="label">06 &middot; Step Ledger</div>
+  <div class="rule"></div>
+  <p>Waves W0 through W2 are seeded as full briefs (these become the milestone files verbatim). Waves W3 through W6 are seeded at summary level, with each wave's <code>.0</code> step being the authoring of its remaining briefs under the 3.2 schema.</p>
+
+  <h3><span class="n">W0</span>Wave W0 &middot; Substrate</h3>
+  <p class="wave-note">the infrastructure that precedes the progressive module system; nothing member-facing ships from W0 except the empty portal shell</p>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.1</span><span class="stitle">Repo bootstrap and governance</span></div>
+    <div class="smeta"><span class="k">owner</span> human (admin) + agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D3] <span class="sep">&middot;</span> <span class="k">verification</span> ci:repo-policy</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; repository exists with README, GOVERNANCE.md, CODEOWNERS, PR/issue templates, branch protection applied; ci:repo-policy green</div>
+    <p class="sbody"><em>Context.</em> The repo is the milestone system (section 03), so its own governance files are the first artifact. Branch protection and required checks need admin credentials, hence the split owner. <em>Action.</em> Human creates org/repo per D3 and applies protection; agent commits the governance files and the repo-policy check that asserts their presence and the protection settings via API read.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.2</span><span class="stitle">Ledger scaffold, validator, status board</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.1] <span class="sep">&middot;</span> <span class="k">verification</span> ci:milestone-validate</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; all section 05/06 entries exist as schema-valid files; validator enforces acyclicity and gating; STATUS.md and index.json regenerate on push</div>
+    <p class="sbody"><em>Context.</em> Converts this document into the live ledger. <em>Action.</em> Author <code>scripts/validate.*</code> and <code>scripts/status.*</code>, the workflow, and one milestone file per entry in this plan, statuses initialized <code>pending</code> (this step and W0.1 flip on merge). <em>Notes.</em> The validator failing any PR that changes code without touching a milestone file is what keeps the ledger exhaustive; implement that rule here.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.3</span><span class="stitle">Supabase project provisioning</span></div>
+    <div class="smeta"><span class="k">owner</span> human (credentials) + agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.1] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify (connection stage)</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; hosted project linked; SUPABASE_ACCESS_TOKEN, PROJECT_REF, anon and service keys present as Actions secrets; ci:db-verify can connect</div>
+    <p class="sbody"><em>Context.</em> One hosted project is production-of-record (2.4); local development via CLI. Secrets never enter the repo. <em>Action.</em> Human creates project and stores secrets; agent commits <code>supabase/config.toml</code>, CLI version pin, and the connection stage of db-verify.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.4</span><span class="stitle">Migration pipeline and shadow verification</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.3] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; ci:db-verify applies all migrations to a clean shadow database and runs pgTAP; push to hosted occurs only from main after green</div>
+    <p class="sbody"><em>Context.</em> With a single hosted environment, the shadow apply is the safety net (2.5). <em>Action.</em> Workflow: spin ephemeral Postgres, dry-run apply against shadow, run <code>supabase/tests</code>, then on main deploy migrations to hosted. Migrations are append-only; no manual SQL against production.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.5</span><span class="stitle">Auth: invite-only identity layer</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.4] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D6] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit (auth probes)</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; email OTP sign-in works; non-allowlisted sign-up is rejected; JWT carries role claims from the auth hook; probe test proves all three</div>
+    <p class="sbody"><em>Context.</em> Identity is the CIS identity layer (CIS &sect;07); alpha is invite-only (D6). <em>Action.</em> Configure Supabase Auth (email OTP), an <code>invites</code> table, a before-user-created hook rejecting non-invited addresses, and a custom-claims hook stamping roles from the role registry (W0.8 extends).</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.6</span><span class="stitle">RLS baseline: default-deny and cite-as-you-enforce</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.4] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D7] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; every table in schema public has RLS enabled and forced; every policy carries a citation comment matching the D7 register; anonymous and cross-member probe suites return denial on protected tables</div>
+    <p class="sbody"><em>Context.</em> The whole authorization perimeter (2.3). <em>Action.</em> Migration template that enables and forces RLS on creation; <code>COMMENT ON POLICY</code> convention embedding <code>draft-bylaws:&sect;&hellip;</code> or <code>grant:&sect;&hellip;</code>; pgTAP suite reading <code>pg_policies</code> for coverage and comment format; probe suite executing as <code>anon</code> and as a second member. This CI job is a required check forever after.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.7</span><span class="stitle">REA core: agents, agreements, signatures, event envelope</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.6] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; agents, agreements, signatures exist per CIS &sect;06; a shared event envelope (actor, occurred_at, prior_value) and audit trigger apply; pgTAP proves an UPDATE writes an audit row with prior value</div>
+    <p class="sbody"><em>Context.</em> The four REA primitives are the top-level partition; every relationship is an Event (CIS &sect;06). Agreements carries versioning and content hash; Storage holds binaries (bucket policies mirror table RLS). <em>Action.</em> Author migrations, the generic <code>record_event()</code> trigger, and tests. <em>Notes.</em> <code>signatures</code> are events against agreement versions; signing UI arrives in W1.4.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.8</span><span class="stitle">Role registry and access helpers</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.7, W0.5] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; the 15 roles of CIS &sect;07 and Hub &sect;05 exist as data with source citations; helper functions (is_member, has_role, is_self) are used by all policies; claims reflect registry changes on next token refresh</div>
+    <p class="sbody"><em>Context.</em> Roles are defined by the bylaws and the grant, represented rather than invented (CIS &sect;07). <em>Action.</em> <code>roles</code> and <code>role_grants</code> tables (grants are events), SQL helpers marked stable for the planner, claims hook reading grants.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.9</span><span class="stitle">Edge functions scaffold and secrets boundary</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.3] <span class="sep">&middot;</span> <span class="k">verification</span> ci:functions-deploy</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; functions deploy from CI; a hello function verifies JWT and echoes the caller's role; service-role key is reachable only inside functions, asserted by a repo-wide secret-scan check</div>
+    <p class="sbody"><em>Context.</em> The only place secrets live at request time (2.3). <em>Action.</em> Scaffold <code>supabase/functions</code> with shared CORS, JWT verification middleware, and the deploy workflow; add secret-scan to required checks.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.10</span><span class="stitle">Scheduling rails and job registry</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.9] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify + observed heartbeat rows</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; pg_cron and an Actions cron each write a heartbeat job-run event; the jobs table shows both rails; a missed-run query exists</div>
+    <p class="sbody"><em>Context.</em> Two independent rails per the Reliability requirement (CIS &sect;14). <em>Action.</em> Enable pg_cron and pg_net; <code>jobs</code> and <code>job_runs</code> (events); Actions workflow invoking a runner function on schedule.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.11</span><span class="stitle">Email rail</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.9] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D4] <span class="sep">&middot;</span> <span class="k">verification</span> ci:functions-deploy + human:operator (test send)</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; email-send function delivers via the D4 provider; provider webhooks write delivery events; a test notice shows queued, sent, delivered states on its record</div>
+    <p class="sbody"><em>Context.</em> Notices carry legally required timing and tracking (CIS &sect;08; draft-bylaws &sect;2.4). <em>Action.</em> Provider adapter interface (so D4 is swappable), send function, webhook receiver writing <code>notice_delivery</code> events. Build the adapter shape even before D4 resolves; mark <code>blocked</code> on live sending only.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.12</span><span class="stitle">Portal scaffold and pages pipeline</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.1] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D1, D6] <span class="sep">&middot;</span> <span class="k">verification</span> ci:pages-deploy + ci:portal-build</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; pages-deploy publishes on merge to main; the site serves 200 on the alpha domain with the build SHA visible; SPA fallback works on a deep link; noindex present; anon key injected at build only</div>
+    <p class="sbody"><em>Context.</em> The member portal shell (CIS &sect;05, &sect;10). <em>Action.</em> Scaffold per D1; Actions workflow building and deploying to Pages; custom subdomain and HTTPS; 404 fallback; meta CSP; environment injection step that fails the build if any non-public secret is referenced.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.13</span><span class="stitle">Design tokens and base components</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.12] <span class="sep">&middot;</span> <span class="k">verification</span> human:Todd (reference page) + ci:portal-build</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; tokens match coop-us-design-system.html exactly (ground #0f0f0f, surface #1a1a1a, terracotta #c4956a and dims, light-mode ramp, 160ms/400ms durations); two-grammar type rule enforced; a rendered reference page passes visual review</div>
+    <p class="sbody"><em>Context.</em> Design-system adherence is a PRD requirement, not decoration (CIS &sect;10): Libre Baskerville for the human voice, IBM Plex Mono for the system voice, terracotta as the sole accent, dark-first with manual toggle, reduced-motion respected. <em>Action.</em> Port the token set from the canonical file into <code>/design</code>, build the base primitives (panel, record detail with its three-part pattern of record, governing authority, history), publish a reference page.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.14</span><span class="stitle">Export paths and tested restore</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.10] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify (restore stage) + observed export artifacts</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; docs/export-paths.md covers every existing table; a scheduled export writes open-format snapshots to Storage on both rails; a restore drill into a clean local database succeeds and is logged as a job run</div>
+    <p class="sbody"><em>Context.</em> The CR Phase 01 floor: every table ships with a documented export path; backup strategy survives any single vendor (CIS &sect;04). <em>Action.</em> Export job (CSV/JSON per table plus full dump), restore runbook, drill executed and recorded.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.15</span><span class="stitle">Chokepoint analysis as design artifact</span></div>
+    <div class="smeta"><span class="k">owner</span> agent (draft) + human (adoption) <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.1] <span class="sep">&middot;</span> <span class="k">verification</span> human:organizers</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; docs/chokepoint-analysis.md exists covering Supabase, GitHub, the D4 provider, Mercury, Claude API, with failure modes, export paths, and the D5 trigger; adopted by organizer review on the PR</div>
+    <p class="sbody"><em>Context.</em> The PRD requires vendor selection recorded as an artifact, not folklore (CIS &sect;04), and this clears the standing blocker that the analysis exist in writing. <em>Action.</em> Draft from section 02 of this plan; organizers adopt or amend.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.16</span><span class="stitle">Grammar lint</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.1] <span class="sep">&middot;</span> <span class="k">verification</span> ci:grammar-lint</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; ci:grammar-lint fails on Subchapter T vocabulary (patronage dividend, written notice of allocation, per-unit retain) in migrations, UI strings, and docs of this repo, with a documented allowlist mechanism</div>
+    <p class="sbody"><em>Context.</em> The grammar quarantine: Subchapter K vocabulary only in RegenHub surfaces; "patronage" survives only as a scoped internal name. Encoding the discipline in CI keeps it from depending on memory. <em>Action.</em> Word-boundary lint with allowlist file requiring a justification comment.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.17</span><span class="stitle">Observability and error sink</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.9] <span class="sep">&middot;</span> <span class="k">verification</span> ci:functions-deploy + human:operator</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; client errors POST to an error-sink function and land in an admin-only events table; function logs reviewed in a runbook; a thrown test error is visible end to end</div>
+    <p class="sbody"><em>Context.</em> Audit by design extends to the system's own failures (principle 09). <em>Action.</em> Minimal client reporter, sink function, RLS admin-only table, runbook.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W0.18</span><span class="stitle">Build-status mirror</span></div>
+    <div class="smeta"><span class="k">owner</span> agent <span class="sep">&middot;</span> <span class="k">depends_on</span> [W0.2, W0.9, W0.12] <span class="sep">&middot;</span> <span class="k">verification</span> ci:status-mirror + human:Todd (panel)</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; every merge updates build_status in Supabase; the portal /build panel renders the ledger over Realtime within one refresh of merge</div>
+    <p class="sbody"><em>Context.</em> Near-real-time tracking (3.4) and the recursive case of legibility-as-product: the system shows its own construction. <em>Action.</em> Mirror workflow, ingest function, read-only public-to-members panel.</p>
+  </div>
+
+  <h3><span class="n">W1</span>Wave W1 &middot; Shared core (CIS Phase 01: Agent and Agreement)</h3>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.1</span><span class="stitle">Memberships and class model</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W0.7, W0.8] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; memberships per draft-bylaws &sect;1.1&ndash;1.4 with the four classes, good-standing status as a derived view, RLS per &sect;18.1 scopes (own-always, member-aggregate); probes prove a member sees self and aggregates but not another member's row</div>
+    <p class="sbody"><em>Context.</em> The canonical register (CIS &sect;08). Class semantics follow the ratified four-class architecture; statutory questions about non-voting classes remain with counsel and do not block representation of the classes as data.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.2</span><span class="stitle">Stock ledger</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W1.1] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; stock_ledger enforces one Patron share per member at the database (unique partial constraint), records issuance and transfer-back as events; pgTAP proves a second issuance fails</div>
+    <p class="sbody"><em>Context.</em> Conservation at the ledger (principle 05; CIS &sect;08, draft-bylaws &sect;1.13). Preferred Stock exists in schema, reserved and inactive per the open investor framework (CIS &sect;17).</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.3</span><span class="stitle">Agreements repository, populated</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W0.7] <span class="sep">&middot;</span> <span class="k">verification</span> human:operator + ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; articles, draft bylaws, interim hub AUP, EE grant letter, and membership-agreement template are loaded as versioned, hashed records with correct visibility; a member can open what governs them from the portal</div>
+    <p class="sbody"><em>Context.</em> The shared repository both PRDs point at (CIS &sect;09b, Hub &sect;09b). Versioning is event-sourced; hashes anchor later attestation without committing to it (D8).</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.4</span><span class="stitle">Signature capture</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W1.3, W0.5] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify + human:operator</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; an authenticated signer executes an agreement version; the signature event stores signer, version hash, timestamp; the agreement detail view shows its signature history</div>
+    <p class="sbody"><em>Context.</em> Signatures are events under draft-bylaws &sect;1.4 (CIS &sect;06). Alpha scope is in-app click-to-sign with hash binding; external e-sign integration is an augmentation deliberately not taken, noted in the chokepoint doc.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.5</span><span class="stitle">Member directory and profile</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W1.1, W0.13] <span class="sep">&middot;</span> <span class="k">verification</span> human:Todd + ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; directory shows only what the bylaws require it to show (P Phase 01 commitment); profile self-edit works; record detail follows the three-part pattern (record, governing authority, history)</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.6</span><span class="stitle">Admission and onboarding workflow</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W1.2, W1.3, W1.4, W0.11] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D2] <span class="sep">&middot;</span> <span class="k">verification</span> human:operator (walkthrough) + ci:db-verify</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; the &sect;1.4 sequence runs end to end on synthetic data: application received, board decision recorded as a consent event, stock purchase recorded, agreements executed, orientation step, active status; each transition is an event with actor and citation</div>
+    <p class="sbody"><em>Notes.</em> Simplification taken and named: the board admission decision is recorded as a consent event rather than through the full motions module (W4); the event shape is forward-compatible. Stock purchase in alpha records the $100 payment as received out-of-band (Mercury reference id field), since payment collection is not yet automated.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.7</span><span class="stitle">Nou v1: read-only, grounded, logged</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W0.9, W1.1, W1.3] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit (nou probes) + human:Todd</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; the gateway forwards the invoking user's JWT and queries through a user-scoped client (scoped impersonation is structural, not promised); answers cite section ids and record ids; every interaction logs prompt, citation set, response; a cross-member probe through Nou is refused identically to a direct query</div>
+    <p class="sbody"><em>Context.</em> CIS &sect;11 in its Phase 01 shape: directory and agreement lookup, question answering with citations, the refusal posture ("I don't know" and "that isn't settled" are honest answers). Retention policy for interaction logs is an open question the privacy pathway forces later (CIS &sect;17); alpha default is retain-all admin-only, named as interim.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W1.8</span><span class="stitle">Notices v1</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W0.11, W1.1] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify + human:operator</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; a notice with a draft-bylaws &sect;2.4 timing window is generated, sent, and shows confirmed delivery state on its record; the window computation is a tested pure function</div>
+  </div>
+
+  <h3><span class="n">W2</span>Wave W2 &middot; Hub Operations (greenfield, pattern-setting)</h3>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.1</span><span class="stitle">Hub schema extensions</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W0.6, W0.7, W0.8] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; the twelve Hub &sect;04 tables exist with grant:&sect; citations on every policy; hub roles enforce scopes per Hub &sect;05 (applicant sees own application only; EE Liaison sees aggregates, not individuals); probes prove both</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.2</span><span class="stitle">Application and access</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.1, W0.12] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D2] <span class="sep">&middot;</span> <span class="k">verification</span> ci:rls-audit (anon insert scope) + human:operator</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; the public form submits through the D2 path into hub_applications under a narrowly scoped insert policy; selection criteria are versioned in the public repo; a decision is recorded against criteria and the applicant is notified with reason</div>
+    <p class="sbody"><em>Context.</em> Grant &sect;2 requires a publicly available application and a transparent, fair selection; the PRD's O posture wants the criteria versioned publicly (Hub &sect;03). The anonymous insert policy is the single deliberate hole in default-deny and gets its own probe tests (rate limiting via Edge Function wrapper if abuse appears; named as a watch item).</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.3</span><span class="stitle">Co-working sessions</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.1] <span class="sep">&middot;</span> <span class="k">verification</span> human:operator + ci:db-verify</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; seat registry holds the 10 weekly complimentary and 2&ndash;3 daily open seats as resources; session capture takes under a minute on mobile; seat_utilization_as_of derives purely from events</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.4</span><span class="stitle">Events module</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.1] <span class="sep">&middot;</span> <span class="k">verification</span> human:operator + ci:rls-audit</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; monthly Ethereum Meetup is distinguishable from additional events; registration and attendance capture work; materials link to the educational surface; attendance aggregates without exposing names</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.5</span><span class="stitle">KPI and performance surface</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.3, W2.4] <span class="sep">&middot;</span> <span class="k">verification</span> ci:db-verify (KPI fixtures) + human:Todd</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; the three KPI views compute exactly per Hub &sect;07 (count of hub_events per month at least 1; complimentary seats per ISO week at least 10; open seats per business day in 2&ndash;3); the public read-only view is live; every figure drills to the event rows that produced it</div>
+    <p class="sbody"><em>Context.</em> "Computed rather than reported" is the module's whole point (Hub &sect;07), and the audit drill-down is the S posture the EE team can verify independently.</p>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.6</span><span class="stitle">Impact reporting</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.5, W1.7] <span class="sep">&middot;</span> <span class="k">verification</span> human:organizer (first cycle) + ci:pages-deploy</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; Nou drafts the monthly report from the event log on the scheduled rail using the stable template (capacity, engagement, two to three highlights, needs); an organizer approves; the report publishes to a stable URL on the cooperative's domain with a portable mirror copy</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.7</span><span class="stitle">Cross-pollination registry</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.1] <span class="sep">&middot;</span> <span class="k">verification</span> human:operator</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; partner_orgs and joint-event linkage work as the lightweight registry the PRD asks for (not a sales pipeline); visible to members</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.8</span><span class="stitle">Educational surface</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.1, W0.12] <span class="sep">&middot;</span> <span class="k">verification</span> human:operator</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; displays, materials, and opportunity listings render on the public hub page; currency and rotation status are tracked; EE-provided materials are versioned alongside local ones</div>
+  </div>
+
+  <div class="step">
+    <div class="shead"><span class="sid">W2.9</span><span class="stitle">Grant lifecycle</span></div>
+    <div class="smeta"><span class="k">depends_on</span> [W2.5, W1.3] <span class="sep">&middot;</span> <span class="k">decision_refs</span> [D9] <span class="sep">&middot;</span> <span class="k">verification</span> human:organizer</div>
+    <div class="ssuccess"><span class="k">success_state</span> &middot; tranches and milestones from Hub &sect;08 exist as events against the grant agreement record; the compliance view shows KPI history in the form D9 selects; tranche entries reference treasury once W3 lands</div>
+  </div>
+
+  <h3><span class="n">W3</span>Wave W3 &middot; Capital (CIS Phase 02)</h3>
+  <p>W3.0 authors the remaining W3 briefs to full schema (verification: ci:milestone-validate). Seeded scope, each entry a milestone file: W3.1 <code>capital_accounts</code> and double-entry <code>capital_events</code> with book/tax distinction and balance-conservation tests (draft-bylaws &sect;5.1); W3.2 personal balance view with full history per the member success criteria (CIS &sect;15); W3.3 manual allocation entry against the equal default, formula automation explicitly gated on R1 (CIS &sect;17); W3.4 Mercury read-only ingestion on the scheduled rails, hub-expenditure tagging at the transaction level for grant deployment reporting (Hub &sect;09c), treasury as payment rail never record (CR Phase 02); W3.5 <code>tax_records</code> with encrypted identifiers and administrator-only access, K-1 preparation export feeding the accountant (CIS &sect;08); W3.6 treasury views and the distribution-event shape, with multi-sig named as a banking-structure action owned by humans, not code (S Phase 02); W3.7 grant tranche entries joined to W2.9. D10 blocks only the facility-obligation detail inside W3.6.</p>
+
+  <h3><span class="n">W4</span>Wave W4 &middot; Governance (CIS Phase 03)</h3>
+  <p>W4.0 authors briefs. Seeded scope: W4.1 meetings, attendance, proxies with real-time quorum view (quorum always correct and the rule shown, CIS &sect;15); W4.2 motions and immutable votes with thresholds enforced as constraints; W4.3 consents (&sect;2.8, &sect;3.15); W4.4 minutes drafting (Nou) and Secretary ratification; W4.5 notices v2 with receipt confirmation hardening; W4.6 voting interface, open-source by commitment (O Phase 03); W4.7 optional attestation extension, blocked on D8. Activation of binding electronic votes is gated on R1 semantics being final.</p>
+
+  <h3><span class="n">W5</span>Wave W5 &middot; Lifecycle (CIS Phase 04)</h3>
+  <p>W5.0 authors briefs. Seeded scope: the membership state machine (application, active, suspended, withdrawn, terminated, former) with signed, logged transitions; withdrawal with the fourteen-day notice and equity calculation; suspension clock; termination hearing support; redemption schedules up to five years, with the simplification path noted if the non-redeemable option is adopted (CIS &sect;17, draft-bylaws &sect;1.9.3).</p>
+
+  <h3><span class="n">W6</span>Wave W6 &middot; Full interface (CIS Phase 05)</h3>
+  <p>W6.0 authors briefs. Seeded scope: derived analytics; benefit report generation and the guaranteed public view anchoring the O pathway (draft-bylaws &sect;XV); audit support surface; member-exercisable data export from the portal (CR Phase 04); and the walkaway drill as a tested, scheduled capability rather than an assumption (CR Phase 05), building on W0.14.</p>
+
+  <h3><span class="n">P1</span>Practice (CIS Phase 06)</h3>
+  <p>Owner: membership. No software. Indexed so STATUS.md never reads 100% on architecture alone, which is the PRD's own caution (CIS &sect;16).</p>
+</section>
+
+<section id="s07">
+  <div class="label">07 &middot; G1: the Alpha Gate</div>
+  <div class="rule"></div>
+  <p>G1 is <code>verified</code> when every step in the following set is <code>verified</code>: all of W0; W1.1 through W1.8; W2.1 through W2.6; and decisions D1, D2, D3, D4, D6, D7 recorded. W2.7 through W2.9 and all of W3 onward are explicitly <em>not</em> required for G1; they proceed against the same ledger after the gate. The gate's own milestone file lists the set, so the validator computes G1 status mechanically and the /build panel shows distance-to-alpha as a single number. Operationally, G1 means: a real invited member can sign in, see what governs them, sign their agreement, appear in the directory, ask Nou a grounded question and get a cited answer, and the Hub team can run applications, sessions, events, the KPI dashboard, and a monthly report against production data.</p>
+</section>
+
+<section id="s08">
+  <div class="label">08 &middot; Operating the Ledger</div>
+  <div class="rule"></div>
+  <p>For an executing agent, the loop is: take the lowest-indexed <code>pending</code> step whose dependencies are <code>verified</code> and whose <code>decision_refs</code> are resolved; branch as <code>step/&lt;id&gt;</code>; do the Action; flip the status in the same PR; merge only when the named verification is green; the validator advances the board. For Todd, the loop is: STATUS.md or the /build panel for state, the D and R ledger for what is waiting on a human, and PR review wherever <code>verification: human</code> names a role. Anything an agent cannot complete becomes <code>blocked</code> with its reason written into the file rather than worked around, which keeps the dependency tree truthful. The plan itself is versioned: amendments to this document are commits like any other, so the history of the plan is part of the audit trail of the build.</p>
+</section>
+
+<footer>
+  CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeToggle');
+  var label = document.getElementById('modeLabel');
+  var icon = document.getElementById('modeIcon');
+
+  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+
+  function apply(mode) {
+    root.setAttribute('data-mode', mode);
+    label.textContent = mode;
+    icon.innerHTML = mode === 'dark' ? moon : sun;
+  }
+
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  apply(prefersLight.matches ? 'light' : 'dark');
+  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
