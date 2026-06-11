@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>Build Roadmap · CIS · Hub Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* co-op.us tokens · verbatim */
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;
+--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;line-height:1.65;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);overflow:hidden;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+
+.app{height:100vh;display:flex;flex-direction:column;}
+
+/* header */
+.top{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s5);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.top h1{font-family:'Libre Baskerville',Georgia,serif;font-size:19px;font-weight:700;color:var(--heading);letter-spacing:-.3px;white-space:nowrap;}
+.top .sub{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
+.top .grow{flex:1;}
+.seg{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--surface);}
+.seg button{padding:5px 14px;font-size:11.5px;color:var(--muted);letter-spacing:.06em;transition:color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.seg button[aria-pressed="true"]{color:var(--terra-text);background:var(--terra-dim);}
+.search{display:flex;align-items:center;gap:var(--s2);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 12px;}
+.search svg{width:13px;height:13px;stroke:var(--faint);}
+.search input{background:none;border:none;color:var(--text);font:inherit;font-size:12px;width:120px;}
+.search input::placeholder{color:var(--faint);}
+.mode-toggle{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 13px;display:flex;align-items:center;gap:var(--s2);transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle svg{width:14px;height:14px;stroke:currentColor;}
+
+/* main grid */
+.main{flex:1;display:grid;grid-template-columns:236px minmax(0,1fr) 396px;gap:var(--s4);padding:var(--s4) var(--s5) var(--s3);min-height:0;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;min-height:0;
+transition:background-color var(--dur-mode) var(--ease);}
+.panel .phead{padding:var(--s3) var(--s4) 0;}
+.plabel{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.prule{width:40px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s2) 0 var(--s3);}
+.pscroll{overflow-y:auto;padding:0 var(--s4) var(--s4);min-height:0;scrollbar-width:thin;}
+
+/* rail */
+.rail .wnode{width:100%;text-align:left;border:1px solid var(--border);border-radius:8px;padding:var(--s2) var(--s3);margin-bottom:var(--s2);background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.rail .wnode:hover{border-color:var(--terra);}
+.rail .wnode[aria-pressed="true"]{border-color:var(--terra);background:var(--terra-dim);}
+.rail .wid{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-text);display:block;}
+.rail .wt{color:var(--heading);font-size:12px;display:block;}
+.rail .wc{font-size:10.5px;color:var(--faint);font-variant-numeric:tabular-nums;}
+.rail .arrow{text-align:center;color:var(--faint);font-size:11px;line-height:1;padding:1px 0 5px;}
+.rail .gn{border-style:dashed;border-color:rgba(196,149,106,.45);background:linear-gradient(135deg,var(--bg),var(--terra-glow));}
+.rail .note{font-size:10px;color:var(--faint);line-height:1.7;margin-top:var(--s2);}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);padding:var(--s3) var(--s4);}
+.tile{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:var(--s3) var(--s3) var(--s2);}
+.tile .tl{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.tile .fig{font-size:21px;font-weight:500;color:var(--heading);font-variant-numeric:tabular-nums;line-height:1.15;}
+.tile .ts{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+/* filter chips */
+.fchips{display:flex;flex-wrap:wrap;gap:var(--s2);padding:0 var(--s4) var(--s3);align-items:center;}
+.fchip{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:3px 11px;
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.fchip:hover{border-color:var(--terra);color:var(--terra-text);}
+.fchip[aria-pressed="true"]{border-color:var(--terra);color:var(--terra-text);background:var(--terra-dim);}
+
+/* index rows */
+.row{width:100%;text-align:left;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:var(--s3);align-items:baseline;
+padding:7px var(--s3);border:1px solid transparent;border-left:2px solid transparent;border-radius:8px;
+transition:background-color var(--dur-micro) var(--ease),border-color var(--dur-micro) var(--ease),opacity var(--dur-micro) var(--ease);}
+.row:hover{background:var(--bg);border-color:var(--border);border-left-color:var(--border);}
+.row .rid{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra-text);white-space:nowrap;}
+.row .rt{color:var(--text);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+body[data-lens="plain"] .row .rt{font-family:'Libre Baskerville',Georgia,serif;font-size:12.5px;}
+.row .rmark{font-size:10px;color:var(--terra-text);width:12px;display:inline-block;}
+.row.sel{background:var(--surface-raised);border-color:var(--border-strong);border-left-color:var(--terra);}
+.row.dim{opacity:.35;}
+.rowgrp{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);padding:var(--s3) var(--s3) var(--s1);}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid;white-space:nowrap;}
+.chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.chip.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.chip.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.chip.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+
+/* tree view */
+.gbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;padding:0 var(--s4) var(--s3);}
+.gbar .lg{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;}
+.gbar .lg .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.gbar .lg.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.gbar .lg.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.gbar .lg.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.gbar .gnote{font-size:10px;color:var(--faint);}
+.gbar .grow{flex:1;}
+.zbtn{font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 10px;background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.zbtn:hover{border-color:var(--terra);color:var(--terra-text);}
+.gwrap{overflow:auto;min-height:0;flex:1;padding:0 var(--s4) var(--s4);scrollbar-width:thin;}
+.gscale{transform-origin:0 0;}
+svg.tree text{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.06em;fill:var(--heading);}
+svg.tree .nd rect{fill:var(--warn-dim);stroke:var(--warn);stroke-width:1;rx:7;
+transition:opacity var(--dur-micro) var(--ease),stroke var(--dur-micro) var(--ease);}
+svg.tree .nd circle{fill:var(--warn);}
+svg.tree .nd.info rect{fill:var(--info-dim);stroke:var(--info);}
+svg.tree .nd.info circle{fill:var(--info);}
+svg.tree .nd.ok rect{fill:var(--ok-dim);stroke:var(--ok);}
+svg.tree .nd.ok circle{fill:var(--ok);}
+svg.tree .nd{cursor:pointer;}
+svg.tree .nd.sel rect{stroke:var(--terra);stroke-width:2;}
+svg.tree .nd.dim{opacity:.22;}
+svg.tree .nd.hit rect{stroke:var(--terra);stroke-dasharray:3 2;}
+svg.tree .nd:focus{outline:none;}
+svg.tree .nd:focus rect{stroke:var(--terra);stroke-width:2;}
+svg.tree .nd.gate rect{stroke-dasharray:5 3;}
+svg.tree path.e{fill:none;stroke:var(--border-strong);stroke-width:1;opacity:.55;
+transition:opacity var(--dur-micro) var(--ease),stroke var(--dur-micro) var(--ease);}
+svg.tree path.e.dec{stroke:var(--faint);}
+svg.tree path.e.act{stroke:var(--terra);stroke-dasharray:5 4;opacity:.8;}
+svg.tree path.e.gatee{stroke:var(--terra);opacity:.45;}
+svg.tree path.e.up{stroke:var(--terra);opacity:.95;stroke-width:1.4;}
+svg.tree path.e.dn{stroke:var(--border-strong);opacity:.95;stroke-width:1.4;}
+svg.tree path.e.off{opacity:.07;}
+svg.tree .col{fill:var(--faint);font-size:9px;letter-spacing:.18em;}
+
+/* detail */
+.det .dhead{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2);}
+.det .did{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-text);}
+.det h2{font-family:'Libre Baskerville',Georgia,serif;font-size:17px;font-weight:700;color:var(--heading);line-height:1.4;}
+.det .plain{font-family:'Libre Baskerville',Georgia,serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.75;margin:var(--s2) 0 var(--s3);}
+.det .meta{font-size:11px;line-height:2;color:var(--text);border-top:1px solid var(--border);padding-top:var(--s2);margin-bottom:var(--s3);}
+.det .meta .k{color:var(--faint);}
+.det .blk{margin-bottom:var(--s4);}
+.det .bk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.det .bv{font-size:11.5px;line-height:1.8;color:var(--text);}
+.det .bv.serif{font-family:'Libre Baskerville',Georgia,serif;font-size:13px;}
+.det .deps{display:flex;flex-wrap:wrap;gap:var(--s2);}
+.dep{font-size:10.5px;color:var(--terra-text);border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:3px 9px;background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease);}
+.dep:hover{border-color:var(--terra);}
+.dep .dt{color:var(--muted);}
+.gatebar{height:6px;border-radius:999px;background:var(--bg);border:1px solid var(--border);overflow:hidden;margin:var(--s2) 0 var(--s1);}
+.gatebar i{display:block;height:100%;width:0%;background:var(--ok);transition:width var(--dur-mode) var(--ease);}
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-size:10.5px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:4px 10px;}
+.prov .cite{color:var(--terra-text);}
+.prov .sep{color:var(--faint);}
+.empty{font-size:11px;color:var(--faint);padding:var(--s3);}
+
+/* footer */
+.foot{font-size:10px;color:var(--faint);text-align:center;padding:var(--s2) var(--s5) var(--s3);border-top:1px solid var(--border);}
+
+/* center view switching */
+body[data-cview="tree"] .idx .fchips,body[data-cview="tree"] .idx #list{display:none;}
+body[data-cview="index"] .idx .gbar,body[data-cview="index"] .idx .gwrap{display:none;}
+
+/* mobile */
+.viewseg{display:none;}
+@media (max-width:980px){
+  body{overflow:auto;}
+  .app{height:100dvh;}
+  .main{grid-template-columns:1fr;overflow:hidden;}
+  .panel{display:none;}
+  body[data-view="rail"] .panel.rail,body[data-view="index"] .panel.idx,body[data-view="detail"] .panel.det{display:flex;}
+  .viewseg{display:flex;margin:0 var(--s5) var(--s3);}
+  .viewseg button{flex:1;}
+  .tiles{grid-template-columns:repeat(2,1fr);}
+  .top h1{font-size:16px;}
+  .search input{width:80px;}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body data-lens="plain" data-view="index" data-cview="index">
+<div class="app">
+
+<div class="top">
+  <div>
+    <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);text-decoration:none;letter-spacing:.1em;margin-bottom:2px;display:block;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&#8592; commons</a>
+    <h1>Build Roadmap</h1>
+    <div class="sub">cis &middot; hub operations &middot; private alpha &middot; ledger index</div>
+  </div>
+  <div class="grow"></div>
+  <div class="seg" role="group" aria-label="Center view">
+    <button id="cvIndex" aria-pressed="true">index</button>
+    <button id="cvTree" aria-pressed="false">tree</button>
+  </div>
+  <div class="seg" role="group" aria-label="Reading lens">
+    <button id="lensPlain" aria-pressed="true">plain</button>
+    <button id="lensTech" aria-pressed="false">technical</button>
+  </div>
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="q" type="search" placeholder="search ledger" aria-label="Search ledger">
+  </div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</div>
+
+<div class="seg viewseg" role="group" aria-label="View">
+  <button data-v="rail" aria-pressed="false">roadmap</button>
+  <button data-v="index" aria-pressed="true">ledger</button>
+  <button data-v="detail" aria-pressed="false">detail</button>
+</div>
+
+<div class="main">
+
+  <div class="panel rail">
+    <div class="phead"><div class="plabel">Roadmap</div><div class="prule"></div></div>
+    <div class="pscroll" id="rail"></div>
+  </div>
+
+  <div class="panel idx">
+    <div class="tiles" id="tiles"></div>
+    <div class="fchips" id="fchips" role="group" aria-label="Filter by kind"></div>
+    <div class="gbar" id="gbar"></div>
+    <div class="pscroll" id="list" role="listbox" aria-label="Milestone index"></div>
+    <div class="gwrap" id="gwrap"><div class="gscale" id="gscale"></div></div>
+  </div>
+
+  <div class="panel det">
+    <div class="phead"><div class="plabel" id="detLabel">Detail</div><div class="prule"></div></div>
+    <div class="pscroll det" id="detail"></div>
+  </div>
+
+</div>
+
+<div class="foot">seeded from implementation plan v0.1 &middot; draft &middot; statuses become live from the repository's build_status mirror once W0.2 and W0.18 are verified &middot; co-op.us &middot; regenhub, lca &middot; 2026</div>
+</div>
+
+<script>
+/* ---------- ledger data · single source, seeded from plan v0.1 ---------- */
+/* k: s step · d decision · r ratification gate · g release gate · p practice */
+/* dep entries may name a wave (e.g. "W1") meaning the coarse edge: that whole wave verified */
+/* act: activation edges (dashed in the plan's tree): switch behavior on, do not block build */
+const L=[
+{i:"D1",k:"d",w:"D",t:"front-end framework",pl:"Which tool builds the member portal.",o:"organizers",dep:[],dec:[],v:"recorded decision",
+ su:"A framework is chosen against the PRD criteria and recorded.",
+ b:"PRD criteria: portability, accessibility, mobile-first, Supabase compatibility, design-system fidelity, plus the chokepoint test (CIS \u00A717). Proposed default: a static-first framework with islands of interactivity (Astro is the type specimen; Vite + React SPA is the alternative)."},
+{i:"D2",k:"d",w:"D",t:"application form host",pl:"Where the public application form lives.",o:"organizers",dep:[],dec:[],v:"recorded decision",
+ su:"A form path is chosen and recorded.",
+ b:"The PRDs frame Formbricks (self-host) versus Tally or Typeform (managed chokepoint) (Hub \u00A711). The constraint adds a third option, named explicitly as an extension: a static form on Pages inserting through a narrowly scoped anonymous RLS policy. Proposed default: the native path, Formbricks as fallback."},
+{i:"D3",k:"d",w:"D",t:"repository visibility and naming",pl:"Whether the repository is public from day one.",o:"organizers",dep:[],dec:[],v:"recorded decision",
+ su:"Org and repo exist with a recorded visibility decision.",
+ b:"Proposed default: public from first commit, the O-pathway Phase 01 commitment made literal (CIS \u00A704). Hard rule either way: no secrets, no member PII, synthetic seeds only."},
+{i:"D4",k:"d",w:"D",t:"transactional email provider",pl:"Which service delivers official email.",o:"organizers",dep:[],dec:[],v:"recorded decision",
+ su:"One provider with API send and delivery webhooks is chosen.",
+ b:"Required because notices carry legally timed windows and delivery tracking (CIS \u00A708, draft-bylaws \u00A72.4); Supabase built-in mail covers auth flows only. Candidate class: Resend, Postmark, SES; no endorsement implied."},
+{i:"D5",k:"d",w:"D",t:"make.com adoption trigger",pl:"Whether Make.com is ever adopted, and what would justify it.",o:"organizers",dep:[],dec:[],v:"recorded decision",
+ su:"The reversal trigger is recorded in the chokepoint analysis.",
+ b:"Proposed default: not adopted in alpha. Trigger if invoked: a required integration whose first-party Edge Function cost exceeds reasonable effort and whose data remains exportable. Until then its PRD duties route to pg_cron, Edge Functions, and Actions."},
+{i:"D6",k:"d",w:"D",t:"alpha access posture",pl:"Whether a publicly visible app shell is acceptable for the alpha.",o:"organizers",dep:[],dec:[],v:"recorded decision",
+ su:"The posture is recorded; W0.12 exposure follows it.",
+ b:"Proposed default: accept the public static shell; privacy enforced at the data layer; noindex; invite-only auth. Alternative augmentation: a proxy with access control in front of Pages."},
+{i:"D7",k:"d",w:"D",t:"section addressing scheme",pl:"How we cite bylaw sections before ratification.",o:"organizers + counsel awareness",dep:[],dec:[],v:"recorded decision",
+ su:"The draft-bylaws: prefix register exists in docs/citations.md.",
+ b:"Pre-ratification, every citation uses the draft-bylaws:\u00A7x.y prefix against a register; ratification (R1) triggers one sweep that drops the prefix and freezes addresses. Keeps cite-as-you-enforce honest before the text is final."},
+{i:"D8",k:"d",w:"D",t:"attestation scope and key custody",pl:"Which events go on-chain, and who holds the keys.",o:"working group (CIS \u00A717)",dep:[],dec:[],v:"recorded decision",
+ su:"Scope and custody recorded; blocks only optional attestation extensions.",
+ b:"Deferred beyond alpha. Blocks the optional attestation steps in W4 and W6 only."},
+{i:"D9",k:"d",w:"D",t:"EE liaison interface form",pl:"How the Ethereum Everywhere liaison reviews KPIs.",o:"organizers + EE team",dep:[],dec:[],v:"recorded decision",
+ su:"Dashboard, digest, or shared page is chosen.",
+ b:"CROPS implications cut both ways (Hub \u00A711). Proposed default: scoped read-only dashboard credential, with the public KPI view satisfying the open-source pull."},
+{i:"D10",k:"d",w:"D",t:"lease-entity question",pl:"Which entity holds the third-floor lease.",o:"board",dep:[],dec:[],v:"recorded decision",
+ su:"Leaseholder recorded; facility obligations enter the ledger accordingly.",
+ b:"Whether West or the LCA holds the lease affects how facility obligations enter the ledger (CIS \u00A717). Blocks specific W3.6 detail only; indexed so the dependency is visible."},
+{i:"R1",k:"r",w:"R",t:"bylaws ratification",pl:"Counsel and membership ratify the bylaws.",o:"counsel + membership",dep:[],dec:[],act:["W3.0","W4.0"],v:"counsel",
+ su:"Bylaws ratified; citation freeze sweep run; \u00A718.1 semantics final.",
+ b:"Named reviewers: Pote Law Firm, Yev Muchnik. Activates allocation-formula automation (until then manual entry against the equal default, exactly as CIS \u00A717 specifies), the D7 citation sweep, and binding electronic votes. Blocks no build step."},
+{i:"R2",k:"r",w:"R",t:"hub membership agreement",pl:"Counsel ratifies the Hub Membership Agreement.",o:"counsel",dep:[],dec:[],act:["W2.1"],v:"counsel",
+ su:"Agreement ratified; Hub Member role activates against it.",
+ b:"Pote review per Hub \u00A711. Until ratified, Hub access proceeds against the interim acceptable-use policy, itself recorded in the agreements repository so the interim state is on the record."},
+{i:"W0.1",k:"s",w:"W0",t:"repo bootstrap and governance",pl:"Create the shared repository and write down its rules.",o:"human (admin) + agent",dep:[],dec:["D3"],v:"ci:repo-policy",
+ su:"Repository exists with README, GOVERNANCE.md, CODEOWNERS, PR and issue templates, branch protection applied; ci:repo-policy green.",
+ b:"The repo is the milestone system, so its own governance files are the first artifact. Human creates org and repo per D3 and applies protection; agent commits the governance files and the repo-policy check."},
+{i:"W0.2",k:"s",w:"W0",t:"ledger scaffold, validator, status board",pl:"Turn this plan into live, checkable files that track themselves.",o:"agent",dep:["W0.1"],dec:[],v:"ci:milestone-validate",
+ su:"All ledger entries exist as schema-valid files; validator enforces acyclicity and gating; STATUS.md and index.json regenerate on push.",
+ b:"Converts the plan into the live ledger: validator scripts, status generator, the workflow, and one milestone file per entry. A PR that changes code without touching a milestone file fails validation; that rule keeps the ledger exhaustive."},
+{i:"W0.3",k:"s",w:"W0",t:"supabase project provisioning",pl:"Stand up the database account and connect it safely.",o:"human (credentials) + agent",dep:["W0.1"],dec:[],v:"ci:db-verify (connection)",
+ su:"Hosted project linked; access token, project ref, anon and service keys present as Actions secrets; ci:db-verify can connect.",
+ b:"One hosted project is production-of-record; local development via CLI; secrets never enter the repo. Human creates the project and stores secrets; agent commits config and the connection stage of db-verify."},
+{i:"W0.4",k:"s",w:"W0",t:"migration pipeline and shadow verification",pl:"Every database change passes a rehearsal before it touches the real thing.",o:"agent",dep:["W0.3"],dec:[],v:"ci:db-verify",
+ su:"CI applies all migrations to a clean shadow database and runs pgTAP; push to hosted occurs only from main after green.",
+ b:"With a single hosted environment, the shadow apply is the safety net. Migrations are append-only; no manual SQL against production."},
+{i:"W0.5",k:"s",w:"W0",t:"auth: invite-only identity layer",pl:"Sign-in by email, invitation only.",o:"agent",dep:["W0.4"],dec:["D6"],v:"ci:rls-audit (auth probes)",
+ su:"Email OTP sign-in works; non-allowlisted sign-up is rejected; JWT carries role claims from the auth hook; probes prove all three.",
+ b:"Identity is the CIS identity layer (CIS \u00A707); alpha is invite-only per D6. Invites table, before-user-created hook, custom-claims hook stamping roles from the registry."},
+{i:"W0.6",k:"s",w:"W0",t:"RLS baseline: default-deny, cite-as-you-enforce",pl:"Lock every table by default; each access rule cites the bylaw line that permits it.",o:"agent",dep:["W0.4"],dec:["D7"],v:"ci:rls-audit",
+ su:"Every public table has RLS enabled and forced; every policy carries a citation comment matching the D7 register; anonymous and cross-member probes return denial on protected tables.",
+ b:"The whole authorization perimeter under the public anon key. Migration template forces RLS on creation; policy comments embed draft-bylaws or grant citations; pgTAP audits coverage. Required check forever after."},
+{i:"W0.7",k:"s",w:"W0",t:"REA core: agents, agreements, signatures, event envelope",pl:"The four-part foundation: people, agreements, signatures, and a tamper-evident history.",o:"agent",dep:["W0.6"],dec:[],v:"ci:db-verify",
+ su:"agents, agreements, signatures exist per CIS \u00A706; shared event envelope (actor, occurred_at, prior_value) and audit trigger apply; pgTAP proves an UPDATE writes an audit row.",
+ b:"The four REA primitives are the top-level partition; every relationship is an Event. Agreements carries versioning and content hash; Storage bucket policies mirror table RLS."},
+{i:"W0.8",k:"s",w:"W0",t:"role registry and access helpers",pl:"Write the fifteen roles from the bylaws and grant into the system.",o:"agent",dep:["W0.7","W0.5"],dec:[],v:"ci:rls-audit",
+ su:"The 15 roles of CIS \u00A707 and Hub \u00A705 exist as data with source citations; helper functions are used by all policies; claims reflect registry changes on token refresh.",
+ b:"Roles are defined by the bylaws and the grant, represented rather than invented. Role grants are events; SQL helpers marked stable for the planner."},
+{i:"W0.9",k:"s",w:"W0",t:"edge functions scaffold and secrets boundary",pl:"A safe place for keys and any work the public site cannot do.",o:"agent",dep:["W0.3"],dec:[],v:"ci:functions-deploy",
+ su:"Functions deploy from CI; a hello function verifies JWT and echoes the caller's role; service-role key reachable only inside functions, asserted by secret-scan.",
+ b:"The only place secrets live at request time. Shared CORS, JWT verification middleware, deploy workflow; secret-scan joins required checks."},
+{i:"W0.10",k:"s",w:"W0",t:"scheduling rails and job registry",pl:"Two independent clocks, so scheduled work survives either one failing.",o:"agent",dep:["W0.9"],dec:[],v:"ci:db-verify + heartbeat rows",
+ su:"pg_cron and an Actions cron each write a heartbeat job-run event; the jobs table shows both rails; a missed-run query exists.",
+ b:"Two rails per the Reliability requirement (CIS \u00A714): an export scheduled from Actions still fires if the database's own scheduler is what failed."},
+{i:"W0.11",k:"s",w:"W0",t:"email rail",pl:"Send official notices by email and record proof of delivery.",o:"agent",dep:["W0.9"],dec:["D4"],v:"ci:functions-deploy + human:operator",
+ su:"email-send delivers via the D4 provider; provider webhooks write delivery events; a test notice shows queued, sent, delivered states on its record.",
+ b:"Notices carry legally required timing and tracking (draft-bylaws \u00A72.4). Provider adapter interface so D4 stays swappable; build the adapter shape before D4 resolves, blocked on live sending only."},
+{i:"W0.12",k:"s",w:"W0",t:"portal scaffold and pages pipeline",pl:"Publish the member portal shell to the web.",o:"agent",dep:["W0.1"],dec:["D1","D6"],v:"ci:pages-deploy + ci:portal-build",
+ su:"pages-deploy publishes on merge to main; the site serves 200 on the alpha domain with build SHA visible; SPA fallback works; noindex present; anon key injected at build only.",
+ b:"The member portal shell (CIS \u00A705, \u00A710). Custom subdomain, HTTPS, 404 fallback, meta CSP; the build fails if any non-public secret is referenced."},
+{i:"W0.13",k:"s",w:"W0",t:"design tokens and base components",pl:"Apply the cooperative's typefaces, colors, and reading patterns.",o:"agent",dep:["W0.12"],dec:[],v:"human:Todd + ci:portal-build",
+ su:"Tokens match the canonical design-system file exactly; the two-grammar type rule is enforced; a rendered reference page passes visual review.",
+ b:"Design-system adherence is a PRD requirement, not decoration (CIS \u00A710). Base primitives include the record detail's three-part pattern: record, governing authority, history."},
+{i:"W0.14",k:"s",w:"W0",t:"export paths and tested restore",pl:"Every table exportable; restoring from backup is practiced, not assumed.",o:"agent",dep:["W0.10"],dec:[],v:"ci:db-verify (restore) + artifacts",
+ su:"docs/export-paths.md covers every table; a scheduled export writes open-format snapshots on both rails; a restore drill into a clean database succeeds and is logged.",
+ b:"The CR Phase 01 floor: every table ships with a documented export path; backup strategy survives any single vendor (CIS \u00A704)."},
+{i:"W0.15",k:"s",w:"W0",t:"chokepoint analysis as design artifact",pl:"Write down what happens if any vendor disappears.",o:"agent (draft) + human (adoption)",dep:["W0.1"],dec:[],v:"human:organizers",
+ su:"docs/chokepoint-analysis.md covers Supabase, GitHub, the D4 provider, Mercury, Claude API, with failure modes, export paths, and the D5 trigger; adopted on review.",
+ b:"The PRD requires vendor selection recorded as an artifact, not folklore (CIS \u00A704). Clears the standing blocker that the analysis exist in writing."},
+{i:"W0.16",k:"s",w:"W0",t:"grammar lint",pl:"A guardrail keeping the wrong tax vocabulary out of our documents.",o:"agent",dep:["W0.1"],dec:[],v:"ci:grammar-lint",
+ su:"CI fails on Subchapter T vocabulary in migrations, UI strings, and docs of this repo, with a documented allowlist mechanism.",
+ b:"The grammar quarantine: Subchapter K vocabulary only in RegenHub surfaces; patronage survives only as a scoped internal name. Encoding the discipline in CI keeps it from depending on memory."},
+{i:"W0.17",k:"s",w:"W0",t:"observability and error sink",pl:"When something breaks, it leaves a record we can read.",o:"agent",dep:["W0.9"],dec:[],v:"ci:functions-deploy + human:operator",
+ su:"Client errors land in an admin-only events table via the sink function; a thrown test error is visible end to end; runbook exists.",
+ b:"Audit by design extends to the system's own failures (principle 09)."},
+{i:"W0.18",k:"s",w:"W0",t:"build-status mirror",pl:"The portal shows the live progress of its own construction.",o:"agent",dep:["W0.2","W0.9","W0.12"],dec:[],v:"ci:status-mirror + human:Todd",
+ su:"Every merge updates build_status in Supabase; the portal /build panel renders the ledger over Realtime within one refresh of merge.",
+ b:"Near-real-time tracking, and the recursive case of legibility-as-product: the system shows its own construction to the members it is built for. This instrument becomes live here."},
+{i:"W1.1",k:"s",w:"W1",t:"memberships and class model",pl:"The member register, with the four classes and good standing.",o:"agent",dep:["W0.7","W0.8"],dec:[],v:"ci:rls-audit",
+ su:"memberships per draft-bylaws \u00A71.1\u20131.4 with four classes; good standing as a derived view; \u00A718.1 scopes proven by probes (own-always, member-aggregate).",
+ b:"The canonical register (CIS \u00A708). Statutory questions about non-voting classes remain with counsel and do not block representing the classes as data."},
+{i:"W1.2",k:"s",w:"W1",t:"stock ledger",pl:"One share per member, enforced by the database itself.",o:"agent",dep:["W1.1"],dec:[],v:"ci:db-verify",
+ su:"stock_ledger enforces one Patron share per member at the database; issuance and transfer-back are events; pgTAP proves a second issuance fails.",
+ b:"Conservation at the ledger (principle 05; draft-bylaws \u00A71.13). Preferred Stock exists in schema, reserved and inactive per the open investor framework."},
+{i:"W1.3",k:"s",w:"W1",t:"agreements repository, populated",pl:"Every governing document, versioned and openable by those it governs.",o:"agent",dep:["W0.7"],dec:[],v:"human:operator + ci:rls-audit",
+ su:"Articles, draft bylaws, interim hub AUP, EE grant letter, membership-agreement template loaded as versioned, hashed records with correct visibility.",
+ b:"The shared repository both PRDs point at. Hashes anchor later attestation without committing to it (D8)."},
+{i:"W1.4",k:"s",w:"W1",t:"signature capture",pl:"Sign agreements in the portal; each signature is a recorded event.",o:"agent",dep:["W1.3","W0.5"],dec:[],v:"ci:db-verify + human:operator",
+ su:"An authenticated signer executes an agreement version; the event stores signer, version hash, timestamp; the detail view shows signature history.",
+ b:"Signatures are events under draft-bylaws \u00A71.4. Alpha scope is in-app click-to-sign with hash binding; external e-sign is an augmentation deliberately not taken."},
+{i:"W1.5",k:"s",w:"W1",t:"member directory and profile",pl:"A directory showing only what the bylaws require.",o:"agent",dep:["W1.1","W0.13"],dec:[],v:"human:Todd + ci:rls-audit",
+ su:"Directory shows only what the bylaws require (P Phase 01); profile self-edit works; record detail follows the three-part pattern.",
+ b:"Record, governing authority, history: traceability made visible (CIS \u00A710)."},
+{i:"W1.6",k:"s",w:"W1",t:"admission and onboarding workflow",pl:"The path from application to active member, step by step.",o:"agent",dep:["W1.2","W1.3","W1.4","W0.11"],dec:["D2"],v:"human:operator + ci:db-verify",
+ su:"The \u00A71.4 sequence runs end to end on synthetic data; each transition is an event with actor and citation.",
+ b:"Named simplification: the board admission decision is recorded as a consent event rather than the full motions module; the event shape is forward-compatible. The $100 stock purchase records an out-of-band payment reference in alpha."},
+{i:"W1.7",k:"s",w:"W1",t:"nou v1: read-only, grounded, logged",pl:"Nou answers questions with citations, and only sees what you can see.",o:"agent",dep:["W0.9","W1.1","W1.3"],dec:[],v:"ci:rls-audit (nou probes) + human:Todd",
+ su:"Gateway forwards the invoking user's JWT through a user-scoped client; answers cite section and record ids; every interaction logs prompt, citation set, response; a cross-member probe through Nou is refused identically to a direct query.",
+ b:"CIS \u00A711 in its Phase 01 shape. Scoped impersonation is structural, not promised; the refusal posture holds. Interaction-log retention is an interim retain-all admin-only default, named as interim."},
+{i:"W1.8",k:"s",w:"W1",t:"notices v1",pl:"Notices that respect the bylaws' timing windows.",o:"agent",dep:["W0.11","W1.1"],dec:[],v:"ci:db-verify + human:operator",
+ su:"A notice with a \u00A72.4 timing window is generated, sent, and shows confirmed delivery on its record; the window computation is a tested pure function.",
+ b:"Minimal legally timed notice path on the email rail."},
+{i:"W2.1",k:"s",w:"W2",t:"hub schema extensions",pl:"The hub's twelve tables, each access rule citing the grant.",o:"agent",dep:["W0.6","W0.7","W0.8"],dec:[],v:"ci:rls-audit",
+ su:"The twelve Hub \u00A704 tables exist with grant citations on every policy; hub roles enforce Hub \u00A705 scopes; probes prove both.",
+ b:"Applicant sees own application only; the EE Liaison sees aggregates, not individuals."},
+{i:"W2.2",k:"s",w:"W2",t:"application and access",pl:"A public application with published criteria and reasoned decisions.",o:"agent",dep:["W2.1","W0.12"],dec:["D2"],v:"ci:rls-audit (anon insert) + human:operator",
+ su:"The public form submits through the D2 path under a narrowly scoped insert policy; criteria are versioned in the public repo; decisions are recorded against criteria with applicant notified.",
+ b:"Grant \u00A72 requires a public application and transparent, fair selection. The anonymous insert policy is the single deliberate hole in default-deny and carries its own probes; rate limiting is a named watch item."},
+{i:"W2.3",k:"s",w:"W2",t:"co-working sessions",pl:"Counting seat use against the grant's promises.",o:"agent",dep:["W2.1"],dec:[],v:"human:operator + ci:db-verify",
+ su:"Seat registry holds 10 weekly complimentary and 2\u20133 daily open seats as resources; session capture takes under a minute on mobile; utilization derives purely from events.",
+ b:"Surfaces directly into the KPI dashboard and monthly report (Hub \u00A706)."},
+{i:"W2.4",k:"s",w:"W2",t:"events module",pl:"Meetups and events, with attendance kept as counts, not name lists.",o:"agent",dep:["W2.1"],dec:[],v:"human:operator + ci:rls-audit",
+ su:"Monthly Ethereum Meetup distinguishable from additional events; registration and attendance work; materials link to the educational surface; attendance aggregates without exposing names.",
+ b:"Individual attendance records exist only with explicit opt-in (Hub \u00A703, privacy)."},
+{i:"W2.5",k:"s",w:"W2",t:"KPI and performance surface",pl:"The three grant KPIs computed from the record, with a public view.",o:"agent",dep:["W2.3","W2.4"],dec:[],v:"ci:db-verify (fixtures) + human:Todd",
+ su:"KPI views compute exactly per Hub \u00A707; the public read-only view is live; every figure drills to the event rows that produced it.",
+ b:"Computed rather than reported is the module's whole point; the drill-down is the security posture the EE team can verify independently."},
+{i:"W2.6",k:"s",w:"W2",t:"impact reporting",pl:"Nou drafts the monthly report; a person approves; it publishes.",o:"agent",dep:["W2.5","W1.7"],dec:[],v:"human:organizer + ci:pages-deploy",
+ su:"Nou drafts from the event log on the scheduled rail using the stable template; an organizer approves; the report publishes to a stable URL with a portable mirror copy.",
+ b:"Capacity, engagement, two to three highlights, needs (Hub \u00A707)."},
+{i:"W2.7",k:"s",w:"W2",t:"cross-pollination registry",pl:"A simple registry of aligned partner organizations.",o:"agent",dep:["W2.1"],dec:[],v:"human:operator",
+ su:"partner_orgs and joint-event linkage work as the lightweight registry the PRD asks for; visible to members.",
+ b:"Not a sales pipeline (Hub \u00A706)."},
+{i:"W2.8",k:"s",w:"W2",t:"educational surface",pl:"Learning materials and opportunity listings on the public hub page.",o:"agent",dep:["W2.1","W0.12"],dec:[],v:"human:operator",
+ su:"Displays, materials, and opportunity listings render publicly; currency and rotation tracked; EE materials versioned alongside local ones.",
+ b:"Every visual and narrative element doubles as a learning touchpoint (grant \u00A72)."},
+{i:"W2.9",k:"s",w:"W2",t:"grant lifecycle",pl:"Tracking the grant's tranches and milestones against the agreement.",o:"agent",dep:["W2.5","W1.3"],dec:["D9"],v:"human:organizer",
+ su:"Tranches and milestones from Hub \u00A708 exist as events against the grant agreement record; the compliance view shows KPI history in the form D9 selects.",
+ b:"Tranche entries reference treasury once W3 lands."},
+{i:"W3.0",k:"s",w:"W3",t:"author the capital wave briefs",pl:"Write the full work briefs for the capital wave.",o:"agent",dep:["W1"],dec:[],v:"ci:milestone-validate",
+ su:"W3.1\u2013W3.7 exist as schema-complete milestone files.",
+ b:"Detail is produced at the boundary where it is real rather than invented early. Coarse edge: wave W3 follows wave W1."},
+{i:"W3.1",k:"s",w:"W3",t:"capital accounts and capital events",pl:"Member capital accounts with double-entry history.",o:"agent",dep:["W3.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Double-entry capital_events with book/tax distinction and balance-conservation tests (draft-bylaws \u00A75.1)."},
+{i:"W3.2",k:"s",w:"W3",t:"personal balance view",pl:"Each member sees their own balance and its full history.",o:"agent",dep:["W3.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Per the member success criteria (CIS \u00A715)."},
+{i:"W3.3",k:"s",w:"W3",t:"manual allocation against the equal default",pl:"Allocations entered by hand until the bylaws ratify a formula.",o:"agent",dep:["W3.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Formula automation explicitly gated on R1 (CIS \u00A717)."},
+{i:"W3.4",k:"s",w:"W3",t:"mercury read-only ingestion",pl:"Bank transactions flow in read-only; the bank is never the record.",o:"agent",dep:["W3.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Scheduled rails; hub-expenditure tagging at the transaction level (Hub \u00A709c); treasury as payment rail, never record (CR Phase 02)."},
+{i:"W3.5",k:"s",w:"W3",t:"tax records and K-1 preparation",pl:"Tax records encrypted, administrator-only, feeding the accountant.",o:"agent",dep:["W3.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Encrypted identifiers; K-1 preparation export (CIS \u00A708)."},
+{i:"W3.6",k:"s",w:"W3",t:"treasury views and distribution shape",pl:"Treasury views and distributions; multi-sig stays a human act.",o:"agent",dep:["W3.0"],dec:["D10"],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Multi-sig named as a banking-structure action owned by humans, not code (S Phase 02). D10 blocks the facility-obligation detail only."},
+{i:"W3.7",k:"s",w:"W3",t:"grant tranches joined to treasury",pl:"Grant tranches joined to the treasury record.",o:"agent",dep:["W3.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W3.0).",b:"Joins W2.9 grant lifecycle entries to treasury."},
+{i:"W4.0",k:"s",w:"W4",t:"author the governance wave briefs",pl:"Write the full work briefs for the governance wave.",o:"agent",dep:["W3"],dec:[],v:"ci:milestone-validate",
+ su:"W4.1\u2013W4.7 exist as schema-complete milestone files.",b:"Coarse edge: wave W4 follows wave W3. Activation of binding electronic votes is gated on R1 semantics being final."},
+{i:"W4.1",k:"s",w:"W4",t:"meetings, attendance, proxies, quorum",pl:"Meetings with quorum computed live and the rule shown.",o:"agent",dep:["W4.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"Quorum always correct and the underlying rule shown (CIS \u00A715)."},
+{i:"W4.2",k:"s",w:"W4",t:"motions and immutable votes",pl:"Motions and votes that cannot be altered once cast.",o:"agent",dep:["W4.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"Thresholds enforced as constraints."},
+{i:"W4.3",k:"s",w:"W4",t:"consents",pl:"Decisions taken by written consent, recorded properly.",o:"agent",dep:["W4.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"draft-bylaws \u00A72.8, \u00A73.15."},
+{i:"W4.4",k:"s",w:"W4",t:"minutes drafting and ratification",pl:"Nou drafts minutes; the Secretary ratifies.",o:"agent",dep:["W4.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"Augmentation, not automation: the Secretary's act remains the authoritative one."},
+{i:"W4.5",k:"s",w:"W4",t:"notices v2: receipt hardening",pl:"Stronger proof that official notices arrived.",o:"agent",dep:["W4.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"Receipt confirmation hardening toward the Phase 03 posture."},
+{i:"W4.6",k:"s",w:"W4",t:"voting interface, open-source",pl:"The voting screen itself, published as open source.",o:"agent",dep:["W4.0"],dec:[],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"O-pathway Phase 03 commitment."},
+{i:"W4.7",k:"s",w:"W4",t:"attestation extension (optional)",pl:"Optionally anchoring vote records on-chain.",o:"agent",dep:["W4.0"],dec:["D8"],v:"to be authored",seeded:1,
+ su:"Brief and success state authored at the wave boundary (W4.0).",b:"Blocked on D8 attestation scope and key custody."},
+{i:"W5.0",k:"s",w:"W5",t:"author the lifecycle wave briefs",pl:"Write the briefs for withdrawal, suspension, termination, and redemption.",o:"agent",dep:["W4"],dec:[],v:"ci:milestone-validate",
+ su:"Lifecycle wave milestone files exist, schema-complete.",
+ b:"Seeded scope: the membership state machine with signed, logged transitions; withdrawal with the fourteen-day notice and equity calculation; suspension clock; termination hearing support; redemption schedules up to five years, with the simplification path noted if the non-redeemable option is adopted (CIS \u00A717, draft-bylaws \u00A71.9.3)."},
+{i:"W6.0",k:"s",w:"W6",t:"author the full-interface wave briefs",pl:"Write the briefs for analytics, the benefit report, member export, and the walkaway drill.",o:"agent",dep:["W5"],dec:[],v:"ci:milestone-validate",
+ su:"Full-interface wave milestone files exist, schema-complete.",
+ b:"Seeded scope: derived analytics; benefit report generation and the guaranteed public view anchoring the O pathway (draft-bylaws \u00A7XV); audit support surface; member-exercisable data export from the portal (CR Phase 04); the walkaway drill as a tested, scheduled capability (CR Phase 05), building on W0.14."},
+{i:"P1",k:"p",w:"P",t:"practice (CIS Phase 06)",pl:"The culture work no software can ship.",o:"membership",dep:["W6"],dec:[],v:"lived, not shipped",
+ su:"Portable formats by habit; build-in-public reflexive; need-to-know felt instinct; security hygiene habitual.",
+ b:"Deliberately not a development phase (CIS \u00A716). Indexed so the board never reads complete on architecture alone."}
+];
+const G1={i:"G1",k:"g",w:"G",t:"alpha gate",pl:"The bar the alpha must clear before real members rely on it.",o:"composite",dep:[],dec:[],v:"composite",
+ steps:["W0.1","W0.2","W0.3","W0.4","W0.5","W0.6","W0.7","W0.8","W0.9","W0.10","W0.11","W0.12","W0.13","W0.14","W0.15","W0.16","W0.17","W0.18","W1.1","W1.2","W1.3","W1.4","W1.5","W1.6","W1.7","W1.8","W2.1","W2.2","W2.3","W2.4","W2.5","W2.6"],
+ decs:["D1","D2","D3","D4","D6","D7"],
+ su:"Every required step and decision verified.",
+ b:"Operationally, G1 means: a real invited member can sign in, see what governs them, sign their agreement, appear in the directory, ask Nou a grounded question and get a cited answer; and the Hub team can run applications, sessions, events, the KPI dashboard, and a monthly report against production data. W2.7\u2013W2.9 and all of W3 onward proceed against the same ledger after the gate."};
+L.push(G1);
+
+/* ---------- derived ---------- */
+const byId={};L.forEach(x=>byId[x.i]=x);
+const WAVES=[
+ {w:"D",t:"decisions",pl:"choices reserved to people"},
+ {w:"R",t:"ratification",pl:"counsel gates"},
+ {w:"W0",t:"substrate",pl:"the ground everything stands on"},
+ {w:"W1",t:"shared core",pl:"members, agreements, Nou"},
+ {w:"W2",t:"hub operations",pl:"the grant surface"},
+ {w:"G",t:"alpha gate",pl:"G1"},
+ {w:"W3",t:"capital",pl:"accounts and treasury"},
+ {w:"W4",t:"governance",pl:"meetings, motions, votes"},
+ {w:"W5",t:"lifecycle",pl:"join, leave, redeem"},
+ {w:"W6",t:"full interface",pl:"reports and the walkaway drill"},
+ {w:"P",t:"practice",pl:"culture, not code"}];
+const waveIx={};WAVES.forEach((v,n)=>waveIx[v.w]=n);
+function expand(dep){ if(byId[dep])return[dep]; return L.filter(x=>x.w===dep&&x.k==="s").map(x=>x.i); }
+const upOf={},downOf={};
+L.forEach(x=>{upOf[x.i]=new Set();downOf[x.i]=downOf[x.i]||new Set();});
+L.forEach(x=>{(x.dep||[]).forEach(d=>expand(d).forEach(u=>{upOf[x.i].add(u);(downOf[u]=downOf[u]||new Set()).add(x.i);}));
+ (x.dec||[]).forEach(d=>{upOf[x.i].add(d);(downOf[d]=downOf[d]||new Set()).add(x.i);});});
+G1.steps.concat(G1.decs).forEach(u=>{upOf["G1"].add(u);(downOf[u]=downOf[u]||new Set()).add("G1");});
+function closure(id,map){const out=new Set(),st=[...(map[id]||[])];while(st.length){const n=st.pop();if(out.has(n))continue;out.add(n);(map[n]||[]).forEach(m=>st.push(m));}return out;}
+const inGate=new Set(G1.steps.concat(G1.decs));
+
+/* status model: pending|blocked -> warn · in_progress|review|done|seeded -> info · verified -> ok */
+function statusOf(x){return x.seeded?"seeded":"pending";}
+function stClass(x){const s=statusOf(x);return s==="verified"?"ok":(s==="pending"||s==="blocked")?"":"info";}
+const statusChip=x=>{const s=statusOf(x);const c=s==="verified"?"ok":(s==="pending"||s==="blocked")?"warn":"info";
+ return `<span class="chip ${c}"><span class="dot"></span>${s}</span>`;};
+
+/* ---------- depth (longest path; act edges excluded) ---------- */
+const depthMemo={};
+function depth(id){if(id in depthMemo)return depthMemo[id];const x=byId[id];let parents=[];
+ if(x.k==="g"){parents=G1.steps.concat(G1.decs);}else{(x.dep||[]).forEach(d=>parents.push(...expand(d)));parents.push(...(x.dec||[]));}
+ const v=parents.length?Math.max(...parents.map(depth))+1:0;depthMemo[id]=v;return v;}
+L.forEach(x=>depth(x.i));
+/* readability override: R nodes sit beside what they activate (legend names this) */
+L.filter(x=>x.k==="r").forEach(x=>{depthMemo[x.i]=Math.max(0,Math.min(...x.act.map(a=>depthMemo[a]))-1);});
+
+/* ---------- state ---------- */
+const S={lens:"plain",sel:null,wave:null,kind:"all",q:"",cview:"index",zoom:1};
+const KINDS=[["all","all"],["s","steps"],["d","decisions"],["r","ratification"],["g","gate"]];
+const kindWord={s:"step",d:"decision",r:"counsel gate",g:"release gate",p:"practice"};
+
+/* ---------- rail ---------- */
+function rRail(){
+ const el=document.getElementById("rail");let h="";
+ WAVES.forEach((wv,ix)=>{
+  const items=wv.w==="G"?[G1]:L.filter(x=>x.w===wv.w);
+  const n=items.length,gn=wv.w==="G";
+  h+=`<button class="wnode${gn?" gn":""}" data-w="${wv.w}" aria-pressed="${S.wave===wv.w}">
+   <span class="wid">${wv.w==="G"?"G1":wv.w}</span><span class="wt">${wv.t}</span>
+   <span class="wc">${gn?(G1.steps.length+" steps + "+G1.decs.length+" decisions \u00b7 0 verified"):(n+" \u00b7 0 verified")}</span></button>`;
+  if(ix<WAVES.length-1)h+='<div class="arrow" aria-hidden="true">\u2193</div>';});
+ h+='<div class="note">order is dependency, not calendar \u00b7 W3 onward proceeds after W1 independent of the gate \u00b7 R items activate behavior, they do not block building</div>';
+ el.innerHTML=h;
+ el.querySelectorAll(".wnode").forEach(b=>b.onclick=()=>{S.wave=S.wave===b.dataset.w?null:b.dataset.w;if(b.dataset.w==="G")sel("G1");rAll();});
+}
+
+/* ---------- tiles ---------- */
+function rTiles(){
+ const steps=L.filter(x=>x.k==="s").length,dec=L.filter(x=>x.k==="d").length;
+ document.getElementById("tiles").innerHTML=
+ `<div class="tile"><div class="tl">ledger entries</div><div class="fig">${L.length}</div><div class="ts">${steps} steps \u00b7 all pending</div></div>
+  <div class="tile"><div class="tl">gate G1 requires</div><div class="fig">${G1.steps.length+G1.decs.length}</div><div class="ts">0 verified</div></div>
+  <div class="tile"><div class="tl">decisions awaiting</div><div class="fig">${dec}</div><div class="ts">all human-owned</div></div>
+  <div class="tile"><div class="tl">counsel gates</div><div class="fig">2</div><div class="ts">R1 \u00b7 R2 \u00b7 activate, not block</div></div>`;
+}
+
+/* ---------- filters + list ---------- */
+function rChips(){
+ document.getElementById("fchips").innerHTML=KINDS.map(([k,t])=>`<button class="fchip" data-k="${k}" aria-pressed="${S.kind===k}">${t}</button>`).join("")
+ +(S.wave?`<button class="fchip" data-clr="1" aria-pressed="true">wave ${S.wave} \u00d7</button>`:"");
+ document.querySelectorAll("#fchips .fchip").forEach(b=>b.onclick=()=>{if(b.dataset.clr){S.wave=null;}else{S.kind=b.dataset.k;}rAll();});
+}
+function matchQ(x){if(!S.q)return true;const q=S.q.toLowerCase();return x.i.toLowerCase().includes(q)||x.t.toLowerCase().includes(q)||x.pl.toLowerCase().includes(q);}
+function visible(){
+ return L.filter(x=>{
+  if(S.kind!=="all"&&x.k!==S.kind)return false;
+  if(S.wave&&!(x.w===S.wave||(S.wave==="G"&&x.k==="g")))return false;
+  return matchQ(x);});
+}
+function rList(){
+ const el=document.getElementById("list");
+ const up=S.sel?closure(S.sel,upOf):null,down=S.sel?closure(S.sel,downOf):null;
+ let h="",lastW=null;
+ visible().forEach(x=>{
+  if(x.w!==lastW){lastW=x.w;const wv=WAVES.find(v=>v.w===x.w);h+=`<div class="rowgrp">${x.w} \u00b7 ${wv?wv.t:""}</div>`;}
+  let mark="";let cls="row";
+  if(S.sel){if(x.i===S.sel)cls+=" sel";else if(up&&up.has(x.i))mark="\u25b2";else if(down&&down.has(x.i))mark="\u25bc";else cls+=" dim";}
+  h+=`<button class="${cls}" data-i="${x.i}" role="option" aria-selected="${x.i===S.sel}">
+   <span class="rid"><span class="rmark" aria-hidden="true">${mark}</span>${x.i}</span>
+   <span class="rt">${S.lens==="plain"?x.pl:x.t}</span>
+   ${statusChip(x)}</button>`;});
+ el.innerHTML=h||'<div class="empty">nothing matches \u00b7 clear a filter or the search</div>';
+ el.querySelectorAll(".row").forEach(b=>b.onclick=()=>sel(b.dataset.i));
+}
+
+/* ---------- tree view ---------- */
+const NW=66,NH=24,GX=84,GY=33,PAD=26;
+function rGbar(){
+ document.getElementById("gbar").innerHTML=
+ `<span class="lg ok"><span class="dot"></span>verified</span>
+  <span class="lg info"><span class="dot"></span>in progress \u00b7 seeded</span>
+  <span class="lg warn"><span class="dot"></span>pending \u00b7 blocked</span>
+  <span class="gnote">left to right is dependency depth \u00b7 dashed terra \u21e2 activates, does not block \u00b7 R nodes sit beside what they activate \u00b7 G1 fan-in draws on select</span>
+  <span class="grow"></span>
+  <button class="zbtn" data-z="-">\u2212</button><button class="zbtn" data-z="0">fit</button><button class="zbtn" data-z="+">+</button>`;
+ document.querySelectorAll(".zbtn").forEach(b=>b.onclick=()=>{
+  if(b.dataset.z==="0"){fitZoom();}else{S.zoom=Math.min(1.6,Math.max(.35,S.zoom+(b.dataset.z==="+"?.12:-.12)));}
+  applyZoom();});
+}
+let treeW=0,treeH=0;
+function fitZoom(){const w=document.getElementById("gwrap").clientWidth-16;S.zoom=Math.min(1,Math.max(.35,w/treeW));}
+function applyZoom(){const g=document.getElementById("gscale");g.style.transform=`scale(${S.zoom})`;
+ g.style.width=treeW+"px";g.parentElement&&(g.parentElement.scrollLeftMax,0);
+ g.style.height=(treeH*S.zoom)+"px";}
+function rTree(){
+ const layers={};let maxD=0;
+ L.forEach(x=>{const d=depthMemo[x.i];maxD=Math.max(maxD,d);(layers[d]=layers[d]||[]).push(x);});
+ Object.values(layers).forEach(arr=>arr.sort((a,b)=>(waveIx[a.w]-waveIx[b.w])||a.i.localeCompare(b.i,undefined,{numeric:true})));
+ const pos={};let maxRows=0;
+ Object.entries(layers).forEach(([d,arr])=>{maxRows=Math.max(maxRows,arr.length);
+  arr.forEach((x,r)=>pos[x.i]={x:PAD+d*(NW+GX),y:PAD+14+r*GY});});
+ treeW=PAD*2+(maxD)*(NW+GX)+NW; treeH=PAD*2+14+maxRows*GY;
+ const up=S.sel?closure(S.sel,upOf):null,down=S.sel?closure(S.sel,downOf):null;
+ const edges=[];
+ L.forEach(x=>{
+  if(x.k==="g")return; /* gate fan-in drawn only on select */
+  (x.dep||[]).forEach(d=>expand(d).forEach(u=>edges.push([u,x.i,"e"])));
+  (x.dec||[]).forEach(u=>edges.push([u,x.i,"e dec"]));
+  (x.act||[]).forEach(t=>edges.push([x.i,t,"e act"]));});
+ if(S.sel==="G1")G1.steps.concat(G1.decs).forEach(u=>edges.push([u,"G1","e gatee"]));
+ let eH="";
+ edges.forEach(([a,b,cls])=>{
+  const pa=pos[a],pb=pos[b];if(!pa||!pb)return;
+  let c=cls;
+  if(S.sel){const rel=(a===S.sel||up&&up.has(a)||(down&&down.has(a)))&&(b===S.sel||up&&up.has(b)||(down&&down.has(b)));
+   if(!cls.includes("act")&&!cls.includes("gatee")){
+    if(rel&&(b===S.sel||up&&up.has(b)))c+=" up";else if(rel)c+=" dn";else c+=" off";}
+   else if(!rel)c+=" off";}
+  const x1=pa.x+NW,y1=pa.y+NH/2,x2=pb.x,y2=pb.y+NH/2,mx=(x1+x2)/2;
+  eH+=`<path class="${c}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;});
+ let nH="";
+ L.forEach(x=>{
+  const p=pos[x.i];const st=stClass(x);
+  let cls="nd"+(st?" "+st:"")+(x.k==="g"?" gate":"");
+  if(S.sel){if(x.i===S.sel)cls+=" sel";else if(!(up&&up.has(x.i))&&!(down&&down.has(x.i)))cls+=" dim";}
+  if(S.q&&matchQ(x)&&!(S.sel&&x.i===S.sel))cls+=" hit";
+  if(S.wave&&!(x.w===S.wave||(S.wave==="G"&&x.k==="g"))&&!S.sel)cls+=" dim";
+  nH+=`<g class="${cls}" data-i="${x.i}" tabindex="0" role="button" aria-label="${x.i} ${x.t}, status ${statusOf(x)}">
+   <title>${x.i} \u00b7 ${x.t} \u00b7 ${statusOf(x)}</title>
+   <rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="7"/>
+   <circle cx="${p.x+11}" cy="${p.y+NH/2}" r="3"/>
+   <text x="${p.x+20}" y="${p.y+NH/2+3.5}">${x.i}</text></g>`;});
+ let cH="";
+ for(let d=0;d<=maxD;d++){cH+=`<text class="col" x="${PAD+d*(NW+GX)}" y="${PAD}">${String(d).padStart(2,"0")}</text>`;}
+ document.getElementById("gscale").innerHTML=
+  `<svg class="tree" width="${treeW}" height="${treeH}" viewBox="0 0 ${treeW} ${treeH}" role="group" aria-label="Dependency tree, left to right">${cH}${eH}${nH}</svg>`;
+ document.querySelectorAll("svg.tree .nd").forEach(g=>{
+  g.onclick=()=>sel(g.dataset.i);
+  g.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();sel(g.dataset.i);}};});
+ applyZoom();
+}
+
+/* ---------- detail ---------- */
+function depChips(ids,label){
+ if(!ids||(!ids.size&&!ids.length))return"";
+ const arr=[...ids];
+ return `<div class="blk"><div class="bk">${label}</div><div class="deps">${arr.map(id=>{
+  const o=byId[id];const txt=o?(S.lens==="plain"?o.pl:o.t):id;
+  return `<button class="dep" data-i="${id}">${id}<span class="dt"> \u00b7 ${trim(txt,34)}</span></button>`;}).join("")}</div></div>`;
+}
+function trim(s,n){return s.length>n?s.slice(0,n-1)+"\u2026":s;}
+function rDetail(){
+ const el=document.getElementById("detail");
+ if(!S.sel){
+  el.innerHTML=`
+   <div class="dhead"><span class="did">how to read this</span></div>
+   <p class="plain">Every node is one unit of work, one decision, or one gate from the implementation plan. In the tree, work flows left to right: a node sits to the right of everything it needs. Color carries status; the legend names each. Select anything to light its upstream chain and what it unlocks.</p>
+   <div class="blk"><div class="bk">where the build opens</div><div class="bv serif">Nothing is unblocked yet: every first step waits on a human decision. The first mover is <b style="font-weight:400;font-style:italic">D3</b> (repository visibility), which unblocks W0.1 and with it the whole substrate. D1, D4, D6, and D7 follow close behind.</div></div>
+   <div class="blk"><div class="bk">gate G1 \u00b7 distance to alpha</div>
+    <div class="gatebar"><i style="width:0%"></i></div>
+    <div class="bv">0 / ${G1.steps.length+G1.decs.length} verified \u00b7 ${G1.steps.length} steps + ${G1.decs.length} decisions</div></div>
+   <div class="blk"><div class="bk">provenance</div>
+    <span class="prov"><span class="cite">plan v0.1</span><span class="sep">\u00b7</span>draft for review<span class="sep">\u00b7</span>june 2026</span></div>
+   <div class="blk"><div class="bv">Statuses here are seeded, honestly all <em>pending</em>. Once W0.2 and W0.18 are verified, this surface reads the repository's own build_status mirror and updates with every merge.</div></div>`;
+  bindDeps(el);return;}
+ const x=byId[S.sel];
+ const up=[...upOf[x.i]||[]],down=[...downOf[x.i]||[]];
+ const gateBadge=inGate.has(x.i)?` \u00b7 <span style="color:var(--terra-text)">required for G1</span>`:"";
+ let body="";
+ if(x.k==="g"){
+  body=`<div class="blk"><div class="bk">gate progress</div><div class="gatebar"><i style="width:0%"></i></div>
+   <div class="bv">0 / ${x.steps.length+x.decs.length} verified \u00b7 all of W0 \u00b7 W1.1\u20131.8 \u00b7 W2.1\u20132.6 \u00b7 decisions D1 D2 D3 D4 D6 D7</div></div>
+   <div class="blk"><div class="bk">what passing means</div><div class="bv serif">${x.b}</div></div>`+depChips(up,"requires");
+ }else{
+  body=`<div class="blk"><div class="bk">brief</div><div class="bv serif">${x.b}</div></div>
+   <div class="blk"><div class="bk">success state</div><div class="bv">${x.su}</div></div>`
+   +(x.act?depChips(x.act,"activates (does not block)"):"")
+   +depChips(up,S.lens==="plain"?"needs first":"depends_on + decision_refs")
+   +depChips(down,S.lens==="plain"?"unlocks":"dependents");
+ }
+ el.innerHTML=`
+  <div class="dhead"><span class="did">${x.i}</span>${statusChip(x)}</div>
+  <h2>${S.lens==="plain"?x.pl:x.t}</h2>
+  ${S.lens==="plain"?`<p class="plain">${x.k==="d"?"A choice reserved to people; the build routes around it until it is made.":x.k==="r"?"A counsel gate: it switches behavior on, it does not block building.":""}</p>`:""}
+  <div class="meta"><span class="k">kind</span> ${kindWord[x.k]||"gate"}${gateBadge}<br>
+   <span class="k">owner</span> ${x.o}<br>
+   ${x.v?`<span class="k">verification</span> ${x.v}<br>`:""}
+   <span class="k">wave</span> ${x.w} <span class="k">\u00b7 depth</span> ${String(depthMemo[x.i]).padStart(2,"0")}</div>
+  ${body}`;
+ bindDeps(el);
+}
+function bindDeps(el){el.querySelectorAll(".dep").forEach(b=>b.onclick=()=>sel(b.dataset.i));}
+function sel(id){S.sel=S.sel===id?null:id;document.getElementById("detLabel").textContent=S.sel?("Detail \u00b7 "+S.sel):"Detail";
+ if(window.matchMedia("(max-width:980px)").matches&&S.sel)setView("detail");rAll();}
+
+/* ---------- shell ---------- */
+function rAll(){rRail();rTiles();rChips();rGbar();rList();if(S.cview==="tree")rTree();rDetail();}
+document.getElementById("q").addEventListener("input",e=>{S.q=e.target.value;rList();if(S.cview==="tree")rTree();});
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.tagName!=="INPUT"){e.preventDefault();document.getElementById("q").focus();}
+ if(e.key==="Escape"){S.sel=null;rAll();}});
+const lp=document.getElementById("lensPlain"),lt=document.getElementById("lensTech");
+function setLens(l){S.lens=l;document.body.dataset.lens=l;lp.setAttribute("aria-pressed",l==="plain");lt.setAttribute("aria-pressed",l==="tech");rAll();}
+lp.onclick=()=>setLens("plain");lt.onclick=()=>setLens("tech");
+const ci=document.getElementById("cvIndex"),ct=document.getElementById("cvTree");
+function setCview(v){S.cview=v;document.body.dataset.cview=v;ci.setAttribute("aria-pressed",v==="index");ct.setAttribute("aria-pressed",v==="tree");
+ if(v==="tree"){rTree();if(S.zoom===1)fitZoom();applyZoom();}}
+ci.onclick=()=>setCview("index");ct.onclick=()=>setCview("tree");
+document.querySelectorAll(".viewseg button").forEach(b=>b.onclick=()=>setView(b.dataset.v));
+function setView(v){document.body.dataset.view=v;document.querySelectorAll(".viewseg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));}
+(function(){var root=document.documentElement,btn=document.getElementById("modeToggle"),label=document.getElementById("modeLabel"),icon=document.getElementById("modeIcon");
+var moon='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+var sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+function apply(m){root.setAttribute("data-mode",m);label.textContent=m;icon.innerHTML=m==="dark"?moon:sun;}
+var pl=window.matchMedia("(prefers-color-scheme: light)");apply(pl.matches?"light":"dark");
+pl.addEventListener("change",e=>apply(e.matches?"light":"dark"));
+btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark"));})();
+rAll();
+</script>
+</body>
+</html>
