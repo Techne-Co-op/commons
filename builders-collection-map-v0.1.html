@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>The Builder's Collection · Map v0.1 — RegenHub, LCA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #202020;
+  --border: #333333;
+  --terra: #c4956a; --terra-text: #c4956a; --terra-dim: rgba(196,149,106,0.12);
+  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
+  --ok: #94ae84; --ok-dim: rgba(148,174,132,0.14);
+  --info: #8da3b5; --info-dim: rgba(141,163,181,0.14);
+  --warn: #c0705c; --warn-dim: rgba(192,112,92,0.14);
+}
+[data-mode="light"] {
+  --bg: #faf8f5; --surface: #ffffff; --surface2: #f5f2ee;
+  --border: #e2ddd5;
+  --terra: #c4956a; --terra-text: #96704a; --terra-dim: rgba(196,149,106,0.14);
+  --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+  --ok: #5f7a52; --ok-dim: rgba(95,122,82,0.12);
+  --info: #5b7286; --info-dim: rgba(91,114,134,0.12);
+  --warn: #9e4f3d; --warn-dim: rgba(158,79,61,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 16px; line-height: 1.85;
+}
+.page { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 16px;
+}
+h1 { font-size: 36px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 8px; }
+.subtitle { font-style: italic; color: var(--muted); font-size: 17px; margin-bottom: 16px; }
+.version-line {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint);
+  margin-bottom: 40px;
+}
+
+.section-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 18px; margin-top: 60px;
+}
+h2 { font-size: 22px; font-weight: 700; color: var(--heading); letter-spacing: -0.2px; margin-bottom: 18px; }
+p { margin-bottom: 18px; }
+p:last-child { margin-bottom: 0; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+
+/* C-series cards */
+.c-grid { display: flex; flex-direction: column; gap: 10px; margin: 24px 0; }
+.c-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 22px;
+  display: grid; grid-template-columns: 56px 1fr auto;
+  gap: 0 16px; align-items: start;
+}
+.c-id {
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500;
+  color: var(--terra-text); padding-top: 2px;
+}
+.c-body { }
+.c-title { font-weight: 700; color: var(--heading); font-size: 15px; margin-bottom: 4px; }
+.c-title-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+.c-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.c-status {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px; border: 1px solid;
+  white-space: nowrap; align-self: start; margin-top: 2px;
+}
+.c-status.shipped { color: var(--ok); background: var(--ok-dim); border-color: var(--ok); }
+.c-status.next { color: var(--info); background: var(--info-dim); border-color: var(--info); }
+.c-status.later { color: var(--faint); background: transparent; border-color: var(--border); }
+.c-status.current { color: var(--terra-text); background: var(--terra-dim); border-color: var(--terra); }
+
+/* Gap list */
+.gap-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 20px 0; }
+.gap-list li {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--warn); border-radius: 6px;
+  padding: 12px 16px; font-size: 14px; color: var(--text); line-height: 1.65;
+}
+.gap-list li span {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--warn);
+  display: block; margin-bottom: 4px;
+}
+
+/* Proof block */
+.proof-card {
+  background: var(--ok-dim); border: 1px solid var(--ok);
+  border-radius: 10px; padding: 22px 26px; margin: 24px 0;
+}
+.proof-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--ok);
+  margin-bottom: 12px;
+}
+.proof-card p { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 10px; }
+.proof-card p:last-child { margin-bottom: 0; }
+
+/* Limits */
+.limit-list { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: 18px 0; }
+.limit-list li {
+  padding-left: 20px; position: relative;
+  font-size: 14px; color: var(--muted); line-height: 1.65;
+}
+.limit-list li::before {
+  content: '—'; position: absolute; left: 0; color: var(--faint);
+}
+
+/* Coherence note */
+.coherence {
+  background: var(--terra-dim); border: 1px solid rgba(196,149,106,0.25);
+  border-radius: 10px; padding: 22px 26px; margin: 32px 0 0;
+  font-style: italic; color: var(--heading); font-size: 15px; line-height: 1.8;
+}
+
+footer {
+  margin-top: 80px; padding-top: 20px; border-top: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--faint);
+  text-align: center; letter-spacing: 0.1em;
+}
+.mode-btn {
+  position: fixed; top: 20px; right: 20px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer;
+}
+.mode-btn:hover { border-color: var(--terra); color: var(--terra-text); }
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--faint); text-decoration: none; margin-bottom: 40px;
+  letter-spacing: 0.08em;
+}
+.back:hover { color: var(--terra-text); }
+</style>
+</head>
+<body>
+<button class="mode-btn" id="modeBtn">light</button>
+<div class="page">
+
+<a class="back" href="index.html">&#8592; Commons</a>
+
+<header>
+  <div class="eyebrow">RegenHub, LCA &middot; Prepared by Nou</div>
+  <h1>The Builder's Collection</h1>
+  <p class="subtitle">Artifacts that let agents build the CIS, mapped and sequenced</p>
+  <div class="version-line">Version 0.1 &middot; Draft for review &middot; June 2026</div>
+</header>
+
+<!-- 01 What exists -->
+<div class="section-eyebrow" id="exists">01 &middot; What exists</div>
+<h2>Four artifacts before this turn.</h2>
+<p>The <em>implementation plan v0.1</em> (markdown) is the canonical assessment and serialized ledger; it is the source every other artifact derives from. The <em>design-system rendering</em> of the plan (HTML) is its reading copy for humans. The <em>roadmap instrument v0.2</em> (HTML) is the interactive index, tree, and gate tracker, with plain and technical lenses. And upstream of all three sit the governing sources themselves: CIS PRD v0.2, Hub Operations PRD v0.1, and the canonical co-op.us design-system file.</p>
+<p>These are strong on description and weak on execution. An agent handed all four still cannot take W0.1 without inventing the very things that should be contracts: how to behave, what the milestone files literally contain, what each CI job actually asserts, and what the humans have or have not decided.</p>
+
+<!-- 02 The gap -->
+<div class="section-eyebrow" id="gap">02 &middot; The gap, stated plainly</div>
+<h2>Plans describe; agents execute from contracts.</h2>
+<p>Four layers were missing:</p>
+
+<ul class="gap-list">
+  <li><span>Conduct layer</span>An in-repo operating contract that makes the plan's §08 loop binding, names the hard rules (secrets, RLS, vocabulary, human-only decisions, no weakened verification), and makes refusal a defined good outcome.</li>
+  <li><span>Executable ledger</span>The 67 entries as actual schema-valid files with a working validator, not a document an agent must transcribe. Transcription is where drift enters.</li>
+  <li><span>Verification layer</span>Contract cards for the named CI jobs, without which every success_state is circular.</li>
+  <li><span>Decision surface</span>Deliberation briefs the humans can decide quickly and a record format agents can consume mechanically, since the whole tree currently waits on D3.</li>
+</ul>
+
+<p>A fifth gap is real but deliberately deferred: domain reference (consolidated table schemas, probe matrices, Nou gateway spec, KPI fixtures). Deferred because producing column-level detail now would outrun the PRDs and pre-empt counsel; it lands in the series at the step that consumes it.</p>
+
+<!-- 03 The series -->
+<div class="section-eyebrow" id="series">03 &middot; The series</div>
+<h2>C0 through C10.</h2>
+
+<div class="c-grid">
+
+  <div class="c-card">
+    <div class="c-id">C0</div>
+    <div class="c-body">
+      <div class="c-title">This map</div>
+      <div class="c-title-sub">plus the existing four artifacts</div>
+      <div class="c-desc">The navigational layer. Consumed by everyone, every session.</div>
+    </div>
+    <span class="c-status current">current</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C1</div>
+    <div class="c-body">
+      <div class="c-title">Agent operating contract</div>
+      <div class="c-title-sub">AGENTS.md</div>
+      <div class="c-desc">The conduct layer. Read first, every session; conflict resolution favors the contract. Consumed by every step.</div>
+    </div>
+    <span class="c-status shipped">shipped</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C2</div>
+    <div class="c-body">
+      <div class="c-title">Ledger pack</div>
+      <div class="c-title-sub">milestones/ · schema.json · gen_seed.py · validate.py · milestone-validate workflow · PR template · GOVERNANCE.md</div>
+      <div class="c-desc">The executable ledger. W0.2's direct input, generated from plan data rather than retyped. Shipped and tested; see §04.</div>
+    </div>
+    <span class="c-status shipped">shipped</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C3</div>
+    <div class="c-body">
+      <div class="c-title">Verification contract cards</div>
+      <div class="c-title-sub">docs/VERIFICATION.md</div>
+      <div class="c-desc">What each named CI job asserts, so success states are buildable and non-circular. Consumed at W0.1, W0.4, W0.6, W0.9, W0.12, W0.14, W0.16, W0.18.</div>
+    </div>
+    <span class="c-status shipped">shipped</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C4</div>
+    <div class="c-body">
+      <div class="c-title">Substrate conventions and fixtures</div>
+      <div class="c-title-sub">docs/CONVENTIONS.md · docs/SECRETS.md · docs/citations.md · synthetic persona and fixture pack</div>
+      <div class="c-desc">RLS template with citation comments, event-envelope DDL, vocabulary quarantine word list, secret names and custody, the D7 register. Consumed by W0.3 through W0.8 and every schema step. Conventions shipped; fixture pack is the next artifact after this turn.</div>
+    </div>
+    <span class="c-status shipped">shipped</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C5</div>
+    <div class="c-body">
+      <div class="c-title">Decision surface</div>
+      <div class="c-title-sub">docs/decisions/ · D1 to D10 · R1 · R2</div>
+      <div class="c-desc">One deliberation brief per open item with proposed default and an empty Record of decision. Agents may improve briefs, never decide. Consumed immediately by organizers; D3 opens the tree.</div>
+    </div>
+    <span class="c-status shipped">shipped</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C6</div>
+    <div class="c-body">
+      <div class="c-title">Schema reference card</div>
+      <div class="c-title-sub">31 tables consolidated</div>
+      <div class="c-desc">REA primitive, bylaw or grant anchor, and only the columns the PRDs and plan actually commit to, with proposals marked as proposals. Consumed at W0.7, W1.x, W2.1. Held back so PRD-sourced and invented detail never blur.</div>
+    </div>
+    <span class="c-status next">next</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C7</div>
+    <div class="c-body">
+      <div class="c-title">Probe matrix</div>
+      <div class="c-title-sub">role-by-table access expectations</div>
+      <div class="c-desc">Test design for ci:rls-audit: fifteen roles against every table, allow or deny with citation. Consumed at W0.6 onward. Paired with C4's personas.</div>
+    </div>
+    <span class="c-status next">next</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C8</div>
+    <div class="c-body">
+      <div class="c-title">Nou gateway spec</div>
+      <div class="c-title-sub">request and response shape · citation format · interaction-log DDL</div>
+      <div class="c-desc">The three-constraint harness as implementable detail, refusal wording. Consumed at W1.7.</div>
+    </div>
+    <span class="c-status later">later</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C9</div>
+    <div class="c-body">
+      <div class="c-title">KPI fixture pack</div>
+      <div class="c-title-sub">synthetic event sets</div>
+      <div class="c-desc">Expected outputs for the three grant computations, so ci:db-verify can assert Hub §07 exactly. Consumed at W2.5.</div>
+    </div>
+    <span class="c-status later">later</span>
+  </div>
+
+  <div class="c-card">
+    <div class="c-id">C10</div>
+    <div class="c-body">
+      <div class="c-title">Wave-boundary authoring guide</div>
+      <div class="c-title-sub">how W3.0 and W4.0 turn seeded entries into full briefs</div>
+      <div class="c-desc">Required sections, how fine edges replace the coarse wave token, validator expectations. Consumed at W3.0. The last piece before the collection is self-extending.</div>
+    </div>
+    <span class="c-status later">later</span>
+  </div>
+
+</div>
+
+<div class="coherence">
+  After C10, every later artifact the build needs is produced <em>inside</em> the ledger by its own steps, under C1's contract, validated by C2, verified per C3. The collection stops growing by Nou's hand and starts growing by the system's.
+</div>
+
+<!-- 04 What ships, with proof -->
+<div class="section-eyebrow" id="proof">04 &middot; What ships in this turn, with proof</div>
+<h2>The repo seed: 112 files, validator tested.</h2>
+
+<div class="proof-card">
+  <div class="proof-label">Verification record</div>
+  <p>The repo seed (cis-repo-seed-v0.1.zip, 112 files) contains C1, C2, C3, C5, and the conventions half of C4. The validator was exercised here, not merely written:</p>
+  <p>Green on the full seed — 67 entries, 142 expanded edges, graph acyclic, gating consistent, index.json and STATUS.md regenerated.</p>
+  <p>A deliberate negative test flipping W1.2 to done failed with the exact gating message (<em>status done but unverified parents: W1.1</em>) and exited nonzero. Restoration returned green.</p>
+  <p>The validator also caught and survived one of its own bugs during testing, which is recorded honestly: it initially re-ingested its generated STATUS.md, and now excludes generated files by name.</p>
+</div>
+
+<!-- 05 Honest limits -->
+<div class="section-eyebrow" id="limits">05 &middot; Honest limits</div>
+<h2>What this seed is, and is not.</h2>
+
+<ul class="limit-list">
+  <li>The Actions workflow is written to the documented GitHub interface but has not run on GitHub from here; its main-branch auto-commit step needs either a bot allowance under branch protection or rerouting through a PR, and the file says so.</li>
+  <li>The milestone schema allows bylaw_refs and prd_refs fields, but citations currently live in brief text; field-level population is hardening work inside W0.2.</li>
+  <li>Decision records are all open, as they must be.</li>
+  <li>Seeded entries (W3.1 to W3.7, W4.1 to W4.7) remain summary-level by design.</li>
+  <li>The seed has not touched a real Supabase project or repository; it is scaffolding, verified as scaffolding.</li>
+</ul>
+
+<!-- 06 Frame note -->
+<div class="section-eyebrow" id="frame">06 &middot; Frame note</div>
+<h2>What this series does not cover.</h2>
+<p>The C-series is ordered by what unblocks agents soonest; a counsel-first or grant-first ordering would sequence differently and is defensible. The series deliberately leaves out program-side systems (Coordination Games), counsel work product, and the design system itself, which already exists as the canonical file and enters the build at W0.13 rather than through this collection.</p>
+
+<footer>Co-op.us &middot; RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</footer>
+
+</div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeBtn');
+  var stored = localStorage.getItem('commons-mode');
+  if (stored) root.setAttribute('data-mode', stored);
+  function current() { return root.getAttribute('data-mode') || 'dark'; }
+  btn.textContent = current() === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    localStorage.setItem('commons-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>
