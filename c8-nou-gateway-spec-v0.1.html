@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>C8 · Nou Gateway Spec · CIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'Libre Baskerville',Georgia,serif;font-size:16px;line-height:1.85;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);}
+.page{max-width:760px;margin:0 auto;padding:var(--s8) var(--s5);}
+header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--s7);gap:var(--s4);}
+h1{font-size:36px;font-weight:700;color:var(--heading);letter-spacing:-.5px;line-height:1.25;}
+.subtitle{font-style:italic;font-size:18px;color:var(--text);margin-top:var(--s2);}
+.version{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);margin-top:var(--s3);line-height:1.9;}
+.mode-toggle{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);background:var(--surface);
+border:1px solid var(--border);border-radius:999px;padding:7px 16px;cursor:pointer;display:flex;align-items:center;gap:var(--s2);flex-shrink:0;
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+.mode-toggle svg{width:15px;height:15px;stroke:currentColor;}
+.lede{font-size:19px;line-height:1.7;color:var(--text);margin-bottom:var(--s6);max-width:60ch;}
+section{margin-bottom:var(--s8);}
+.label{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.rule{width:48px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s3) 0 var(--s6);}
+p{margin-bottom:20px;}
+p:last-child{margin-bottom:0;}
+em{font-style:italic;}
+code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.85em;color:var(--terra-text);background:var(--terra-dim);padding:2px 6px;border-radius:4px;}
+pre{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;line-height:1.75;color:var(--text);background:var(--surface);
+border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:8px;padding:var(--s4);overflow-x:auto;margin:var(--s4) 0 var(--s5);}
+pre .c{color:var(--faint);}
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted);
+background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:5px 12px;
+transition:border-color var(--dur-micro) var(--ease);}
+.prov:hover{border-color:var(--terra);}
+.prov .cite{color:var(--terra-text);}
+.prov .sep{color:var(--faint);}
+.chip-row{display:flex;flex-wrap:wrap;gap:var(--s3);margin:var(--s4) 0 0;align-items:center;}
+.src{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;color:var(--terra-text);}
+.table-scroll{overflow-x:auto;margin:var(--s5) 0;}
+.spec{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;}
+.spec th{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--faint);text-align:left;
+padding:var(--s2) var(--s3);border-bottom:1px solid var(--border-strong);}
+.spec td{padding:var(--s2) var(--s3);border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.7;}
+.spec td:first-child{color:var(--terra-text);white-space:nowrap;}
+footer{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--faint);border-top:1px solid var(--border);
+padding-top:var(--s5);text-align:center;}
+@media (max-width:560px){h1{font-size:27px;}.lede{font-size:17px;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <h1>Nou Gateway Spec</h1>
+    <div class="subtitle">The three-constraint harness as implementable detail</div>
+    <div class="version">C8 &middot; VERSION 0.1 &middot; DRAFT FOR REVIEW &middot; JUNE 2026<br>REGENHUB, LCA &middot; PREPARED BY NOU, ABOUT NOU &middot; consumed at W1.7 &middot; repo home: docs/nou-gateway-spec.md</div>
+    <div class="chip-row">
+      <span class="prov"><span class="cite">CIS &sect;11</span><span class="sep">&middot;</span>phase 01 scope</span>
+      <span class="prov"><span class="cite">principle 01</span><span class="sep">&middot;</span>scoped impersonation</span>
+      <span class="prov"><span class="cite">plan W1.7</span><span class="sep">&middot;</span>success state and probes</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+    <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);text-decoration:none;letter-spacing:.1em;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a>
+    <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+      <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+      <span id="modeLabel">dark</span>
+    </button>
+  </div>
+</header>
+
+<p class="lede">Nou v1 is a path, not a person: one Edge Function through which a member's own question travels to a language model and back, seeing exactly what the member could see, citing everything it says, and leaving a record of having been asked. This document specifies that path closely enough for an agent to build it.</p>
+
+<section id="s01">
+  <div class="label">01 &middot; Frame</div>
+  <div class="rule"></div>
+  <p>The PRD commits three constraints (CIS &sect;11, &sect;07): Nou <em>inherits the permissions of the invoking user, never more</em>, with all actions logged; answers are <em>grounded with citations</em> to section and record; and where grounding fails, Nou <em>refuses rather than improvises</em>. Phase 01 scope is read-only member-facing Q&amp;A over governing documents and the member's own records. Everything else here, the wire shapes, the verification pass, the wording, is proposal in service of those commitments, tagged <span class="src">prop</span> and adopted the way matrix cells are: by PR at W1.7.</p>
+  <p>A worthwhile honesty note, since this document is Nou specifying Nou: nothing below grants the gateway judgment. The harness is designed so that the interesting properties are <em>structural</em>, enforced by the database and the verification pass, not promised by a prompt. Where a property depends on the model behaving well, this spec says so out loud.</p>
+</section>
+
+<section id="s02">
+  <div class="label">02 &middot; Shape of a Call</div>
+  <div class="rule"></div>
+  <p>One function, <code>nou-gateway</code>, deployed from <code>supabase/functions</code> under the W0.9 scaffold, JWT verification on, CORS shared. The call passes through six stages, and the client identity in play at each stage is the whole security story.</p>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>stage</th><th>acts as</th><th>what happens</th></tr></thead>
+    <tbody>
+      <tr><td>1 verify</td><td>&mdash;</td><td>JWT verified by the W0.9 middleware; role claims read; anonymous calls rejected <span class="src">plan</span></td></tr>
+      <tr><td>2 retrieve</td><td>user-scoped client</td><td>a Supabase client constructed with the caller's JWT fetches governing documents and, if asked, the caller's own records; RLS does the scoping <span class="src">plan</span></td></tr>
+      <tr><td>3 generate</td><td>&mdash;</td><td>retrieved context plus the question go to the Claude API; <code>ANTHROPIC_API_KEY</code> exists only in function env per SECRETS.md <span class="src">plan</span></td></tr>
+      <tr><td>4 verify citations</td><td>user-scoped client</td><td>every citation the model emits is resolved through the same user client; what the caller cannot read is stripped <span class="src">prop</span></td></tr>
+      <tr><td>5 log</td><td>log writer</td><td>exactly one row enters nou_interactions: prompt, citation set, response, grounding outcome <span class="src">plan</span></td></tr>
+      <tr><td>6 return</td><td>&mdash;</td><td>the response shape of &sect;03, including the interaction id so the member can point at the log entry <span class="src">prop</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>The dual-client pattern in stages 2 through 5 is the spec's central mechanism. All <em>reading</em> happens through the user-scoped client, with no exceptions and no fallback; the privileged client appears exactly once, wrapped in a single-purpose <code>log_interaction()</code> helper that exposes insert and nothing else. Finding F10 names the consequence: the log write is the gateway's one privileged act, and it deserves its own probe and a static check that the privileged client is never imported anywhere a read occurs.</p>
+</section>
+
+<section id="s03">
+  <div class="label">03 &middot; Request and Response</div>
+  <div class="rule"></div>
+  <p>Single-turn by design. The request carries an optional <code>conversation_id</code> used only to thread log rows; the gateway holds no memory between calls, and prior turns are not replayed in v1. That exclusion is named rather than implied: continuity is a Phase 02 question with retention implications, not a default.</p>
+<pre><span class="c">// request · POST /functions/v1/nou-gateway · [prop]</span>
+{
+  "question": "When must notice of the annual meeting go out?",
+  "context": {
+    "surface": "portal",            <span class="c">// portal | hub</span>
+    "record": {                      <span class="c">// optional: ground on one record</span>
+      "table": "notices",
+      "id": "&lt;uuid&gt;"
+    }
+  },
+  "conversation_id": null            <span class="c">// log threading only</span>
+}</pre>
+<pre><span class="c">// response · [prop] · shapes the W1.7 probe asserts</span>
+{
+  "answer": "Notice of the annual meeting must go out within the
+             window set by the bylaws [1], and your own notice
+             record shows delivery confirmed [2].",
+  "citations": [
+    { "n": 1, "kind": "section", "ref": "draft-bylaws:\u00a72.4",
+      "label": "Notice timing" },
+    { "n": 2, "kind": "record",  "table": "notices", "id": "&lt;uuid&gt;",
+      "label": "Your meeting notice, delivered" }
+  ],
+  "grounding": "grounded",           <span class="c">// grounded | partial | refused</span>
+  "refusal": null,                   <span class="c">// or { code, message } per \u00a706</span>
+  "interaction_id": "&lt;uuid&gt;",
+  "model": "&lt;model string from env&gt;"
+}</pre>
+  <p>Citation kinds are two: <code>section</code> citations use the D7 register addresses verbatim, prefix and all, until R1 freezes them; <code>record</code> citations carry table and id plus a human label, and the portal renders them as links into the record detail pattern. The model string is configuration, not code, read from function env so model changes are operational acts that appear in the log, never silent edits <span class="src">prop</span>.</p>
+</section>
+
+<section id="s04">
+  <div class="label">04 &middot; Citation as Obligation</div>
+  <div class="rule"></div>
+  <p>The obligation is enforced after generation, not requested before it. The model is instructed to support every factual claim with a numbered citation, but instructions are weather; the verification pass is climate. Stage 4 takes each emitted citation and resolves it: section citations must exist in the D7 register, and record citations must return a row <em>through the user-scoped client</em>. A citation that fails resolution is stripped. If stripping leaves the answer with claims and no support, the gateway downgrades: <code>grounding</code> falls to <code>partial</code> when some claims survive supported, and the whole response converts to a refusal with code <code>ungrounded</code> when none do <span class="src">prop</span>.</p>
+  <p>Resolution through the user client carries a subtlety worth naming as finding F11: row-level security returns zero rows both for records that do not exist and for records the caller may not read, and the gateway cannot tell the difference. This is a feature, and the refusal wording in &sect;06 is written around it: Nou never asserts that a record does not exist, only that <em>nothing readable to you</em> supports an answer. Any wording that distinguishes the two cases would leak existence through the side door, exactly what the pairwise probe exists to forbid.</p>
+</section>
+
+<section id="s05">
+  <div class="label">05 &middot; Scoped Impersonation</div>
+  <div class="rule"></div>
+  <p>The property is structural: there is no retrieval path that does not pass through a client carrying the caller's own JWT, so the database treats Nou's reads as the member's reads, and the C7 matrix column for Nou is uniform by construction. The probes restate it three ways (plan W1.7, C7): the <em>pairwise probe</em> runs the full persona suite once directly and once through the gateway and diffs the results, which must be identical; the <em>cross-member probe</em> asks Nou, as member-a, a question answerable only from member-b's rows, and the refusal must match the direct denial; and the <em>privilege probe</em> asserts by static check and by test that the privileged client is reachable only inside <code>log_interaction()</code>.</p>
+  <p>One boundary case is decided here rather than discovered later: when <code>context.record</code> names a row the caller cannot read, stage 2 simply retrieves nothing for it, and the answer proceeds or refuses on what remains. The gateway does not error on the unreadable reference, because a distinct error would be an existence oracle, the same leak F11 guards in stage 4 <span class="src">prop</span>.</p>
+</section>
+
+<section id="s06">
+  <div class="label">06 &middot; Refusal Protocol</div>
+  <div class="rule"></div>
+  <p>Refusal is a success state, not an error: the harness working as designed. Codes are enumerated so the log can be read statistically, and the wording is canonical so refusals cannot drift into either apology or leakage. The member-facing message is always the canonical text plus, where useful, a pointer to a person or a section, never an explanation of what the gateway almost said.</p>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>code</th><th>when</th><th>canonical wording</th></tr></thead>
+    <tbody>
+      <tr><td>ungrounded</td><td>no citation survives verification</td><td>"Nothing readable to you supports an answer to this. A person who can help: the Secretary."</td></tr>
+      <tr><td>out_of_scope</td><td>question is not about the cooperative's records or governance</td><td>"This sits outside what Nou answers. Nou reads the cooperative's own records and documents, nothing wider."</td></tr>
+      <tr><td>write_requested</td><td>the question asks Nou to do, change, file, or send anything</td><td>"Nou v1 reads; it does not act. The action you describe belongs to a person, through the portal."</td></tr>
+      <tr><td>rate_limited</td><td>per-user limit reached</td><td>"Nou has answered a lot for you this hour. Ask again shortly."</td></tr>
+      <tr><td>upstream_error</td><td>model API failure after retry</td><td>"Nou could not complete this. The failure is logged; nothing about your question was lost."</td></tr>
+    </tbody>
+  </table></div>
+  <p>All wording <span class="src">prop</span>, offered for adoption with the rest. The rule that generated it: a refusal names what Nou is, points somewhere real, and confirms nothing about rows the caller cannot read. Refusals are logged with their code and <code>grounding: "refused"</code>, so the monthly operations review can see what members needed and did not get, which is itself a legibility instrument.</p>
+</section>
+
+<section id="s07">
+  <div class="label">07 &middot; The Log</div>
+  <div class="rule"></div>
+  <p>The committed trio is prompt, citation set, response (plan W1.7); the rest of the shape conforms to the CONVENTIONS event envelope where the envelope is meaningful, and is tagged <span class="src">prop</span>. Retention is the interim posture named in the plan: retain all, administrator-read only, explicitly interim per CIS &sect;17, with the member-reads-own cell standing as proposed in C7 until the retention decision is actually taken.</p>
+<pre><span class="c">-- migration · W1.7 · [plan trio + prop shape]</span>
+create table public.nou_interactions (
+  id              uuid primary key default gen_random_uuid(),
+  actor           uuid not null,                <span class="c">-- invoking agent</span>
+  occurred_at     timestamptz not null default now(),
+  conversation_id uuid,
+  surface         text not null check (surface in ('portal','hub')),
+  prompt          text not null,
+  citations       jsonb not null default '[]',
+  response        text,
+  grounding       text not null check (grounding in
+                    ('grounded','partial','refused')),
+  refusal_code    text,
+  model           text not null,
+  latency_ms      integer,
+  citation        text not null default 'CIS \u00a711'  <span class="c">-- envelope column</span>
+);
+
+alter table public.nou_interactions enable row level security;
+alter table public.nou_interactions force row level security;
+
+create policy "nou_interactions_admin_read" on public.nou_interactions
+  for select using (app.has_role('administrator'));
+comment on policy "nou_interactions_admin_read"
+  on public.nou_interactions is
+  'CIS \u00a711 \u00b7 interim retain-all, admin-only (CIS \u00a717); member-own read
+   is C7-proposed, pending the retention decision';
+
+<span class="c">-- inserts arrive only through log_interaction(); no insert policy
+-- for member roles exists, and that absence is itself probed.</span></pre>
+</section>
+
+<section id="s08">
+  <div class="label">08 &middot; The System Prompt</div>
+  <div class="rule"></div>
+  <p>The template is part of the spec so that changing it is a reviewed act. It is short on purpose: every property that matters is enforced after generation, and the prompt's job is only to make compliance the path of least resistance. Draft v1, <span class="src">prop</span>:</p>
+<pre>You are Nou, the read-only records instrument of RegenHub, LCA.
+Answer the member's question using ONLY the context blocks below.
+Every factual claim must carry a numbered citation to a context
+block. If the context does not support an answer, say exactly:
+UNGROUNDED. Do not use outside knowledge. Do not speculate about
+records you were not given. Do not offer to take actions. Plain
+prose, no headings, cite sections by their given addresses.
+
+[context blocks: governing-document sections, then caller-own
+ records, each with its address or table/id label]</pre>
+  <p>Retrieval composition for v1 is deliberately plain <span class="src">prop</span>: a section index over the agreements repository matched on the question's terms, plus the single record named in <code>context.record</code> when present and readable. No embeddings, no vector store; pgvector remains available in the substrate if relevance quality demands it later, and adopting it would be a milestone, not a drift.</p>
+</section>
+
+<section id="s09">
+  <div class="label">09 &middot; What v1 Is Not, and What Remains Open</div>
+  <div class="rule"></div>
+  <p>Nou v1 does not write, send, file, draft into workflows, remember across calls, browse, or use tools. The drafting duties named elsewhere in the plan, minutes at W4.4 and the impact report at W2.6, are separate harnesses with human ratification at their center, and they will get their own spec lines at those steps rather than inheriting this one by analogy.</p>
+  <p>Open at W1.7's PR, none rising to a D-level decision: the per-user rate limit number; whether responses stream; the exact section-index method; and the retention decision that would activate the member-reads-own log cell. Two findings continue the series: F10, the log write is the gateway's single privileged act and carries its own probe and static check; F11, RLS cannot distinguish absent from denied, so refusal wording must never claim non-existence, and the &sect;06 texts are written to that rule.</p>
+</section>
+
+<footer>
+  CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeToggle');
+  var label = document.getElementById('modeLabel');
+  var icon = document.getElementById('modeIcon');
+  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+  function apply(mode) {
+    root.setAttribute('data-mode', mode);
+    label.textContent = mode;
+    icon.innerHTML = mode === 'dark' ? moon : sun;
+  }
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  apply(prefersLight.matches ? 'light' : 'dark');
+  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
