@@ -918,100 +918,121 @@ const CROPS_POSTURE = [
   { id:'S',  name:'Security',              stage:'02', note:'Multi-sig · RLS · audit trail'  }
 ];
 
-/* ── documentation fulfilment data ── */
-const DOC_PHASES = [
-  { id:'01', name:'Inception'   },
-  { id:'02', name:'Discovery'   },
-  { id:'03', name:'Design'      },
-  { id:'04', name:'Development' },
-  { id:'05', name:'Quality'     },
-  { id:'06', name:'Launch'      },
-  { id:'07', name:'Maintenance' },
-  { id:'08', name:'Continuity'  }
-];
-const DOC_ANCHORS = ['pre','m03','W0','W1','W2','G1','W3','W4','W5','W6','ongoing'];
-const DOC_STANDINGS = ['produced','by_reference','proposed','partial','queued','projected','unanchored'];
-const DOC_STANDING_LABELS = {
-  produced:'produced', by_reference:'by ref', proposed:'proposed',
-  partial:'partial', queued:'queued', projected:'projected', unanchored:'unanchored'
+/* ── documentation fulfilment data (canonical · framework explorer v0.3) ── */
+/* three provenance layers:
+   canonical: deliverable identities (framework explorer v0.3)
+   record:    standings from the definition movements and corpus
+   editorial: first-fulfilment anchors, working judgments, revisable   */
+
+const DOC_PHASE_NAMES = {
+  1:'Inception', 2:'Discovery', 3:'Definition', 4:'Construction',
+  5:'Validation', 6:'Release', 7:'Operations', 8:'Evolution'
 };
 
+const DOC_ANCHOR_DEFS = [
+  {k:'NOW',  label:'pre-existing', sub:'PRDs \u00b7 plan \u00b7 roadmap'},
+  {k:'M01',  label:'movement 01',  sub:'inception baseline'},
+  {k:'M02',  label:'movement 02',  sub:'discovery consolidation'},
+  {k:'M03',  label:'movement 03',  sub:'definition synthesis \u00b7 queued'},
+  {k:'W0',   label:'wave W0',      sub:'substrate'},
+  {k:'W1',   label:'wave W1',      sub:'shared core'},
+  {k:'W2',   label:'wave W2',      sub:'hub operations'},
+  {k:'G1',   label:'gate G1',      sub:'alpha'},
+  {k:'W3',   label:'wave W3',      sub:'capital'},
+  {k:'W4',   label:'wave W4',      sub:'governance'},
+  {k:'W5',   label:'wave W5',      sub:'lifecycle'},
+  {k:'W6',   label:'wave W6',      sub:'full interface'},
+  {k:'CONT', label:'post-G1',      sub:'ongoing operations'},
+  {k:'NONE', label:'unanchored',   sub:'projection gaps'}
+];
+
+/* status key → { label, full CSS suffix } */
+const DOC_STATUS_MAP = {
+  prod: {label:'produced',     css:'produced'},
+  ref:  {label:'by reference', css:'by_reference'},
+  prop: {label:'proposed',     css:'proposed'},
+  part: {label:'partial',      css:'partial'},
+  que:  {label:'queued',       css:'queued'},
+  proj: {label:'projected',    css:'projected'}
+};
+
+/* i=id · n=name · p=phase(int) · s=status · a=anchor · w=evidence */
 const DOC_DELIVERABLES = [
-  // Phase 01 — Inception
-  { id:'D-01.1', phase:'01', title:'Vision & problem statement',       standing:'produced',     anchor:'pre',     ref:'CIS PRD §1' },
-  { id:'D-01.2', phase:'01', title:'Stakeholder register',             standing:'partial',      anchor:'pre',     ref:'scattered across PRD / plan' },
-  { id:'D-01.3', phase:'01', title:'Risk & constraint register',       standing:'partial',      anchor:'pre',     ref:'CROPS §17 / PRD scattered' },
-  { id:'D-01.4', phase:'01', title:'Project charter',                  standing:'proposed',     anchor:'pre',     ref:'awaiting organizer signature' },
-  { id:'D-01.5', phase:'01', title:'Operating agreement',              standing:'proposed',     anchor:'pre',     ref:'pending R1 ratification' },
-  { id:'D-01.6', phase:'01', title:'Success KPIs',                     standing:'produced',     anchor:'pre',     ref:'CIS PRD §success_state' },
-  { id:'D-01.7', phase:'01', title:'Team structure & RACI',            standing:'partial',      anchor:'pre',     ref:'scattered in PRD / plan' },
-  { id:'D-01.8', phase:'01', title:'Kickoff record',                   standing:'projected',    anchor:'W0',      ref:'' },
-  // Phase 02 — Discovery
-  { id:'D-02.1', phase:'02', title:'Requirements document',            standing:'by_reference', anchor:'pre',     ref:'CIS PRD v0.2 indexed' },
-  { id:'D-02.2', phase:'02', title:'User research synthesis',          standing:'projected',    anchor:'W0',      ref:'' },
-  { id:'D-02.3', phase:'02', title:'Data model & schema',              standing:'produced',     anchor:'pre',     ref:'milestones/schema.json + CONVENTIONS.md' },
-  { id:'D-02.4', phase:'02', title:'Integration map',                  standing:'queued',       anchor:'m03',     ref:'' },
-  { id:'D-02.5', phase:'02', title:'Compliance requirements',          standing:'by_reference', anchor:'pre',     ref:'CIS PRD §16' },
-  { id:'D-02.6', phase:'02', title:'CROPS threat model',               standing:'by_reference', anchor:'pre',     ref:'hub-ops-prd §17 CROPS posture' },
-  { id:'D-02.7', phase:'02', title:'Definition of done',               standing:'produced',     anchor:'pre',     ref:'GOVERNANCE.md + success_state' },
-  { id:'D-02.8', phase:'02', title:'Grant compliance plan',            standing:'proposed',     anchor:'pre',     ref:'pending grant index' },
-  // Phase 03 — Design
-  { id:'D-03.1', phase:'03', title:'Architecture decision records',    standing:'queued',       anchor:'m03',     ref:'' },
-  { id:'D-03.2', phase:'03', title:'Database schema + migrations',     standing:'produced',     anchor:'pre',     ref:'supabase/migrations/' },
-  { id:'D-03.3', phase:'03', title:'Security design',                  standing:'partial',      anchor:'pre',     ref:'RLS + SECRETS.md scattered' },
-  { id:'D-03.4', phase:'03', title:'API contract',                     standing:'projected',    anchor:'W0',      ref:'' },
-  { id:'D-03.5', phase:'03', title:'UI/UX specification',              standing:'projected',    anchor:'W2',      ref:'' },
-  { id:'D-03.6', phase:'03', title:'Infrastructure design',            standing:'queued',       anchor:'m03',     ref:'' },
-  { id:'D-03.7', phase:'03', title:'Privacy design',                   standing:'produced',     anchor:'pre',     ref:'hub-ops-prd §17 CROPS' },
-  { id:'D-03.8', phase:'03', title:'Design system',                    standing:'produced',     anchor:'pre',     ref:'design-system.html + commons.css' },
-  // Phase 04 — Development
-  { id:'D-04.1', phase:'04', title:'Contribution guide & agent contract', standing:'produced',  anchor:'pre',     ref:'AGENTS.md + GOVERNANCE.md' },
-  { id:'D-04.2', phase:'04', title:'CI/CD pipeline',                   standing:'produced',     anchor:'pre',     ref:'README + .github/workflows/' },
-  { id:'D-04.3', phase:'04', title:'Software bill of materials (SBOM)',standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
-  { id:'D-04.4', phase:'04', title:'Feature flags & rollout plan',     standing:'projected',    anchor:'W0',      ref:'' },
-  { id:'D-04.5', phase:'04', title:'API documentation',                standing:'projected',    anchor:'W1',      ref:'' },
-  { id:'D-04.6', phase:'04', title:'Database documentation',           standing:'projected',    anchor:'W2',      ref:'' },
-  { id:'D-04.7', phase:'04', title:'Component library docs',           standing:'projected',    anchor:'W1',      ref:'' },
-  { id:'D-04.8', phase:'04', title:'Environment setup guide',          standing:'projected',    anchor:'W0',      ref:'' },
-  // Phase 05 — Quality
-  { id:'D-05.1', phase:'05', title:'Test plan',                        standing:'projected',    anchor:'W1',      ref:'' },
-  { id:'D-05.2', phase:'05', title:'Test coverage report',             standing:'projected',    anchor:'W2',      ref:'' },
-  { id:'D-05.3', phase:'05', title:'Performance benchmark',            standing:'projected',    anchor:'G1',      ref:'' },
-  { id:'D-05.4', phase:'05', title:'Security audit report',            standing:'projected',    anchor:'G1',      ref:'' },
-  { id:'D-05.5', phase:'05', title:'Accessibility audit',              standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
-  { id:'D-05.6', phase:'05', title:'Defect register',                  standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
-  { id:'D-05.7', phase:'05', title:'Regression test suite',            standing:'projected',    anchor:'G1',      ref:'' },
-  { id:'D-05.8', phase:'05', title:'Load & stress test report',        standing:'projected',    anchor:'W6',      ref:'' },
-  // Phase 06 — Launch
-  { id:'D-06.1', phase:'06', title:'Release notes',                    standing:'projected',    anchor:'W3',      ref:'' },
-  { id:'D-06.2', phase:'06', title:'Deployment runbook',               standing:'projected',    anchor:'W3',      ref:'' },
-  { id:'D-06.3', phase:'06', title:'Rollback procedure',               standing:'projected',    anchor:'W2',      ref:'' },
-  { id:'D-06.4', phase:'06', title:'Launch checklist',                 standing:'projected',    anchor:'W3',      ref:'' },
-  { id:'D-06.5', phase:'06', title:'User onboarding guide',            standing:'projected',    anchor:'G1',      ref:'' },
-  { id:'D-06.6', phase:'06', title:'Support escalation path',          standing:'projected',    anchor:'W3',      ref:'' },
-  { id:'D-06.7', phase:'06', title:'Monitoring & alerting setup',      standing:'projected',    anchor:'W6',      ref:'' },
-  { id:'D-06.8', phase:'06', title:'On-call rotation',                 standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
-  { id:'D-06.9', phase:'06', title:'Post-launch review',               standing:'projected',    anchor:'W5',      ref:'' },
-  // Phase 07 — Maintenance
-  { id:'D-07.1', phase:'07', title:'Incident response playbook',       standing:'projected',    anchor:'W4',      ref:'' },
-  { id:'D-07.2', phase:'07', title:'Operational runbook',              standing:'projected',    anchor:'W3',      ref:'' },
-  { id:'D-07.3', phase:'07', title:'Feedback & ticket trends',         standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
-  { id:'D-07.4', phase:'07', title:'Dependency update log',            standing:'projected',    anchor:'W6',      ref:'' },
-  { id:'D-07.5', phase:'07', title:'Capacity plan',                    standing:'projected',    anchor:'W6',      ref:'' },
-  { id:'D-07.6', phase:'07', title:'SLA & uptime report',              standing:'projected',    anchor:'W5',      ref:'' },
-  { id:'D-07.7', phase:'07', title:'Changelog',                        standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-07.8', phase:'07', title:'Patching policy',                  standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
-  { id:'D-07.9', phase:'07', title:'Maintenance windows log',          standing:'projected',    anchor:'ongoing', ref:'' },
-  // Phase 08 — Continuity
-  { id:'D-08.1', phase:'08', title:'Disaster recovery plan',           standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-08.2', phase:'08', title:'Data backup & restore procedure',  standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-08.3', phase:'08', title:'Business continuity plan',         standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-08.4', phase:'08', title:'Offboarding & handover guide',     standing:'projected',    anchor:'W6',      ref:'' },
-  { id:'D-08.5', phase:'08', title:'Knowledge transfer log',           standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-08.6', phase:'08', title:'Archive & retention policy',       standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-08.7', phase:'08', title:'Sunsetting plan',                  standing:'projected',    anchor:'W6',      ref:'' },
-  { id:'D-08.8', phase:'08', title:'Successor stewardship guide',      standing:'projected',    anchor:'ongoing', ref:'' },
-  { id:'D-08.9', phase:'08', title:'Impact evaluation report',         standing:'projected',    anchor:'W4',      ref:'' }
+/* 01 · inception */
+{i:'D-01.1',n:'Problem Brief',                          p:1,s:'prod',a:'M01',w:'Inception Baseline v0.2 \u00a702; reconstructed from the corpus, citations verified against the PRDs'},
+{i:'D-01.2',n:'Stakeholder Map',                        p:1,s:'prod',a:'M01',w:'Inception Baseline v0.2 \u00a703; relationship column reserved to organizers'},
+{i:'D-01.3',n:'Success Criteria Worksheet',             p:1,s:'prod',a:'M01',w:'Inception Baseline v0.2 \u00a704; aligned with the four axes of CIS \u00a715'},
+{i:'D-01.4',n:'Project Charter',                        p:1,s:'prop',a:'M01',w:'Inception Baseline v0.2 \u00a705; v0.1 proposed and unsigned; sponsor and accountable lead reserved (Q-01)'},
+{i:'D-01.5',n:'Open Questions (Inception)',              p:1,s:'prod',a:'M01',w:'Inception Baseline v0.2 \u00a706; seven questions carried into Discovery'},
+/* 02 · discovery */
+{i:'D-02.1',n:'Requirements Specification',             p:2,s:'ref', a:'M02',w:'The PRDs and grant remain authoritative; indexed in Discovery \u00a702'},
+{i:'D-02.2',n:'Feasibility Matrix',                     p:2,s:'prod',a:'M02',w:'Discovery \u00a703; legal and economic verdicts are document-only'},
+{i:'D-02.3',n:'Risk Register',                          p:2,s:'prod',a:'M02',w:'Discovery \u00a704; ten risks with seat owners and review points'},
+{i:'D-02.4',n:'Prototype Evaluations',                  p:2,s:'prop',a:'M02',w:'Discovery \u00a705; verified W0 steps proposed as evidence record; adoption pending (Q-06)'},
+{i:'D-02.5',n:'User Research Synthesis',                p:2,s:'prop',a:'M02',w:'Discovery \u00a706; waiver with two named instruments; adoption pending (Q-05)'},
+{i:'D-02.6',n:'Open Questions (Discovery)',              p:2,s:'prod',a:'M02',w:'Discovery \u00a707; fifteen questions joined to the D and R ledger'},
+/* 03 · definition */
+{i:'D-03.1',n:'Architecture Document',                  p:3,s:'que', a:'M03',w:'Synthesis of plan \u00a72.2, \u00a72.3, \u00a73.1 against CIS \u00a705\u2013\u00a707; queued for movement 03'},
+{i:'D-03.2',n:'ADR Set',                                p:3,s:'que', a:'M03',w:'One record per decision the organizers close on D1\u2013D10; first drafts OQ-03, OQ-07, OQ-10, OQ-11'},
+{i:'D-03.3',n:'Threat Model',                           p:3,s:'que', a:'M03',w:'Public-anon-key perimeter deserves the document; draws RR-01, RR-02, RR-08'},
+{i:'D-03.4',n:'Build/Buy/Integrate Canvas',             p:3,s:'part',a:'M03',w:'Core exists as plan \u00a72.2 stack delta; formalization queued'},
+{i:'D-03.5',n:'Technology Stack Record',                p:3,s:'part',a:'M03',w:'Plan \u00a72.2; final record pending closures on D1\u2013D5'},
+{i:'D-03.6',n:'Environment Topology',                   p:3,s:'part',a:'M03',w:'Plan \u00a72.4; one project production-of-record; single-environment risk named (RR-02)'},
+{i:'D-03.7',n:'Definition of Done (Construction Draft)',p:3,s:'ref', a:'NOW',w:'Plan \u00a73.3: status semantics, done vs verified, branch protection on five CI checks; lift queued in M03'},
+{i:'D-03.8',n:'Open Questions (Definition)',            p:3,s:'part',a:'M03',w:'D and R ledger is the operational form; OQ-01\u2013OQ-15 feed it'},
+/* 04 · construction */
+{i:'D-04.1', n:'Tagged Source Code',                    p:4,s:'proj',a:'W0', w:'W0.1 repo bootstrap; one step per PR, branch and commit conventions (plan \u00a73.5)'},
+{i:'D-04.2', n:'Versioned Build Artifacts',             p:4,s:'proj',a:'W0', w:'portal-build and pages-deploy workflows; first real artifact at W0.12'},
+{i:'D-04.3', n:'Software Bill of Materials (SBOM)',     p:4,s:'proj',a:'NONE',w:'No SBOM step is indexed in the plan or roadmap; a projection gap to place'},
+{i:'D-04.4', n:'Test Results',                          p:4,s:'proj',a:'W0', w:'pgTAP suites from W0.4, W0.6, W0.16; CI green on merged commits'},
+{i:'D-04.5', n:'Technical Documentation (Current)',     p:4,s:'proj',a:'W0', w:'README, GOVERNANCE.md, /docs from W0.1 and W0.15'},
+{i:'D-04.6', n:'Configured Test Environments',          p:4,s:'proj',a:'W0', w:'Shadow database in CI (W0.4); local development via Supabase CLI (plan \u00a72.4)'},
+{i:'D-04.7', n:'Representative Test Data',              p:4,s:'proj',a:'W0', w:'seed.sql synthetic fixtures only (W0.3); D3 hard rule keeps PII out'},
+{i:'D-04.8', n:'Known Limitations List',                p:4,s:'proj',a:'W0', w:'Per-step Notes carry simplifications and tensions; aggregate view owed'},
+{i:'D-04.9', n:'Contributing Guide',                    p:4,s:'proj',a:'W0', w:'GOVERNANCE.md ledger rules plus the PR template (plan \u00a73.1, \u00a73.5)'},
+{i:'D-04.10',n:'CI Configuration',                      p:4,s:'proj',a:'W0', w:'Eight-workflow set of plan \u00a73.1; milestone-validate lands with W0.2'},
+{i:'D-04.11',n:'Dependency Policy',                     p:4,s:'proj',a:'W0', w:'Vendor level lives in W0.15 chokepoint analysis; package-level policy not yet indexed'},
+/* 05 · validation */
+{i:'D-05.1',n:'Test Plan',                              p:5,s:'proj',a:'W0', w:'The ledger is the plan in distributed form: a named verification per step (plan \u00a73.2, \u00a73.3)'},
+{i:'D-05.2',n:'Test Reports',                           p:5,s:'proj',a:'W0', w:'CI runs on merged commits are the reports; verified requires the named job green'},
+{i:'D-05.3',n:'UAT Script',                             p:5,s:'proj',a:'G1', w:'Operational walkthrough named (plan \u00a707, Discovery \u00a706); the script itself is unwritten'},
+{i:'D-05.4',n:'UAT Documentation',                     p:5,s:'proj',a:'G1', w:'The walkthrough record with a real invited member, judged by that member with an organizer'},
+{i:'D-05.5',n:'Accessibility Audit',                    p:5,s:'proj',a:'NONE',w:'Target exists (WCAG AA, CIS \u00a714); no audit step is indexed; a projection gap to place'},
+{i:'D-05.6',n:'Defect Register',                        p:5,s:'proj',a:'NONE',w:'Blocked-status discipline covers build blockers, not defects; no register is indexed; a projection gap'},
+{i:'D-05.7',n:'Evidence Package',                       p:5,s:'proj',a:'G1', w:'index.json, STATUS.md, and the verified step set are the package (plan \u00a73.4); G1 computes from it'},
+{i:'D-05.8',n:'Compliance Evidence',                    p:5,s:'proj',a:'W2', w:'KPI audit trail the EE team can verify independently (W2.5); \u00a7704(b) close evidence lands with W3'},
+{i:'D-05.9',n:'Open Questions (Validation)',            p:5,s:'proj',a:'G1', w:'The questions the gate review surfaces, recorded at the gate'},
+/* 06 · release */
+{i:'D-06.1', n:'Release Runbook',                       p:6,s:'proj',a:'G1', w:'Gate file lists the verified set; a runbook proper is not indexed and is owed at the gate'},
+{i:'D-06.2', n:'Rollback Plan',                         p:6,s:'proj',a:'W0', w:'Tested restore (W0.14) plus migrations only via PR; rollback is restore by construction'},
+{i:'D-06.3', n:'Communication Checklist',               p:6,s:'proj',a:'W0', w:'/build panel via the status mirror (W0.18) is the member channel; checklist proper not indexed'},
+{i:'D-06.4', n:'Operational Handoff Plan',              p:6,s:'proj',a:'W2', w:'Operator verifications across W2 plus the operating loop (plan \u00a708) carry the handoff'},
+{i:'D-06.5', n:'Operational Runbooks (Initial)',        p:6,s:'proj',a:'W0', w:'docs/runbooks: restore drill and walkaway groundwork, first real at W0.14'},
+{i:'D-06.6', n:'Monitoring Configuration',              p:6,s:'proj',a:'W0', w:'W0.17 observability and error sink'},
+{i:'D-06.7', n:'Service Level Objectives (SLOs)',       p:6,s:'proj',a:'M03',w:'Four targets to cast (Discovery \u00a702A: reliability, availability, legibility, longevity)'},
+{i:'D-06.8', n:'On-Call Rotation',                      p:6,s:'proj',a:'NONE',w:'A seat-level duty; no rotation is indexed; a projection gap to place or waive with reasons'},
+{i:'D-06.9', n:'Support Knowledge Base (Initial)',      p:6,s:'proj',a:'W1', w:'Nou v1, read-only, grounded, logged (W1.7): cited answers are the first support surface'},
+{i:'D-06.10',n:'Access Management Plan',                p:6,s:'proj',a:'W0', w:'Invite-only auth (W0.5) plus the role registry (W0.8) under bylaws \u00a718.1'},
+{i:'D-06.11',n:'Status Communication Channels',        p:6,s:'proj',a:'W0', w:'The status mirror (W0.18); near real time means every merge (plan \u00a73.4)'},
+{i:'D-06.12',n:'User-Facing Release Notes',             p:6,s:'proj',a:'W0', w:'/build panel substitutes for notes in alpha; member-facing notes not separately indexed'},
+{i:'D-06.13',n:'Deployed System (Production)',          p:6,s:'proj',a:'G1', w:'G1 verified is the deployed system: a real member signs in against production data (plan \u00a707)'},
+/* 07 · operations */
+{i:'D-07.1',n:'Service Review Reports',                p:7,s:'proj',a:'W2', w:'Monthly impact report (W2.6) covers the hub face; cooperative-side service review not indexed'},
+{i:'D-07.2',n:'Incident Postmortems',                  p:7,s:'proj',a:'W0', w:'Error sink (W0.17) captures incidents; postmortem practice not yet indexed'},
+{i:'D-07.3',n:'User Feedback / Ticket Trends',         p:7,s:'proj',a:'NONE',w:'No feedback or ticket surface is indexed; a projection gap to place'},
+{i:'D-07.4',n:'Capacity / Performance Data',           p:7,s:'proj',a:'W2', w:'Seat utilization and KPI views (W2.5) cover the hub; system capacity not indexed'},
+{i:'D-07.5',n:'Technical Debt Register',               p:7,s:'proj',a:'W0', w:'Per-step Notes and blocked reasons are the raw record; aggregate register owed'},
+{i:'D-07.6',n:'Security / Compliance Audit Results',   p:7,s:'proj',a:'W0', w:'rls-audit runs continuously in CI (W0.6); formal audit cadence unset'},
+{i:'D-07.7',n:'Platform Dependency Status',            p:7,s:'proj',a:'W0', w:'Chokepoint analysis as a living design artifact (W0.15); D5 reversal trigger recorded there'},
+{i:'D-07.8',n:'Patching Policy',                       p:7,s:'proj',a:'NONE',w:'Not indexed in plan or roadmap; a projection gap to place'},
+{i:'D-07.9',n:'SLO Definition (Formal)',               p:7,s:'proj',a:'CONT',w:'Formal objectives from operating data, after the movement 03 initial cast'},
+/* 08 · evolution */
+{i:'D-08.1',n:'Roadmap',                               p:8,s:'ref', a:'NOW', w:'Build Roadmap instrument v0.2 plus CIS \u00a716 phased roadmap with CROPS stage targets'},
+{i:'D-08.2',n:'Technical Debt Register (Current)',     p:8,s:'proj',a:'CONT',w:'Aggregate of per-step notes and blocked reasons, maintained over time'},
+{i:'D-08.3',n:'Migration Runbook',                     p:8,s:'proj',a:'W6',  w:'Walkaway drill as a tested, scheduled capability (CR Phase 05), building on W0.14 export paths'},
+{i:'D-08.4',n:'Sunset Plan',                           p:8,s:'proj',a:'W6',  w:'Walkaway is the system sunset; grant-arc closure has its own milestone, January 2027 (Hub \u00a708)'},
+{i:'D-08.5',n:'Compost / Lessons Preserved',           p:8,s:'proj',a:'CONT',w:'Plan amendments are commits like any other; history of the plan is the audit trail of the build'},
+{i:'D-08.6',n:'Annual Build-in-Public Report',         p:8,s:'proj',a:'W6',  w:'Benefit report archive with its guaranteed public view (bylaws \u00a7XV) is the vehicle'}
 ];
 
 /* ── state ── */
@@ -1101,11 +1122,11 @@ function renderRail(nodes) {
   </button>`;
 
   /* doc entry */
-  const docFulfilled = DOC_DELIVERABLES.filter(d => d.standing === 'produced' || d.standing === 'by_reference').length;
-  const docGaps = DOC_DELIVERABLES.filter(d => d.anchor === null).length;
+  const docFulfilled = DOC_DELIVERABLES.filter(d => d.s === 'prod' || d.s === 'ref').length;
+  const docGaps = DOC_DELIVERABLES.filter(d => d.a === 'NONE').length;
   const docPips = [
     docFulfilled > 0 ? 'done' : '',
-    DOC_DELIVERABLES.filter(d => d.standing === 'partial' || d.standing === 'proposed').length > 0 ? 'active' : '',
+    DOC_DELIVERABLES.filter(d => d.s === 'part' || d.s === 'prop').length > 0 ? 'active' : '',
     docGaps > 0 ? 'active' : ''
   ].map(c => `<span class="wave-pip ${c}"></span>`).join('');
   h += `<button class="wave-btn${docMode ? ' on' : ''}" onclick="setDoc()" aria-pressed="${docMode}">
@@ -1776,48 +1797,50 @@ function docSelect(id) {
 }
 
 function docCard(d) {
-  const isUnanchored = d.anchor === null;
-  const stCls = isUnanchored ? 'st-unanchored' : `st-${d.standing}`;
-  const badgeCls = `dsb-${d.standing}`;
-  const badgeLbl = DOC_STANDING_LABELS[d.standing] || d.standing;
-  const anchorTag = isUnanchored
-    ? `<span class="dc-anchor-tag warn">unanchored</span>`
-    : d.anchor ? `<span class="dc-anchor-tag">${d.anchor}</span>` : '';
-  const refH = (d.ref || anchorTag)
-    ? `<div class="dc-card-ref">${d.ref || ''}${anchorTag}</div>`
+  const isGap = d.a === 'NONE';
+  const stInfo = DOC_STATUS_MAP[d.s] || {label: d.s, css: 'projected'};
+  const stCls  = isGap ? 'st-unanchored' : `st-${stInfo.css}`;
+  const badgeCls = isGap ? 'dsb-unanchored' : `dsb-${stInfo.css}`;
+  const anchorDef = DOC_ANCHOR_DEFS.find(a => a.k === d.a);
+  const anchorLbl = isGap ? 'unanchored' : (d.a === 'NOW' ? 'pre-existing' : (d.a || '—'));
+  const anchorTag = `<span class="dc-anchor-tag${isGap?' warn':''}">${anchorLbl}</span>`;
+  const evid = d.w ? (d.w.length > 72 ? d.w.slice(0,72) + '\u2026' : d.w) : '';
+  const refH = evid || anchorTag
+    ? `<div class="dc-card-ref">${evid ? evid + '\u00a0' : ''}${anchorTag}</div>`
     : '';
-  const sel = docSelected === d.id ? ' selected' : '';
-  return `<div class="dc-card ${stCls}${sel}" onclick="docSelect('${d.id}')" role="button" tabindex="0">
-    <span class="dc-card-id">${d.id}</span>
+  const gapDot = isGap
+    ? `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--warn);margin-left:6px;vertical-align:middle"></span>`
+    : '';
+  const sel = docSelected === d.i ? ' selected' : '';
+  return `<div class="dc-card ${stCls}${sel}" onclick="docSelect('${d.i}')" role="button" tabindex="0">
+    <span class="dc-card-id">${d.i}</span>
     <div class="dc-card-body">
-      <div class="dc-card-title">${d.title}</div>
+      <div class="dc-card-title">${d.n}${gapDot}</div>
       ${refH}
     </div>
-    <span class="dc-standing-badge ${badgeCls}">${badgeLbl}</span>
+    <span class="dc-standing-badge ${badgeCls}">${isGap ? 'unanchored' : stInfo.label}</span>
   </div>`;
 }
 
 function renderDocMain() {
   const all = DOC_DELIVERABLES;
+  const isGap = d => d.a === 'NONE';
 
   /* apply filter */
   let filtered = all;
   if (docFilter !== 'ALL') {
-    if (docFilter === 'unanchored') filtered = all.filter(d => d.anchor === null);
-    else filtered = all.filter(d => d.standing === docFilter);
+    if (docFilter === 'unanchored') filtered = all.filter(isGap);
+    else filtered = all.filter(d => d.s === docFilter);
   }
 
-  /* summary stats */
+  /* summary stats (canonical counts) */
+  const ct = k => all.filter(d => d.s === k).length;
   const stats = {
-    produced:     all.filter(d => d.standing === 'produced').length,
-    by_reference: all.filter(d => d.standing === 'by_reference').length,
-    proposed:     all.filter(d => d.standing === 'proposed').length,
-    partial:      all.filter(d => d.standing === 'partial').length,
-    queued:       all.filter(d => d.standing === 'queued').length,
-    projected:    all.filter(d => d.standing === 'projected' && d.anchor !== null).length,
-    unanchored:   all.filter(d => d.anchor === null).length
+    prod: ct('prod'), ref: ct('ref'), prop: ct('prop'),
+    part: ct('part'), que: ct('que'), proj: ct('proj'),
+    gaps: all.filter(isGap).length
   };
-  const fulfilled = stats.produced + stats.by_reference;
+  const fulfilled = stats.prod + stats.ref;
   const pct = Math.round(fulfilled / all.length * 100);
 
   let h = '';
@@ -1825,116 +1848,127 @@ function renderDocMain() {
   /* masthead */
   h += `<div class="dc-masthead">
     <div class="dc-masthead-title">Documentation Fulfilment</div>
-    <div class="dc-masthead-sub">${all.length} deliverables &middot; 8 phases &middot; seeded June 2026 &middot; CIS corpus</div>
+    <div class="dc-masthead-sub">${all.length} deliverables &middot; 8 phases &middot; seeded June 2026 &middot; inception baseline v0.2 &middot; discovery consolidation v0.1 &middot; implementation plan v0.1 &middot; build roadmap v0.2</div>
   </div>`;
 
   /* summary band */
   h += `<div class="overview-bar" style="margin-bottom:16px">
     <div class="overview-row">
       <span class="overview-label">Fulfilment</span>
-      <span>${fulfilled} of ${all.length} fulfilled &middot; ${pct}%</span>
+      <span>${fulfilled} of ${all.length} &middot; ${pct}% &middot; ${stats.prop} awaiting adoption &middot; ${stats.part + stats.que} in synthesis &middot; ${stats.gaps} unanchored</span>
     </div>
     <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
     <div class="dc-summary-band" style="margin-top:10px">
-      <div class="dc-stat"><span class="dc-stat-n s-produced">${stats.produced}</span><span class="dc-stat-label">produced</span></div>
-      <div class="dc-stat"><span class="dc-stat-n s-by_ref">${stats.by_reference}</span><span class="dc-stat-label">by ref</span></div>
-      <div class="dc-stat"><span class="dc-stat-n s-proposed">${stats.proposed}</span><span class="dc-stat-label">proposed</span></div>
-      <div class="dc-stat"><span class="dc-stat-n s-partial">${stats.partial}</span><span class="dc-stat-label">partial</span></div>
-      <div class="dc-stat"><span class="dc-stat-n s-queued">${stats.queued}</span><span class="dc-stat-label">queued</span></div>
-      <div class="dc-stat"><span class="dc-stat-n s-projected">${stats.projected}</span><span class="dc-stat-label">projected</span></div>
-      <div class="dc-stat"><span class="dc-stat-n s-unanchored">${stats.unanchored}</span><span class="dc-stat-label">unanchored</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-produced">${stats.prod}</span><span class="dc-stat-label">produced</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-by_ref">${stats.ref}</span><span class="dc-stat-label">by ref</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-proposed">${stats.prop}</span><span class="dc-stat-label">proposed</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-partial">${stats.part}</span><span class="dc-stat-label">partial</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-queued">${stats.que}</span><span class="dc-stat-label">queued</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-projected">${stats.proj - stats.gaps}</span><span class="dc-stat-label">projected</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-unanchored">${stats.gaps}</span><span class="dc-stat-label">unanchored</span></div>
     </div>
   </div>`;
 
   /* controls */
-  const filterBtns = ['ALL','produced','by_reference','proposed','partial','queued','projected','unanchored'].map(f =>
-    `<button class="dc-filter-btn${docFilter===f?' on':''}" onclick="setDocFilter('${f}')">${f==='by_reference'?'by&nbsp;ref':f}</button>`
+  const FILTER_DEFS = [
+    {k:'ALL',        lbl:'ALL'},
+    {k:'prod',       lbl:'produced'},
+    {k:'ref',        lbl:'by ref'},
+    {k:'prop',       lbl:'proposed'},
+    {k:'part',       lbl:'partial'},
+    {k:'que',        lbl:'queued'},
+    {k:'proj',       lbl:'projected'},
+    {k:'unanchored', lbl:'unanchored'}
+  ];
+  const filterBtns = FILTER_DEFS.map(f =>
+    `<button class="dc-filter-btn${docFilter===f.k?' on':''}" onclick="setDocFilter('${f.k}')">${f.lbl}</button>`
   ).join('');
 
   h += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <div class="dc-lens-strip">
-      <button class="dc-lens-btn${docLens==='phase'?' on':''}" onclick="setDocLens('phase')">by phase</button>
-      <button class="dc-lens-btn${docLens==='anchor'?' on':''}" onclick="setDocLens('anchor')">by anchor</button>
+      <button class="dc-lens-btn${docLens==='phase'?' on':''}" onclick="setDocLens('phase')">phases</button>
+      <button class="dc-lens-btn${docLens==='anchor'?' on':''}" onclick="setDocLens('anchor')">roadmap</button>
     </div>
     <div class="dc-filter-strip">${filterBtns}</div>
   </div>`;
 
-  /* render deliverables by lens */
+  /* render by lens */
   if (docLens === 'phase') {
-    DOC_PHASES.forEach((ph, i) => {
-      const items = filtered.filter(d => d.phase === ph.id);
-      const total = all.filter(d => d.phase === ph.id).length;
-      if (items.length === 0 && docFilter !== 'ALL') return;
-      h += `<div class="sh" style="margin-top:${i===0?'0':'18px'}">
-        <span>Ph${ph.id} &middot; ${ph.name}</span>
+    for (let p = 1; p <= 8; p++) {
+      const items = filtered.filter(d => d.p === p);
+      const total = all.filter(d => d.p === p).length;
+      if (items.length === 0 && docFilter !== 'ALL') continue;
+      h += `<div class="sh" style="margin-top:${p===1?'0':'18px'}">
+        <span>Ph0${p} &middot; ${DOC_PHASE_NAMES[p]}</span>
         <span class="sh-count">${items.length}${docFilter!=='ALL'?' / '+total:''}</span>
       </div>`;
-      if (items.length === 0) {
+      if (!items.length) {
         h += `<p class="empty-note">No deliverables match filter.</p>`;
       } else {
         items.forEach(d => { h += docCard(d); });
       }
-    });
+    }
   } else {
-    /* anchor lens */
-    DOC_ANCHORS.forEach((anc, i) => {
-      const items = filtered.filter(d => d.anchor === anc);
-      if (items.length === 0) return;
-      h += `<div class="sh" style="margin-top:${i===0?'0':'18px'}">
-        <span>${anc}</span>
-        <span class="sh-count">${items.length}</span>
+    /* roadmap / anchor lens */
+    DOC_ANCHOR_DEFS.forEach((anc, i) => {
+      const items = filtered.filter(d => d.a === anc.k);
+      if (!items.length) return;
+      const isGapCol = anc.k === 'NONE';
+      h += `<div class="sh" style="margin-top:${i===0?'0':'18px'}${isGapCol?';border-color:var(--warn)':''}">
+        <span${isGapCol?' style="color:var(--warn)"':''}>${anc.label}${anc.sub ? ` &middot; <span style="font-weight:normal;color:var(--faint)">${anc.sub}</span>` : ''}</span>
+        <span class="sh-count"${isGapCol?' style="border-color:var(--warn);color:var(--warn)"':''}>${items.length}</span>
       </div>`;
       items.forEach(d => { h += docCard(d); });
     });
-    /* unanchored group */
-    const gaps = filtered.filter(d => d.anchor === null);
-    if (gaps.length > 0) {
-      h += `<div class="sh" style="margin-top:18px;border-color:var(--warn)">
-        <span style="color:var(--warn)">unanchored &middot; gaps</span>
-        <span class="sh-count" style="border-color:var(--warn);color:var(--warn)">${gaps.length}</span>
-      </div>`;
-      gaps.forEach(d => { h += docCard(d); });
-    }
   }
 
   document.getElementById('mainPanel').innerHTML = h;
 }
 
 function renderDocCtx() {
-  const phaseName = ph => (DOC_PHASES.find(p => p.id === ph) || {}).name || '';
-
   let inspectorH = '';
   if (docSelected) {
-    const d = DOC_DELIVERABLES.find(x => x.id === docSelected);
+    const d = DOC_DELIVERABLES.find(x => x.i === docSelected);
     if (d) {
-      const isUnanchored = d.anchor === null;
-      const stCls = isUnanchored ? 'st-unanchored' : `st-${d.standing}`;
+      const isGap = d.a === 'NONE';
+      const stInfo = DOC_STATUS_MAP[d.s] || {label: d.s, css: 'projected'};
+      const stCls  = isGap ? 'st-unanchored' : `st-${stInfo.css}`;
+      const anchorDef = DOC_ANCHOR_DEFS.find(a => a.k === d.a);
+      const anchorDesc = isGap ? 'unanchored' : (anchorDef ? `${anchorDef.label} \u00b7 ${anchorDef.sub}` : d.a);
       inspectorH = `<div class="ctx-section">
         <div class="ctx-head">Inspector</div>
         <div class="dc-card ${stCls}" style="cursor:default;margin-bottom:10px">
-          <span class="dc-card-id">${d.id}</span>
+          <span class="dc-card-id">${d.i}</span>
           <div class="dc-card-body">
-            <div class="dc-card-title">${d.title}</div>
-            ${d.ref ? `<div class="dc-card-ref">${d.ref}</div>` : ''}
+            <div class="dc-card-title">${d.n}</div>
+            <div class="dc-card-ref">Ph0${d.p} &middot; ${DOC_PHASE_NAMES[d.p]}</div>
           </div>
         </div>
-        <div class="ctx-row"><span class="ctx-row-label">Phase</span><span class="ctx-row-val">Ph${d.phase} &middot; ${phaseName(d.phase)}</span></div>
-        <div class="ctx-row"><span class="ctx-row-label">Standing</span><span class="ctx-row-val">${d.standing.replace('_',' ')}</span></div>
-        <div class="ctx-row"><span class="ctx-row-label">Anchor</span><span class="ctx-row-val ${isUnanchored?'v-warn':''}">${isUnanchored?'unanchored':d.anchor||'—'}</span></div>
-        ${d.ref ? `<div class="ctx-row"><span class="ctx-row-label" style="white-space:nowrap">Ref</span><span class="ctx-row-val" style="font-size:9px;text-align:right">${d.ref}</span></div>` : ''}
-        ${isUnanchored ? `<div class="ctx-note" style="padding-top:8px;color:var(--warn)">Gap: no roadmap step anchors this deliverable. Requires a milestone or explicit deferral.</div>` : ''}
+        <div class="ctx-row"><span class="ctx-row-label">Standing</span><span class="ctx-row-val">${isGap ? 'unanchored' : stInfo.label}</span></div>
+        <div class="ctx-row"><span class="ctx-row-label">Anchor</span><span class="ctx-row-val ${isGap?'v-warn':''}">${anchorDesc}</span></div>
+        <div class="ctx-row" style="align-items:flex-start;padding-top:8px"><span class="ctx-row-label" style="padding-top:1px">Evidence</span></div>
+        <div class="ctx-note" style="padding-top:4px;line-height:1.7">${d.w || '—'}</div>
+        ${isGap ? `<div class="ctx-note" style="padding-top:8px;color:var(--warn)">One of six deliverables with no anchor in the plan or roadmap. Placing or waiving it, with reasons, is organizer work.</div>` : ''}
       </div>`;
     }
   }
 
-  /* standing legend */
-  const legendH = DOC_STANDINGS.map(s => {
-    const count = s === 'unanchored'
-      ? DOC_DELIVERABLES.filter(d => d.anchor === null).length
-      : DOC_DELIVERABLES.filter(d => d.standing === s && (s !== 'projected' || d.anchor !== null)).length;
+  /* standing legend with canonical counts */
+  const isGap = d => d.a === 'NONE';
+  const legendItems = [
+    {s:'prod', css:'produced'},    {s:'ref',  css:'by_reference'},
+    {s:'prop', css:'proposed'},    {s:'part', css:'partial'},
+    {s:'que',  css:'queued'},      {s:'proj', css:'projected'},
+    {s:'gap',  css:'unanchored'}
+  ];
+  const legendH = legendItems.map(x => {
+    const count = x.s === 'gap'
+      ? DOC_DELIVERABLES.filter(isGap).length
+      : DOC_DELIVERABLES.filter(d => d.s === x.s && (x.s !== 'proj' || !isGap(d))).length;
+    const lbl = x.s === 'gap' ? 'unanchored' : (DOC_STATUS_MAP[x.s]?.label || x.s);
     return `<div class="dc-legend-row">
-      <div class="dc-legend-swatch st-${s}"></div>
-      <span style="flex:1">${DOC_STANDING_LABELS[s]||s}</span>
+      <div class="dc-legend-swatch st-${x.css}"></div>
+      <span style="flex:1">${lbl}</span>
       <span style="color:var(--faint)">${count}</span>
     </div>`;
   }).join('');
@@ -1946,11 +1980,12 @@ function renderDocCtx() {
       ${legendH}
     </div>
     <div class="ctx-section">
-      <div class="ctx-head">Framework</div>
-      <div class="ctx-note">6 standings + unanchored flag. T1–T6 decision procedure. 3-layer provenance: canonical · record · editorial.<br><br>Seeded June 2026 from §11 of Documentation Fulfilment Agent Framework v0.1.</div>
+      <div class="ctx-head">Provenance</div>
+      <div class="ctx-note">canonical: deliverable identities (framework explorer v0.3)<br>record: standings from the definition movements and corpus<br>editorial: first-fulfilment anchors, working judgments, revisable<br><br>Anchors mark first fulfilment; deliverables accrue through every later wave.</div>
     </div>
     <div class="ctx-section">
       <div class="ctx-head">Links</div>
+      <a href="cis-hubops-documentation-fulfilment-hud-v0_1.html" class="ctx-link">&rarr; full fulfilment instrument</a>
       <a href="documentation-fulfilment-agent-framework-v0_1.html" class="ctx-link">Framework v0.1</a>
       <a href="cis-prd-v0.2.html" class="ctx-link">CIS PRD v0.2</a>
       <a href="AGENTS.md" class="ctx-link">AGENTS.md</a>

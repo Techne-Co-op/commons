@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Documentation Fulfilment &middot; CIS &middot; Hub Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* co-op.us design system · token layer (verbatim) */
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface-raised: #232220;
+  --border: #333333; --border-strong: #4a4a4a;
+  --terra: #c4956a; --terra-text: #c4956a;
+  --terra-dim: rgba(196, 149, 106, 0.12); --terra-glow: rgba(196, 149, 106, 0.06);
+  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
+  --ok: #94ae84; --ok-dim: rgba(148, 174, 132, 0.14);
+  --info: #8da3b5; --info-dim: rgba(141, 163, 181, 0.14);
+  --warn: #c0705c; --warn-dim: rgba(192, 112, 92, 0.14);
+  --dur-micro: 160ms; --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+}
+[data-mode="light"] {
+  color-scheme: light;
+  --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+  --border: #e2ddd5; --border-strong: #c9c2b8;
+  --terra: #c4956a; --terra-text: #96704a;
+  --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+  --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+  --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+  --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+  --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 14px; line-height: 1.6; overflow: hidden;
+}
+.mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+.app { display: grid; grid-template-rows: auto auto 1fr auto; height: 100vh; padding: var(--s5) var(--s5) var(--s3); gap: var(--s3); }
+
+/* masthead: eyebrow / title / subtitle / meta */
+.mast { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s4); }
+.eyebrow { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--terra-text); margin-bottom: var(--s1); }
+.title { font-size: 26px; font-weight: 700; color: var(--heading); letter-spacing: -0.3px; line-height: 1.2; }
+.subtitle { font-style: italic; font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+.meta { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--faint); margin-top: var(--s2); line-height: 1.8; max-width: 70ch; }
+.mast-right { display: flex; gap: var(--s2); align-items: center; flex-shrink: 0; }
+.btn {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 5px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.btn:hover { border-color: var(--terra); color: var(--terra-text); }
+.btn:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+.btn.active { border-color: var(--terra); color: var(--terra-text); background: var(--terra-dim); }
+.btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* summary band */
+.band { display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; }
+.fulfil { flex: 1 1 260px; min-width: 220px; }
+.bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+.bar i { display: block; height: 100%; }
+.bar-cap { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: var(--faint); margin-top: 4px; letter-spacing: 0.08em; }
+.chips { display: flex; gap: var(--s2); flex-wrap: wrap; }
+.chip {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.06em;
+  border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer;
+  background: var(--surface); color: var(--muted); display: inline-flex; align-items: center; gap: 7px;
+  transition: border-color var(--dur-micro) var(--ease);
+}
+.chip:hover { border-color: var(--border-strong); }
+.chip:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+.chip .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.chip .ct { color: var(--heading); }
+.chip.on { border-color: var(--heading); color: var(--heading); }
+.chip.dim { opacity: 0.38; }
+
+/* main: lens + inspector */
+.main { display: grid; grid-template-columns: 1fr 330px; gap: var(--s4); min-height: 0; }
+.lens { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: var(--s4); overflow: auto; min-height: 0; }
+.cols { display: grid; gap: var(--s3); align-items: start; }
+.col {}
+.col-h { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra-text); padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 8px; line-height: 1.5; }
+.col-h .sub { display: block; color: var(--faint); text-transform: none; letter-spacing: 0.04em; }
+.col-h .n { color: var(--faint); }
+.col.gapcol .col-h { color: var(--warn); border-bottom-color: rgba(192,112,92,0.4); }
+.col.ghost .col-h { color: var(--faint); }
+.ghost-note { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; color: var(--faint); line-height: 1.7; }
+
+.card {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; line-height: 1.45;
+  border: 1px solid var(--border); border-left: 3px solid var(--faint); border-radius: 6px;
+  padding: 5px 8px; margin-bottom: 6px; cursor: pointer; background: var(--bg);
+  transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);
+  display: block; width: 100%; text-align: left; color: var(--text);
+}
+.card:hover { border-color: var(--border-strong); }
+.card:focus-visible { outline: 2px solid var(--terra); outline-offset: 1px; }
+.card .cid { color: var(--terra-text); margin-right: 6px; }
+.card .nm { color: var(--text); }
+.card.sel { border-color: var(--heading); border-left-color: var(--heading); background: var(--surface-raised); }
+.card.hide { display: none; }
+.card.s-prod { border-left-color: var(--ok); }
+.card.s-ref  { border-left-color: var(--ok); border-left-style: double; }
+.card.s-prop { border-left-color: var(--terra); }
+.card.s-part { border-left-color: var(--info); }
+.card.s-que  { border-left-color: var(--info); border-left-style: double; }
+.card.s-proj { border-left-color: var(--faint); }
+.card.s-gap  { border-left-color: var(--warn); }
+.card .gapdot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); margin-left: 6px; vertical-align: middle; }
+
+/* inspector */
+.insp { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: var(--s4) var(--s4); overflow: auto; min-height: 0; }
+.insp .ilabel { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terra-text); margin-bottom: var(--s3); }
+.insp .iid { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--terra-text); letter-spacing: 0.1em; }
+.insp .ititle { font-size: 17px; font-weight: 700; color: var(--heading); line-height: 1.35; margin: 4px 0 var(--s3); }
+.kv { margin-bottom: var(--s3); }
+.kv .k { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.kv .v { font-size: 13px; line-height: 1.65; color: var(--text); }
+.kv .v.mono { font-size: 11px; line-height: 1.7; }
+.tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--faint); }
+.tag.edit { color: var(--info); border-color: rgba(141,163,181,0.35); background: var(--info-dim); }
+.tag.canon { color: var(--terra-text); border-color: rgba(196,149,106,0.35); background: var(--terra-dim); }
+.tag.rec { color: var(--ok); border-color: rgba(148,174,132,0.3); background: var(--ok-dim); }
+.stbadge { display: inline-block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 9px; border-radius: 4px; border: 1px solid var(--border); }
+.insp .empty { font-size: 13px; color: var(--muted); line-height: 1.8; }
+.insp .empty .mono { font-size: 10.5px; color: var(--faint); }
+
+/* footer legend */
+.foot { display: flex; justify-content: space-between; align-items: center; gap: var(--s4); flex-wrap: wrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.08em; color: var(--faint); border-top: 1px solid var(--border); padding-top: var(--s3); }
+.foot .leg { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
+.foot .leg .li { display: inline-flex; align-items: center; gap: 5px; }
+.foot .leg .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.foot .right { display: flex; gap: var(--s2); align-items: center; text-transform: uppercase; }
+
+@media (max-width: 980px) {
+  body { overflow: auto; }
+  .app { height: auto; }
+  .main { grid-template-columns: 1fr; }
+  .lens { max-height: 60vh; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- masthead -->
+  <header class="mast">
+    <div>
+      <div class="eyebrow">CO-OP.US &middot; REGENHUB, LCA &middot; DOCUMENTATION INSTRUMENT</div>
+      <div class="title">Documentation Fulfilment</div>
+      <div class="subtitle">The 67 framework deliverables, as written and as projected, for the Common Information System and Hub Operations</div>
+      <div class="meta" id="metaLine">v0.1 &middot; seeded June 2026 from Inception Baseline v0.2, Discovery Consolidation v0.1, Implementation Plan v0.1, Build Roadmap v0.2 &middot; statuses become live when bound to the repository's milestone ledger</div>
+    </div>
+    <div class="mast-right">
+      <button class="btn active" id="lensPhase" aria-pressed="true">phases</button>
+      <button class="btn" id="lensRoad" aria-pressed="false">roadmap</button>
+      <button class="btn" id="modeToggle" aria-label="Toggle color mode"><svg id="modeIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><span id="modeLabel">dark</span></button>
+    </div>
+  </header>
+
+  <!-- summary band -->
+  <div class="band">
+    <div class="fulfil">
+      <div class="bar" id="bar" role="img" aria-label="Fulfilment distribution across 67 deliverables"></div>
+      <div class="bar-cap" id="barCap"></div>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by standing"></div>
+  </div>
+
+  <!-- main -->
+  <div class="main">
+    <div class="lens" id="lens" tabindex="-1"></div>
+    <aside class="insp" id="insp" aria-live="polite"></aside>
+  </div>
+
+  <!-- footer legend -->
+  <footer class="foot">
+    <div class="leg" id="legend"></div>
+    <div class="right">
+      <button class="btn" id="expJson">json</button>
+      <button class="btn" id="expCsv">csv</button>
+      <span>anchors are editorial, revisable &middot; co-op.us &middot; 2026</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   model · three provenance layers
+   canonical: the 67 deliverable identities (framework explorer v0.3)
+   record:    standings as written in the definition movements and corpus
+   editorial: projection anchors and notes, working judgments, revisable
+   anchors mark FIRST fulfilment; construction and validation
+   deliverables accrue through every subsequent wave.
+   ============================================================ */
+
+const PHASES = {1:'Inception',2:'Discovery',3:'Definition',4:'Construction',5:'Validation',6:'Release',7:'Operations',8:'Evolution'};
+
+const STATUSES = {
+  prod:{label:'produced',       cls:'s-prod', color:'var(--ok)',   desc:'the document exists in the definition track'},
+  ref: {label:'by reference',   cls:'s-ref',  color:'var(--ok)',   desc:'satisfied by an authoritative existing source, indexed'},
+  prop:{label:'proposed',       cls:'s-prop', color:'var(--terra)',desc:'drafted; adoption reserved to organizers'},
+  part:{label:'partial',        cls:'s-part', color:'var(--info)', desc:'material exists distributed; synthesis owed'},
+  que: {label:'queued',         cls:'s-que',  color:'var(--info)', desc:'named work of movement 03, definition synthesis'},
+  proj:{label:'projected',      cls:'s-proj', color:'var(--faint)',desc:'future; bound to the roadmap anchor where it first becomes real'}
+};
+
+const ANCHORS = [
+  {k:'NOW', label:'pre-existing', sub:'PRDs &middot; plan &middot; roadmap'},
+  {k:'M01', label:'movement 01',  sub:'inception baseline'},
+  {k:'M02', label:'movement 02',  sub:'discovery consolidation'},
+  {k:'M03', label:'movement 03',  sub:'definition synthesis &middot; queued'},
+  {k:'W0',  label:'wave W0',      sub:'substrate'},
+  {k:'W1',  label:'wave W1',      sub:'shared core'},
+  {k:'W2',  label:'wave W2',      sub:'hub operations'},
+  {k:'G1',  label:'gate G1',      sub:'alpha'},
+  {k:'W3',  label:'wave W3',      sub:'capital'},
+  {k:'W4',  label:'wave W4',      sub:'governance'},
+  {k:'W5',  label:'wave W5',      sub:'lifecycle'},
+  {k:'W6',  label:'wave W6',      sub:'full interface'},
+  {k:'CONT',label:'post-G1',      sub:'ongoing operations'},
+  {k:'NONE',label:'unanchored',   sub:'projection gaps'}
+];
+
+/* i id · n name · p phase · s status · a anchor · w where / evidence */
+const D = [
+/* 01 · inception */
+{i:'D-01.1', n:'Problem Brief', p:1, s:'prod', a:'M01', w:'Inception Baseline v0.2 \u00a702; reconstructed from the corpus, citations verified against the PRDs'},
+{i:'D-01.2', n:'Stakeholder Map', p:1, s:'prod', a:'M01', w:'Inception Baseline v0.2 \u00a703; relationship column deliberately reserved to organizers'},
+{i:'D-01.3', n:'Success Criteria Worksheet', p:1, s:'prod', a:'M01', w:'Inception Baseline v0.2 \u00a704; aligned with the four axes of CIS \u00a715'},
+{i:'D-01.4', n:'Project Charter', p:1, s:'prop', a:'M01', w:'Inception Baseline v0.2 \u00a705; v0.1 proposed and unsigned; sponsor and accountable lead reserved (Q-01)'},
+{i:'D-01.5', n:'Open Questions (Inception)', p:1, s:'prod', a:'M01', w:'Inception Baseline v0.2 \u00a706; seven questions carried into Discovery'},
+/* 02 · discovery */
+{i:'D-02.1', n:'Requirements Specification', p:2, s:'ref', a:'M02', w:'The PRDs and grant remain authoritative; indexed in Discovery \u00a702. Index over recast, deliberately, to avoid a drift-prone copy'},
+{i:'D-02.2', n:'Feasibility Matrix', p:2, s:'prod', a:'M02', w:'Discovery \u00a703; legal and economic verdicts are document-only, to re-render after counsel and accountant input'},
+{i:'D-02.3', n:'Risk Register', p:2, s:'prod', a:'M02', w:'Discovery \u00a704; ten risks with seat owners and review points; RR-09 and RR-10 visible only from the grant text'},
+{i:'D-02.4', n:'Prototype Evaluations', p:2, s:'prop', a:'M02', w:'Discovery \u00a705; verified W0 steps proposed as the evidence record; adoption pending (Q-06)'},
+{i:'D-02.5', n:'User Research Synthesis', p:2, s:'prop', a:'M02', w:'Discovery \u00a706; waiver with two named instruments (G1 walkthrough, W2.2 applicant pass); adoption pending (Q-05)'},
+{i:'D-02.6', n:'Open Questions (Discovery)', p:2, s:'prod', a:'M02', w:'Discovery \u00a707; fifteen questions joined to the D and R ledger'},
+/* 03 · definition */
+{i:'D-03.1', n:'Architecture Document', p:3, s:'que', a:'M03', w:'One synthesis of plan \u00a72.2, \u00a72.3, \u00a73.1 against CIS \u00a705 to \u00a707; queued for movement 03'},
+{i:'D-03.2', n:'ADR Set', p:3, s:'que', a:'M03', w:'One record per decision the organizers close on D1 through D10; first drafts OQ-03, OQ-07, OQ-10, OQ-11'},
+{i:'D-03.3', n:'Threat Model', p:3, s:'que', a:'M03', w:'The public-anon-key perimeter deserves the document; draws RR-01, RR-02, RR-08'},
+{i:'D-03.4', n:'Build/Buy/Integrate Canvas', p:3, s:'part', a:'M03', w:'Core exists as the plan \u00a72.2 stack delta with dispositions per layer; formalization queued'},
+{i:'D-03.5', n:'Technology Stack Record', p:3, s:'part', a:'M03', w:'Plan \u00a72.2; final record pending closures on D1 through D5'},
+{i:'D-03.6', n:'Environment Topology', p:3, s:'part', a:'M03', w:'Plan \u00a72.4; one project production-of-record, local CLI development, single-environment risk accepted and named (RR-02)'},
+{i:'D-03.7', n:'Definition of Done (Construction Draft)', p:3, s:'ref', a:'NOW', w:'Plan \u00a73.3: status semantics, done versus verified, branch protection on five named CI checks; lift queued in movement 03'},
+{i:'D-03.8', n:'Open Questions (Definition)', p:3, s:'part', a:'M03', w:'The D and R ledger is the operational form; OQ-01 through OQ-15 feed it'},
+/* 04 · construction */
+{i:'D-04.1', n:'Tagged Source Code', p:4, s:'proj', a:'W0', w:'W0.1 repo bootstrap; one step per PR, branch and commit conventions (plan \u00a73.5)'},
+{i:'D-04.2', n:'Versioned Build Artifacts', p:4, s:'proj', a:'W0', w:'portal-build and pages-deploy workflows; first real artifact at W0.12'},
+{i:'D-04.3', n:'Software Bill of Materials (SBOM)', p:4, s:'proj', a:'NONE', w:'No SBOM step is indexed in the plan or roadmap; a projection gap to place'},
+{i:'D-04.4', n:'Test Results', p:4, s:'proj', a:'W0', w:'pgTAP suites from W0.4 (shadow verification), W0.6 (rls-audit, probes), W0.16 (grammar lint); CI green on merged commits'},
+{i:'D-04.5', n:'Technical Documentation (Current)', p:4, s:'proj', a:'W0', w:'README, GOVERNANCE.md, /docs (chokepoint analysis, export paths, citations, runbooks) from W0.1 and W0.15'},
+{i:'D-04.6', n:'Configured Test Environments', p:4, s:'proj', a:'W0', w:'Shadow database in CI (W0.4); local development through the Supabase CLI (plan \u00a72.4)'},
+{i:'D-04.7', n:'Representative Test Data', p:4, s:'proj', a:'W0', w:'seed.sql synthetic fixtures only (W0.3); the D3 hard rule keeps PII out until first real onboarding'},
+{i:'D-04.8', n:'Known Limitations List', p:4, s:'proj', a:'W0', w:'Per-step Notes carry simplifications and tensions (plan \u00a73.2); an aggregate view is owed'},
+{i:'D-04.9', n:'Contributing Guide', p:4, s:'proj', a:'W0', w:'GOVERNANCE.md ledger rules plus the PR template (plan \u00a73.1, \u00a73.5)'},
+{i:'D-04.10', n:'CI Configuration', p:4, s:'proj', a:'W0', w:'The eight-workflow set of plan \u00a73.1; milestone-validate lands with W0.2'},
+{i:'D-04.11', n:'Dependency Policy', p:4, s:'proj', a:'W0', w:'Vendor level lives in the W0.15 chokepoint analysis; package-level policy is not yet indexed'},
+/* 05 · validation */
+{i:'D-05.1', n:'Test Plan', p:5, s:'proj', a:'W0', w:'The ledger is the plan in distributed form: a named verification per step (plan \u00a73.2, \u00a73.3)'},
+{i:'D-05.2', n:'Test Reports', p:5, s:'proj', a:'W0', w:'CI runs on merged commits are the reports; verified requires the named job green (plan \u00a73.3)'},
+{i:'D-05.3', n:'UAT Script', p:5, s:'proj', a:'G1', w:'The operational walkthrough is named (plan \u00a707, Discovery \u00a706); the script itself is unwritten'},
+{i:'D-05.4', n:'UAT Documentation', p:5, s:'proj', a:'G1', w:'The walkthrough record with a real invited member, judged by that member with an organizer'},
+{i:'D-05.5', n:'Accessibility Audit', p:5, s:'proj', a:'NONE', w:'The target exists (WCAG AA, CIS \u00a714); no audit step is indexed; a projection gap to place'},
+{i:'D-05.6', n:'Defect Register', p:5, s:'proj', a:'NONE', w:'Blocked-status discipline covers build blockers, not defects; no register is indexed; a projection gap'},
+{i:'D-05.7', n:'Evidence Package', p:5, s:'proj', a:'G1', w:'index.json, STATUS.md, and the verified step set are the package (plan \u00a73.4); G1 computes from it'},
+{i:'D-05.8', n:'Compliance Evidence', p:5, s:'proj', a:'W2', w:'KPI audit trail the EE team can verify independently (W2.5); \u00a7704(b) close evidence lands with W3'},
+{i:'D-05.9', n:'Open Questions (Validation)', p:5, s:'proj', a:'G1', w:'The questions the gate review surfaces, recorded at the gate'},
+/* 06 · release */
+{i:'D-06.1', n:'Release Runbook', p:6, s:'proj', a:'G1', w:'The gate file lists the verified set; a runbook proper is not indexed and is owed at the gate'},
+{i:'D-06.2', n:'Rollback Plan', p:6, s:'proj', a:'W0', w:'Tested restore (W0.14) plus migrations only via PR; rollback is restore by construction'},
+{i:'D-06.3', n:'Communication Checklist', p:6, s:'proj', a:'W0', w:'The /build panel via the status mirror (W0.18) is the member channel; a checklist proper is not indexed'},
+{i:'D-06.4', n:'Operational Handoff Plan', p:6, s:'proj', a:'W2', w:'Operator verifications across W2 plus the operating loop (plan \u00a708) carry the handoff'},
+{i:'D-06.5', n:'Operational Runbooks (Initial)', p:6, s:'proj', a:'W0', w:'docs/runbooks: restore drill and walkaway groundwork, first real at W0.14'},
+{i:'D-06.6', n:'Monitoring Configuration', p:6, s:'proj', a:'W0', w:'W0.17 observability and error sink'},
+{i:'D-06.7', n:'Service Level Objectives (SLOs)', p:6, s:'proj', a:'M03', w:'Four targets to cast (Discovery \u00a702A: reliability, availability, legibility, longevity); values organizer-set'},
+{i:'D-06.8', n:'On-Call Rotation', p:6, s:'proj', a:'NONE', w:'A seat-level duty; no rotation is indexed; a projection gap to place or to waive with reasons'},
+{i:'D-06.9', n:'Support Knowledge Base (Initial)', p:6, s:'proj', a:'W1', w:'Nou v1, read-only, grounded, logged (W1.7): cited answers are the first support surface'},
+{i:'D-06.10', n:'Access Management Plan', p:6, s:'proj', a:'W0', w:'Invite-only auth (W0.5) plus the role registry (W0.8) under bylaws \u00a718.1'},
+{i:'D-06.11', n:'Status Communication Channels', p:6, s:'proj', a:'W0', w:'The status mirror (W0.18); near real time means every merge (plan \u00a73.4)'},
+{i:'D-06.12', n:'User-Facing Release Notes', p:6, s:'proj', a:'W0', w:'The /build panel substitutes for notes in alpha; member-facing notes are not separately indexed'},
+{i:'D-06.13', n:'Deployed System (Production)', p:6, s:'proj', a:'G1', w:'G1 verified is the deployed system: a real member signs in against production data (plan \u00a707)'},
+/* 07 · operations */
+{i:'D-07.1', n:'Service Review Reports', p:7, s:'proj', a:'W2', w:'The monthly impact report (W2.6) covers the hub face; cooperative-side service review is not indexed'},
+{i:'D-07.2', n:'Incident Postmortems', p:7, s:'proj', a:'W0', w:'The error sink (W0.17) captures incidents; postmortem practice is not yet indexed'},
+{i:'D-07.3', n:'User Feedback / Ticket Trends', p:7, s:'proj', a:'NONE', w:'No feedback or ticket surface is indexed; a projection gap to place'},
+{i:'D-07.4', n:'Capacity / Performance Data', p:7, s:'proj', a:'W2', w:'Seat utilization and KPI views (W2.5) cover the hub; system capacity is not indexed'},
+{i:'D-07.5', n:'Technical Debt Register (Operationally Informed)', p:7, s:'proj', a:'W0', w:'Per-step Notes and blocked reasons are the raw record; the aggregate register is owed'},
+{i:'D-07.6', n:'Security / Compliance Audit Results', p:7, s:'proj', a:'W0', w:'rls-audit runs continuously in CI (W0.6); a formal audit cadence is unset'},
+{i:'D-07.7', n:'Platform Dependency Status', p:7, s:'proj', a:'W0', w:'The chokepoint analysis as a living design artifact (W0.15); D5 reversal trigger recorded there'},
+{i:'D-07.8', n:'Patching Policy', p:7, s:'proj', a:'NONE', w:'Not indexed in plan or roadmap; a projection gap to place'},
+{i:'D-07.9', n:'SLO Definition (Formal)', p:7, s:'proj', a:'CONT', w:'Formal objectives from operating data, after the movement 03 initial cast'},
+/* 08 · evolution */
+{i:'D-08.1', n:'Roadmap', p:8, s:'ref', a:'NOW', w:'The Build Roadmap instrument v0.2 plus the CIS \u00a716 phased roadmap with CROPS stage targets'},
+{i:'D-08.2', n:'Technical Debt Register (Current)', p:8, s:'proj', a:'CONT', w:'The aggregate of per-step notes and blocked reasons, maintained over time'},
+{i:'D-08.3', n:'Migration Runbook', p:8, s:'proj', a:'W6', w:'The walkaway drill as a tested, scheduled capability (CR Phase 05), building on W0.14 export paths'},
+{i:'D-08.4', n:'Sunset Plan', p:8, s:'proj', a:'W6', w:'Walkaway is the system sunset; the grant-arc closure has its own milestone, January 2027 (Hub \u00a708)'},
+{i:'D-08.5', n:'Compost / Lessons Preserved', p:8, s:'proj', a:'CONT', w:'Plan amendments are commits like any other; the history of the plan is the audit trail of the build (plan \u00a708)'},
+{i:'D-08.6', n:'Annual Build-in-Public Report', p:8, s:'proj', a:'W6', w:'The benefit report archive with its guaranteed public view (bylaws \u00a7XV) is the vehicle'}
+];
+
+/* ============================================================ state */
+let lens = 'phase';        /* 'phase' | 'road' */
+let filter = null;         /* status key or 'gap' or null */
+let selected = null;       /* deliverable id or null */
+
+const isGap = d => d.a === 'NONE';
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ============================================================ summary band */
+function renderBand(){
+  const counts = {}; Object.keys(STATUSES).forEach(k=>counts[k]=0);
+  let gaps = 0;
+  D.forEach(d=>{ counts[d.s]++; if(isGap(d)) gaps++; });
+
+  const bar = $('bar'); bar.innerHTML = '';
+  Object.entries(STATUSES).forEach(([k,st])=>{
+    if(!counts[k]) return;
+    const seg = document.createElement('i');
+    seg.style.width = (counts[k]/D.length*100)+'%';
+    seg.style.background = st.color;
+    if(k==='proj') seg.style.opacity = '0.45';
+    bar.appendChild(seg);
+  });
+  const docNow = counts.prod + counts.ref;
+  $('barCap').textContent = docNow + ' of 67 fulfilled now \u00b7 ' + counts.prop + ' awaiting adoption \u00b7 '
+    + (counts.part + counts.que) + ' in synthesis \u00b7 ' + counts.proj + ' projected, of which ' + gaps + ' unanchored';
+
+  const chips = $('chips'); chips.innerHTML = '';
+  const mk = (key, label, color, count, outline) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (filter===key ? ' on' : (filter ? ' dim' : ''));
+    b.setAttribute('aria-pressed', filter===key);
+    b.innerHTML = '<span class="dot" style="background:'+(outline?'transparent':color)+';border:1.5px solid '+color+'"></span>'
+      + label + ' <span class="ct">' + count + '</span>';
+    b.onclick = ()=>{ filter = (filter===key ? null : key); renderAll(); };
+    chips.appendChild(b);
+  };
+  mk('prod', STATUSES.prod.label, STATUSES.prod.color, counts.prod, false);
+  mk('ref',  STATUSES.ref.label,  STATUSES.ref.color,  counts.ref,  true);
+  mk('prop', STATUSES.prop.label, STATUSES.prop.color, counts.prop, false);
+  mk('part', STATUSES.part.label, STATUSES.part.color, counts.part, false);
+  mk('que',  STATUSES.que.label,  STATUSES.que.color,  counts.que,  true);
+  mk('proj', STATUSES.proj.label, STATUSES.proj.color, counts.proj, false);
+  mk('gap',  'unanchored',        'var(--warn)',       gaps,        true);
+}
+
+/* ============================================================ lenses */
+function visible(d){
+  if(!filter) return true;
+  if(filter==='gap') return isGap(d);
+  return d.s === filter;
+}
+
+function card(d){
+  const gap = isGap(d);
+  return '<button class="card '+STATUSES[d.s].cls+(gap?' s-gap':'')+(selected===d.i?' sel':'')+(visible(d)?'':' hide')+'" data-id="'+d.i+'">'
+    + '<span class="cid">'+d.i+'</span><span class="nm">'+esc(d.n)+'</span>'+(gap?'<span class="gapdot" title="unanchored"></span>':'')
+    + '</button>';
+}
+
+function renderLens(){
+  const el = $('lens');
+  let html = '';
+  if(lens==='phase'){
+    html = '<div class="cols" style="grid-template-columns: repeat(8, minmax(150px, 1fr)); min-width: 1240px;">';
+    for(let p=1;p<=8;p++){
+      const items = D.filter(d=>d.p===p);
+      const shown = items.filter(visible).length;
+      html += '<div class="col"><div class="col-h"><span class="n">0'+p+'</span> '+PHASES[p]
+        + '<span class="sub">'+shown+' of '+items.length+'</span></div>'
+        + items.map(card).join('') + '</div>';
+    }
+    html += '</div>';
+  } else {
+    html = '<div class="cols" style="grid-template-columns: repeat('+ANCHORS.length+', minmax(132px, 1fr)); min-width: '+(ANCHORS.length*140)+'px;">';
+    ANCHORS.forEach(a=>{
+      const items = D.filter(d=>d.a===a.k);
+      const shown = items.filter(visible).length;
+      const empty = items.length===0;
+      html += '<div class="col'+(a.k==='NONE'?' gapcol':'')+(empty?' ghost':'')+'">'
+        + '<div class="col-h">'+a.label+'<span class="sub">'+a.sub+' \u00b7 '+shown+(shown!==items.length?' of '+items.length:'')+'</span></div>'
+        + (empty ? '<div class="ghost-note">no first fulfilments; accrual continues through this stratum</div>' : items.map(card).join(''))
+        + '</div>';
+    });
+    html += '</div>';
+  }
+  el.innerHTML = html;
+  el.querySelectorAll('.card').forEach(b=>{
+    b.onclick = ()=>{ selected = (selected===b.dataset.id ? null : b.dataset.id); renderLens(); renderInsp(); };
+  });
+}
+
+/* ============================================================ inspector */
+function renderInsp(){
+  const el = $('insp');
+  if(!selected){
+    el.innerHTML = '<div class="ilabel">Inspector</div>'
+      + '<p class="empty">Select a deliverable to open its record.<br><br>'
+      + 'Two lenses: <em>phases</em> arranges the 67 by lifecycle phase; <em>roadmap</em> places each at the anchor where it first becomes real, from the pre-existing sources through the waves to the gate and beyond.<br><br>'
+      + '<span class="mono">provenance \u00b7 identities are canonical (explorer v0.3); standings are record (the movements and corpus); anchors are editorial overlay, working judgments open to revision. anchors mark first fulfilment; construction and validation deliverables accrue through every later wave.</span></p>';
+    return;
+  }
+  const d = D.find(x=>x.i===selected);
+  const st = STATUSES[d.s];
+  const an = ANCHORS.find(a=>a.k===d.a);
+  const gap = isGap(d);
+  el.innerHTML = '<div class="ilabel">Inspector</div>'
+    + '<span class="iid">'+d.i+' \u00b7 PHASE 0'+d.p+' \u00b7 '+PHASES[d.p].toUpperCase()+'</span>'
+    + '<div class="ititle">'+esc(d.n)+'</div>'
+    + '<div class="kv"><div class="k">standing <span class="tag rec">record</span></div>'
+    +   '<div class="v"><span class="stbadge" style="color:'+st.color+';border-color:'+st.color+'">'+st.label+'</span>'
+    +   '<span style="display:block;margin-top:6px;font-size:12.5px;color:var(--muted)">'+st.desc+'</span></div></div>'
+    + '<div class="kv"><div class="k">where it lives \u00b7 evidence <span class="tag rec">record</span></div><div class="v">'+esc(d.w)+'</div></div>'
+    + '<div class="kv"><div class="k">first fulfilment anchor <span class="tag edit">editorial</span></div>'
+    +   '<div class="v mono">'+(gap ? '<span style="color:var(--warn)">unanchored \u00b7 no roadmap step carries this yet</span>'
+                                    : an.label+' \u00b7 '+an.sub)+'</div></div>'
+    + '<div class="kv"><div class="k">identity <span class="tag canon">canonical</span></div>'
+    +   '<div class="v mono">framework explorer v0.3 \u00b7 progressive software delivery \u00b7 67-deliverable inventory</div></div>'
+    + (gap ? '<div class="kv"><div class="k">signal</div><div class="v" style="color:var(--warn);font-size:12.5px">One of six deliverables with no anchor in the plan or roadmap. Placing or waiving it, with reasons, is organizer work.</div></div>' : '');
+}
+
+/* ============================================================ legend + exports */
+function renderLegend(){
+  const el = $('legend');
+  el.innerHTML = Object.entries(STATUSES).map(([k,st])=>{
+    const outline = (k==='ref'||k==='que');
+    return '<span class="li"><span class="sw" style="background:'+(outline?'transparent':st.color)+';border:1.5px solid '+st.color+'"></span>'+st.label+'</span>';
+  }).join('')
+  + '<span class="li"><span class="sw" style="background:transparent;border:1.5px solid var(--warn)"></span>unanchored gap</span>'
+  + '<span class="li">&middot; seeded static; live binding follows the build_status pattern</span>';
+}
+
+function dl(name, text, type){
+  const blob = new Blob([text], {type});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+$('expJson').onclick = ()=>{
+  const out = {
+    instrument: 'documentation-fulfilment-hud', version: '0.1', seeded: 'June 2026',
+    provenance: {
+      canonical: 'deliverable identities, framework explorer v0.3',
+      record: 'standings from inception baseline v0.2, discovery consolidation v0.1, implementation plan v0.1, build roadmap v0.2',
+      editorial: 'first-fulfilment anchors; working judgments, revisable'
+    },
+    statuses: STATUSES, anchors: ANCHORS,
+    records: D.map(d=>({id:d.i, name:d.n, phase:d.p, phaseName:PHASES[d.p], status:d.s, anchor:d.a, unanchored:isGap(d), evidence:d.w}))
+  };
+  dl('cis-hubops-doc-fulfilment-v0_1.json', JSON.stringify(out, null, 2), 'application/json');
+};
+$('expCsv').onclick = ()=>{
+  const q = s => '"' + String(s).replace(/"/g,'""') + '"';
+  const rows = [['id','name','phase','phase_name','status','anchor','unanchored','evidence'].join(',')];
+  D.forEach(d=> rows.push([d.i, q(d.n), d.p, PHASES[d.p], d.s, d.a, isGap(d), q(d.w)].join(',')));
+  dl('cis-hubops-doc-fulfilment-v0_1.csv', '\ufeff' + rows.join('\r\n'), 'text/csv;charset=utf-8');
+};
+
+/* ============================================================ chrome */
+$('lensPhase').onclick = ()=>{ lens='phase'; syncLensBtns(); renderLens(); };
+$('lensRoad').onclick  = ()=>{ lens='road';  syncLensBtns(); renderLens(); };
+function syncLensBtns(){
+  $('lensPhase').classList.toggle('active', lens==='phase');
+  $('lensPhase').setAttribute('aria-pressed', lens==='phase');
+  $('lensRoad').classList.toggle('active', lens==='road');
+  $('lensRoad').setAttribute('aria-pressed', lens==='road');
+}
+
+(function(){
+  const root = document.documentElement, label = $('modeLabel'), icon = $('modeIcon');
+  const moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  const sun = '<circle cx="12" cy="12" r="4" stroke="currentColor" fill="none" stroke-width="1.5"/><path d="M12 2v2M12 20v2m-7.07-15.07 1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round"/>';
+  function apply(mode){ root.setAttribute('data-mode', mode); label.textContent = mode; icon.innerHTML = mode==='dark' ? moon : sun; }
+  apply('dark');
+  $('modeToggle').onclick = ()=> apply(root.getAttribute('data-mode')==='dark' ? 'light' : 'dark');
+})();
+
+function renderAll(){ renderBand(); renderLens(); renderInsp(); }
+renderLegend();
+renderAll();
+</script>
+</body>
+</html>
