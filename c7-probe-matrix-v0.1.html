@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
 <style>
 :root{color-scheme:dark;
 --bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
@@ -623,10 +624,11 @@ function setMobile(v,force){if(!window.matchMedia("(max-width:980px)").matches&&
 (function(){var root=document.documentElement,btn=document.getElementById("modeToggle"),label=document.getElementById("modeLabel"),icon=document.getElementById("modeIcon");
 var moon='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
 var sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
-function apply(m){root.setAttribute("data-mode",m);label.textContent=m;icon.innerHTML=m==="dark"?moon:sun;}
-var pl=window.matchMedia("(prefers-color-scheme: light)");apply(pl.matches?"light":"dark");
-pl.addEventListener("change",e=>apply(e.matches?"light":"dark"));
-btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark"));})();
+function apply(m,save){root.setAttribute("data-mode",m);label.textContent=m;icon.innerHTML=m==="dark"?moon:sun;if(save)try{localStorage.setItem("commons-mode",m);}catch(e){}}
+var stored;try{stored=localStorage.getItem("commons-mode");}catch(e){}
+var pl=window.matchMedia("(prefers-color-scheme: light)");apply(stored||(pl.matches?"light":"dark"));
+pl.addEventListener("change",e=>{try{if(!localStorage.getItem("commons-mode"))apply(e.matches?"light":"dark");}catch(e){}});
+btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark",true));})();
 rAll();showDefault();
 </script>
 <footer class="inst-footer">

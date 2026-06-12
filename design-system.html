@@ -180,25 +180,6 @@ h1 {
   max-width: 60ch;
 }
  
-.mode-toggle {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 13px;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 7px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: var(--s2);
-  flex-shrink: 0;
-  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
-}
-.mode-toggle:hover { border-color: var(--terra); color: var(--terra-text); }
-.mode-toggle:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
-.mode-toggle svg { width: 15px; height: 15px; stroke: currentColor; }
- 
 /* ============================================================
    section grammar — label + fading rule
    ============================================================ */
@@ -500,10 +481,7 @@ footer {
     <h1>commons</h1>
     <div class="version">Design System v3 · adopted from co-op.us</div>
   </div>
-  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
-    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
-    <span id="modeLabel">dark</span>
-  </button>
+  <button class="mode-btn" id="modeBtn">light</button>
 </header>
  
 <p class="lede">A reference specification for the visual artifacts of a cooperative: the documents it writes to govern itself, and the instruments it builds to watch itself. This document holds the tokens, type, components, layout, and voice that make those artifacts recognizably ours, and includes the instructions an agent needs to produce them on our behalf.</p>
@@ -826,29 +804,16 @@ footer {
 <script>
 (function () {
   var root = document.documentElement;
-  var btn = document.getElementById('modeToggle');
-  var label = document.getElementById('modeLabel');
-  var icon = document.getElementById('modeIcon');
- 
-  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
-  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
- 
-  function apply(mode) {
-    root.setAttribute('data-mode', mode);
-    label.textContent = mode;
-    icon.innerHTML = mode === 'dark' ? moon : sun;
-  }
- 
-  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
-  var stored = null;
+  var btn  = document.getElementById('modeBtn');
+  var stored;
   try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
-  apply(stored || (prefersLight.matches ? 'light' : 'dark'));
-  prefersLight.addEventListener('change', function (e) {
-    try { if (!localStorage.getItem('commons-mode')) apply(e.matches ? 'light' : 'dark'); } catch(e2) {}
-  });
+  var m = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
   btn.addEventListener('click', function () {
     var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
-    apply(next);
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
     try { localStorage.setItem('commons-mode', next); } catch(e) {}
   });
 })();

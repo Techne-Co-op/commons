@@ -430,16 +430,20 @@ padding-top:var(--s5);text-align:center;}
   var icon = document.getElementById('modeIcon');
   var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
   var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
-  function apply(mode) {
+  function apply(mode, save) {
     root.setAttribute('data-mode', mode);
     label.textContent = mode;
     icon.innerHTML = mode === 'dark' ? moon : sun;
+    if (save) try { localStorage.setItem('commons-mode', mode); } catch(e) {}
   }
+  var stored; try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
   var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
-  apply(prefersLight.matches ? 'light' : 'dark');
-  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  apply(stored || (prefersLight.matches ? 'light' : 'dark'));
+  prefersLight.addEventListener('change', function (e) {
+    try { if (!localStorage.getItem('commons-mode')) apply(e.matches ? 'light' : 'dark'); } catch(e) {}
+  });
   btn.addEventListener('click', function () {
-    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark', true);
   });
 })();
 </script>
