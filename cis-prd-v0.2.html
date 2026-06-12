@@ -185,6 +185,12 @@ footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint)
   </button>
 </header>
 
+<div style="margin:20px 0;padding:14px 18px;border-left:3px solid var(--terra);background:var(--terra-dim);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.7;color:var(--text);">
+  <span style="color:var(--terra-text);font-weight:600;letter-spacing:.08em;">ERRATUM — §06 Hub Ops table count</span><br>
+  <span style="color:var(--muted);">Issued 2026-06-11 · applies to v0.2</span><br><br>
+  Section 06 lists 9 Hub Ops extension tables. This count is incomplete. The Hub Ops PRD §04 and the C6 Schema Reference Card are authoritative: there are <strong>12</strong> Hub Ops extension tables (adding <code>hub_applicants</code>, <code>event_materials</code>, and <code>educational_displays</code>). The total schema is <strong>31 tables</strong> (19 cooperative core + 12 Hub Ops). Section 06 will be corrected in v0.3.
+</div>
+
 <p class="lede">The system's purpose is to hold the authoritative state of the cooperative and to make that state legible to members, directors, officers, auditors, and automation. It is the book of record and the interface through which the cooperative operates itself.</p>
 
 <nav class="toc">

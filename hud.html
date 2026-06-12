@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="en" data-mode="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CIS Implementation HUD · RegenHub Commons</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    /* ── design tokens ── */
+    :root {
+      --bg: #0d0d0d;
+      --surface: #141414;
+      --surface2: #1a1a1a;
+      --terra: #c8693a;
+      --terra-text: #e07d50;
+      --terra-dim: rgba(200,105,58,.12);
+      --heading: #f0ece4;
+      --text: #d8d3ca;
+      --muted: #9b9488;
+      --faint: #5a5550;
+      --ok: #4a9960;
+      --ok-dim: rgba(74,153,96,.12);
+      --info: #4a7fb5;
+      --info-dim: rgba(74,127,181,.12);
+      --warn: #b5904a;
+      --warn-dim: rgba(181,144,74,.12);
+      --border: #2a2824;
+    }
+    [data-mode="light"] {
+      --bg: #f5f2ee;
+      --surface: #ebe7e0;
+      --surface2: #e2ddd5;
+      --terra: #9e4e22;
+      --terra-text: #8b4520;
+      --terra-dim: rgba(158,78,34,.10);
+      --heading: #1a1714;
+      --text: #2e2a24;
+      --muted: #6a6258;
+      --faint: #a09890;
+      --ok: #2e7048;
+      --ok-dim: rgba(46,112,72,.12);
+      --info: #2a5f94;
+      --info-dim: rgba(42,95,148,.12);
+      --warn: #8a6a28;
+      --warn-dim: rgba(138,106,40,.12);
+      --border: #d8d2c8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+    }
+
+    /* ── top bar ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 52px;
+    }
+    .topbar-back {
+      font-size: 10.5px;
+      color: var(--faint);
+      text-decoration: none;
+      letter-spacing: .1em;
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+    .topbar-back:hover { color: var(--terra-text); }
+    .topbar-divider { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+    .topbar-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 15px;
+      color: var(--heading);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .topbar-sub {
+      font-size: 10px;
+      color: var(--faint);
+      letter-spacing: .06em;
+      flex-shrink: 0;
+      display: none;
+    }
+    @media (min-width: 900px) { .topbar-sub { display: block; } }
+
+    .topbar-chips {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .chip {
+      font-size: 10px;
+      letter-spacing: .06em;
+      padding: 3px 9px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--surface2);
+      white-space: nowrap;
+    }
+    .chip.c-active  { color: var(--info);      background: var(--info-dim);  border-color: var(--info); }
+    .chip.c-done    { color: var(--ok);         background: var(--ok-dim);    border-color: var(--ok); }
+    .chip.c-blocked { color: var(--warn);       background: var(--warn-dim);  border-color: var(--warn); }
+    .chip.c-terra   { color: var(--terra-text); background: var(--terra-dim); border-color: var(--terra); }
+
+    .mode-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .08em;
+      flex-shrink: 0;
+      transition: border-color .15s, color .15s;
+    }
+    .mode-btn:hover { border-color: var(--terra); color: var(--terra-text); }
+
+    /* ── 3-column layout ── */
+    .hud-grid {
+      display: grid;
+      grid-template-columns: 196px 1fr 256px;
+      grid-template-areas: "rail main ctx";
+      max-width: 1640px;
+      margin: 0 auto;
+    }
+    @media (max-width: 1100px) {
+      .hud-grid { grid-template-columns: 180px 1fr; grid-template-areas: "rail main"; }
+      .ctx-panel { display: none; }
+    }
+    @media (max-width: 720px) {
+      .hud-grid { grid-template-columns: 1fr; grid-template-areas: "main"; }
+      .wave-rail { display: none; }
+    }
+
+    /* ── wave rail ── */
+    .wave-rail {
+      grid-area: rail;
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .rail-group-label {
+      font-size: 8.5px;
+      letter-spacing: .16em;
+      color: var(--faint);
+      text-transform: uppercase;
+      padding: 0 14px;
+      margin-top: 14px;
+      margin-bottom: 5px;
+    }
+    .rail-group-label:first-child { margin-top: 0; }
+    .wave-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 6px 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: left;
+      transition: background .12s, color .12s;
+    }
+    .wave-btn:hover { background: var(--surface); color: var(--text); }
+    .wave-btn.on { background: var(--terra-dim); color: var(--terra-text); }
+    .wave-btn-id { font-weight: 500; min-width: 28px; }
+    .wave-btn-name { flex: 1; font-size: 9.5px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wave-btn.on .wave-btn-name { color: var(--terra-text); opacity: .8; }
+    .wave-pips { display: flex; gap: 2px; align-items: center; }
+    .wave-pip {
+      width: 5px; height: 5px; border-radius: 1px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .wave-pip.done    { background: var(--ok); }
+    .wave-pip.active  { background: var(--terra); }
+    .wave-pip.ready   { background: var(--info); opacity: .5; }
+
+    /* ── main panel ── */
+    .main-panel {
+      grid-area: main;
+      padding: 24px 28px;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── overview bar ── */
+    .overview-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+    .overview-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .06em;
+      margin-bottom: 10px;
+    }
+    .overview-label { font-family: 'Libre Baskerville', serif; font-size: 13px; color: var(--heading); }
+    .prog-track {
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .prog-fill {
+      height: 100%;
+      background: var(--ok);
+      border-radius: 3px;
+      transition: width .4s ease;
+      min-width: 0;
+    }
+    .wave-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .wave-pill {
+      font-size: 9px;
+      letter-spacing: .06em;
+      padding: 3px 9px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      color: var(--faint);
+      background: var(--surface2);
+      transition: border-color .12s, color .12s;
+      white-space: nowrap;
+    }
+    .wave-pill:hover   { border-color: var(--terra); color: var(--terra-text); }
+    .wave-pill.on      { border-color: var(--terra); color: var(--terra-text); background: var(--terra-dim); }
+    .wave-pill.wdone   { border-color: var(--ok);    color: var(--ok);         background: var(--ok-dim); }
+    .wave-pill.wactive { border-color: var(--info);  color: var(--info);       background: var(--info-dim); }
+
+    /* ── section headers ── */
+    .sh {
+      font-size: 8.5px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sh:first-of-type { margin-top: 0; }
+    .sh-count {
+      font-size: 9px;
+      color: var(--faint);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+
+    /* ── milestone cards ── */
+    .m-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 9px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 5px;
+      transition: border-color .12s;
+    }
+    .m-card:hover { border-color: var(--muted); }
+    .m-card.t-warn    { border-left: 2px solid var(--warn); }
+    .m-card.t-info    { border-left: 2px solid var(--info); }
+    .m-card.t-terra   { border-left: 2px solid var(--terra); background: rgba(200,105,58,.06); }
+    .m-card.t-ok      { border-left: 2px solid var(--ok); opacity: .72; }
+    .m-card.t-pending { border-left: 2px solid var(--border); }
+
+    .m-id {
+      font-size: 9.5px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: .06em;
+      min-width: 46px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+    .m-body { flex: 1; min-width: 0; }
+    .m-title { font-size: 12px; color: var(--text); line-height: 1.4; }
+    .m-meta  { font-size: 9.5px; color: var(--faint); margin-top: 3px; line-height: 1.5; }
+    .m-deps  { display: inline; }
+    .m-dep   { display: inline-block; font-size: 8.5px; background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; padding: 0 4px; margin: 1px 2px 0 0; color: var(--faint); }
+
+    .m-badge {
+      font-size: 8.5px;
+      letter-spacing: .07em;
+      padding: 2px 7px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      align-self: center;
+      white-space: nowrap;
+    }
+    .b-pending    { color: var(--faint);      background: var(--surface2);  border-color: var(--border); }
+    .b-in_progress{ color: var(--terra-text); background: var(--terra-dim); border-color: var(--terra); }
+    .b-done       { color: var(--ok);         background: var(--ok-dim);    border-color: var(--ok); }
+    .b-verified   { color: var(--ok);         background: var(--ok-dim);    border-color: var(--ok); }
+    .b-review     { color: var(--warn);       background: var(--warn-dim);  border-color: var(--warn); }
+    .b-blocked    { color: var(--faint);      background: var(--surface2);  border-color: var(--border); }
+
+    .empty-note {
+      font-size: 11px;
+      color: var(--faint);
+      padding: 8px 0 4px;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* ── wave group ── */
+    .wave-group-label {
+      font-size: 8.5px;
+      color: var(--faint);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 10px 0 5px;
+      margin-top: 4px;
+    }
+
+    /* ── context panel ── */
+    .ctx-panel {
+      grid-area: ctx;
+      border-left: 1px solid var(--border);
+      padding: 20px 16px;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .ctx-section { margin-bottom: 22px; }
+    .ctx-head {
+      font-size: 8.5px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+    .ctx-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 10.5px;
+    }
+    .ctx-row:last-child { border-bottom: none; }
+    .ctx-row-label { color: var(--muted); }
+    .ctx-row-val { color: var(--text); font-weight: 500; }
+    .ctx-row-val.v-ok   { color: var(--ok); }
+    .ctx-row-val.v-info { color: var(--info); }
+    .ctx-row-val.v-warn { color: var(--warn); }
+
+    .ctx-link {
+      display: block;
+      font-size: 10px;
+      color: var(--faint);
+      text-decoration: none;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: .04em;
+      transition: color .12s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ctx-link:last-child { border-bottom: none; }
+    .ctx-link:hover { color: var(--terra-text); }
+
+    .wave-table { font-size: 9.5px; width: 100%; border-collapse: collapse; }
+    .wave-table td { padding: 3px 0; vertical-align: middle; }
+    .wave-table .wt-id   { color: var(--muted); min-width: 28px; }
+    .wave-table .wt-name { color: var(--faint); padding: 0 6px; }
+    .wave-table .wt-n    { color: var(--faint); text-align: right; min-width: 24px; }
+    .wave-table .wt-bar  { width: 48px; padding-left: 6px; }
+    .wt-bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .wt-bar-fill  { height: 100%; background: var(--ok); border-radius: 2px; }
+
+    .ctx-note {
+      font-size: 9.5px;
+      color: var(--faint);
+      line-height: 1.6;
+    }
+
+    /* ── explorer ── */
+    .explorer-wrap {
+      max-width: 1640px;
+      margin: 0 auto;
+      padding: 0 28px 48px;
+      border-top: 1px solid var(--border);
+    }
+    .explorer-head {
+      padding: 22px 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .explorer-title {
+      font-size: 8.5px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .explorer-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .07em;
+      padding: 3px 9px;
+      border-radius: 2px;
+      cursor: pointer;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: border-color .12s, color .12s, background .12s;
+    }
+    .filter-btn:hover { border-color: var(--terra); color: var(--terra-text); }
+    .filter-btn.on { background: var(--terra-dim); border-color: var(--terra); color: var(--terra-text); }
+    .search-box {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 3px;
+      width: 180px;
+      transition: border-color .12s;
+    }
+    .search-box:focus { outline: none; border-color: var(--terra); }
+    .search-box::placeholder { color: var(--faint); }
+
+    .ex-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .ex-table th {
+      text-align: left;
+      font-size: 8.5px;
+      letter-spacing: .1em;
+      color: var(--faint);
+      padding: 7px 10px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .ex-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .ex-table tr:hover td { background: var(--surface); }
+    .ex-table .c-id    { font-weight: 500; color: var(--muted); letter-spacing: .05em; white-space: nowrap; }
+    .ex-table .c-title { color: var(--text); }
+    .ex-table .c-wave  { color: var(--faint); white-space: nowrap; }
+    .ex-table .c-owner { color: var(--faint); font-size: 10px; }
+    .ex-table .c-verif { color: var(--faint); font-size: 9.5px; }
+    .ex-table .c-status { white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────── TOP BAR ─────────────────────── -->
+<div class="topbar">
+  <a href="index.html" class="topbar-back">&larr; commons</a>
+  <span class="topbar-divider"></span>
+  <span class="topbar-title">CIS Implementation HUD</span>
+  <span class="topbar-sub">67 milestones &middot; W0 substrate + 6 build waves</span>
+  <div class="topbar-chips" id="topChips"></div>
+  <button class="mode-btn" id="modeBtn">light</button>
+</div>
+
+<!-- ─────────────────────── 3-COL GRID ─────────────────────── -->
+<div class="hud-grid">
+
+  <!-- Left: wave rail -->
+  <nav class="wave-rail" id="waveRail" aria-label="Wave navigation"></nav>
+
+  <!-- Center: main panel -->
+  <main class="main-panel" id="mainPanel" aria-live="polite">
+    <p style="font-size:11px;color:var(--faint);padding:24px 0;">Loading milestones&hellip;</p>
+  </main>
+
+  <!-- Right: context panel -->
+  <aside class="ctx-panel" id="ctxPanel" aria-label="Build context"></aside>
+
+</div>
+
+<!-- ─────────────────────── EXPLORER ─────────────────────── -->
+<section class="explorer-wrap">
+  <div class="explorer-head">
+    <span class="explorer-title">Milestone explorer</span>
+    <div class="explorer-controls">
+      <div id="filterBar"></div>
+      <input type="text" class="search-box" id="searchBox" placeholder="filter by title, owner…" aria-label="Search milestones">
+    </div>
+  </div>
+  <table class="ex-table" role="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Wave</th>
+        <th>Owner</th>
+        <th>Status</th>
+        <th>Verification</th>
+      </tr>
+    </thead>
+    <tbody id="exBody"></tbody>
+  </table>
+</section>
+
+<script>
+/* ── mode toggle ── */
+const html = document.documentElement;
+const modeBtn = document.getElementById('modeBtn');
+function setMode(m) {
+  html.setAttribute('data-mode', m);
+  modeBtn.textContent = m === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('hud-mode', m); } catch(e) {}
+}
+modeBtn.addEventListener('click', () => setMode(html.dataset.mode === 'dark' ? 'light' : 'dark'));
+try { const s = localStorage.getItem('hud-mode'); if (s) setMode(s); } catch(e) {}
+
+/* ── constants ── */
+const WAVE_ORDER = ['D','R','W0','W1','W2','W3','W4','W5','W6','G','P'];
+const WAVE_LABELS = {
+  D:'Decisions', R:'Ratifications',
+  W0:'Substrate', W1:'Coop core',
+  W2:'Hub layer', W3:'Public layer',
+  W4:'Finance', W5:'Integration',
+  W6:'Alpha ready', G:'Gates', P:'Practice'
+};
+const WAVE_FULL = {
+  D:'Decisions (D1–D10)',
+  R:'Ratifications (R1–R2)',
+  W0:'W0 · Substrate',
+  W1:'W1 · Cooperative core',
+  W2:'W2 · Hub layer',
+  W3:'W3 · Public layer',
+  W4:'W4 · Finance & governance',
+  W5:'W5 · Integration',
+  W6:'W6 · Alpha ready',
+  G:'Gates', P:'Practice'
+};
+
+/* ── state ── */
+let DATA = null;
+let waveFilter = null;   // null = all
+let exFilter = 'ALL';
+let searchQ = '';
+
+/* ── computations ── */
+function enrich(nodes) {
+  const statusMap = {};
+  nodes.forEach(n => { statusMap[n.id] = n.status; });
+  return nodes.map(n => {
+    const deps = n.depends_on || [];
+    const ready = n.status === 'pending' && deps.every(d => ['done','verified'].includes(statusMap[d] || ''));
+    const isDecision = n.wave === 'D' || n.wave === 'R';
+    return Object.assign({}, n, {
+      _ready: ready,
+      _isDecision: isDecision,
+      _isBlocker: isDecision && n.status === 'pending'
+    });
+  });
+}
+
+function waveSummary(nodes) {
+  const m = {};
+  WAVE_ORDER.forEach(w => { m[w] = { total:0, done:0, active:0, ready:0 }; });
+  nodes.forEach(n => {
+    if (!m[n.wave]) return;
+    m[n.wave].total++;
+    if (['done','verified'].includes(n.status)) m[n.wave].done++;
+    else if (n.status === 'in_progress') m[n.wave].active++;
+    else if (n._ready && !n._isBlocker) m[n.wave].ready++;
+  });
+  return m;
+}
+
+/* ── badge html ── */
+const BADGE_LABELS = { pending:'pending', in_progress:'active', done:'done', verified:'verified', review:'review', blocked:'blocked' };
+function badge(status) {
+  return `<span class="m-badge b-${status}">${BADGE_LABELS[status] || status}</span>`;
+}
+
+/* ── wave rail ── */
+function renderRail(nodes) {
+  const ws = waveSummary(nodes);
+  let h = '';
+
+  const groups = [
+    { label:'Governance', waves:['D','R'] },
+    { label:'Build waves', waves:['W0','W1','W2','W3','W4','W5','W6'] },
+    { label:'Milestones', waves:['G','P'] }
+  ];
+
+  for (const g of groups) {
+    const hasAny = g.waves.some(w => ws[w] && ws[w].total > 0);
+    if (!hasAny) continue;
+    h += `<div class="rail-group-label">${g.label}</div>`;
+    for (const w of g.waves) {
+      const wv = ws[w];
+      if (!wv || wv.total === 0) continue;
+      const isOn = waveFilter === w;
+
+      // pip indicators (max 8)
+      const limit = Math.min(wv.total, 8);
+      const wNodes = nodes.filter(n => n.wave === w).slice(0, limit);
+      let pips = wNodes.map(n => {
+        const cls = ['done','verified'].includes(n.status) ? 'done' : n.status === 'in_progress' ? 'active' : n._ready ? 'ready' : '';
+        return `<span class="wave-pip ${cls}"></span>`;
+      }).join('');
+
+      h += `<button class="wave-btn${isOn ? ' on' : ''}" onclick="setWave('${w}')" aria-pressed="${isOn}">
+        <span class="wave-btn-id">${w}</span>
+        <span class="wave-btn-name">${WAVE_LABELS[w]||w}</span>
+        <span class="wave-pips">${pips}</span>
+      </button>`;
+    }
+  }
+  document.getElementById('waveRail').innerHTML = h;
+}
+
+/* ── top chips ── */
+function renderChips(nodes) {
+  const total = nodes.length;
+  const done = nodes.filter(n => ['done','verified'].includes(n.status)).length;
+  const active = nodes.filter(n => n.status === 'in_progress').length;
+  const blockers = nodes.filter(n => n._isBlocker).length;
+  const pct = Math.round(done / total * 100);
+
+  const chips = document.getElementById('topChips');
+  let h = `<span class="chip">${done}/${total} &middot; ${pct}%</span>`;
+  if (active > 0) h += `<span class="chip c-active">${active} active</span>`;
+  if (blockers > 0) h += `<span class="chip c-blocked">${blockers} decisions open</span>`;
+  if (done === total && total > 0) h += `<span class="chip c-done">complete</span>`;
+  chips.innerHTML = h;
+}
+
+/* ── main panel ── */
+function renderMain(nodes) {
+  const filtered = waveFilter ? nodes.filter(n => n.wave === waveFilter) : nodes;
+  const ws = waveSummary(nodes);
+
+  const total = filtered.length;
+  const done = filtered.filter(n => ['done','verified'].includes(n.status)).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const label = waveFilter ? (WAVE_FULL[waveFilter] || waveFilter) : 'All waves';
+
+  let h = '';
+
+  /* overview bar */
+  let pillsH = '';
+  for (const w of WAVE_ORDER) {
+    const wv = ws[w];
+    if (!wv || wv.total === 0) continue;
+    const allDone = wv.done === wv.total;
+    const someActive = wv.active > 0;
+    const cls = allDone ? 'wdone' : someActive ? 'wactive' : '';
+    const isOn = waveFilter === w;
+    pillsH += `<span class="wave-pill ${cls}${isOn ? ' on' : ''}" onclick="setWave('${w}')" role="button" tabindex="0">${w} ${wv.done}/${wv.total}</span>`;
+  }
+
+  h += `<div class="overview-bar">
+    <div class="overview-row">
+      <span class="overview-label">${label}</span>
+      <span>${done} of ${total} complete &middot; ${pct}%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${Math.max(pct,0)}%"></div></div>
+    <div class="wave-pills">${pillsH}</div>
+  </div>`;
+
+  /* blockers */
+  const blockers = filtered.filter(n => n._isBlocker);
+  h += `<div class="sh"><span>Open decisions &amp; ratifications</span><span class="sh-count">${blockers.length}</span></div>`;
+  if (blockers.length === 0) {
+    h += `<p class="empty-note">All decisions recorded — build tree is unlocked.</p>`;
+  } else {
+    for (const n of blockers) h += card(n, 't-warn');
+  }
+
+  /* active */
+  const active = filtered.filter(n => n.status === 'in_progress');
+  h += `<div class="sh"><span>In progress</span><span class="sh-count">${active.length}</span></div>`;
+  if (active.length === 0) {
+    h += `<p class="empty-note">Nothing active yet.</p>`;
+  } else {
+    for (const n of active) h += card(n, 't-terra');
+  }
+
+  /* ready */
+  const ready = filtered.filter(n => n._ready && !n._isBlocker && n.status === 'pending');
+  h += `<div class="sh"><span>Ready to start</span><span class="sh-count">${ready.length}</span></div>`;
+  if (ready.length === 0) {
+    h += `<p class="empty-note">No steps are unblocked. Record open decisions to unlock the build tree.</p>`;
+  } else {
+    for (const n of ready) h += card(n, 't-info');
+  }
+
+  /* pending (blocked by upstream) */
+  const blocked = filtered.filter(n => n.status === 'pending' && !n._ready && !n._isBlocker);
+  if (blocked.length > 0) {
+    h += `<div class="sh"><span>Pending &middot; upstream dependencies</span><span class="sh-count">${blocked.length}</span></div>`;
+    const byWave = {};
+    blocked.forEach(n => { (byWave[n.wave] = byWave[n.wave] || []).push(n); });
+    for (const w of WAVE_ORDER) {
+      if (!byWave[w]) continue;
+      h += `<div class="wave-group-label">${w} &middot; ${WAVE_LABELS[w]||w}</div>`;
+      for (const n of byWave[w]) h += card(n, 't-pending');
+    }
+  }
+
+  /* done */
+  const doneItems = filtered.filter(n => ['done','verified'].includes(n.status));
+  if (doneItems.length > 0) {
+    h += `<div class="sh"><span>Complete</span><span class="sh-count">${doneItems.length}</span></div>`;
+    for (const n of doneItems) h += card(n, 't-ok');
+  }
+
+  document.getElementById('mainPanel').innerHTML = h;
+}
+
+function card(n, typeClass) {
+  const deps = (n.depends_on || []);
+  const depsH = deps.length ? `<span class="m-deps">&nbsp;&middot; needs: ${deps.map(d => `<span class="m-dep">${d}</span>`).join('')}</span>` : '';
+  return `<div class="m-card ${typeClass}">
+    <span class="m-id">${n.id}</span>
+    <div class="m-body">
+      <div class="m-title">${n.title}</div>
+      <div class="m-meta">${n.owner || ''}${depsH}</div>
+    </div>
+    ${badge(n.status)}
+  </div>`;
+}
+
+/* ── context panel ── */
+function renderCtx(nodes) {
+  const total = nodes.length;
+  const done  = nodes.filter(n => ['done','verified'].includes(n.status)).length;
+  const active = nodes.filter(n => n.status === 'in_progress').length;
+  const review = nodes.filter(n => n.status === 'review').length;
+  const pending = nodes.filter(n => n.status === 'pending').length;
+  const blockers = nodes.filter(n => n._isBlocker).length;
+  const ready = nodes.filter(n => n._ready && !n._isBlocker).length;
+
+  const ws = waveSummary(nodes);
+
+  let rows = `
+    <div class="ctx-row"><span class="ctx-row-label">Total milestones</span><span class="ctx-row-val">${total}</span></div>
+    <div class="ctx-row"><span class="ctx-row-label">Complete</span><span class="ctx-row-val v-ok">${done}</span></div>
+    <div class="ctx-row"><span class="ctx-row-label">Active</span><span class="ctx-row-val v-info">${active}</span></div>
+    <div class="ctx-row"><span class="ctx-row-label">In review</span><span class="ctx-row-val">${review}</span></div>
+    <div class="ctx-row"><span class="ctx-row-label">Pending</span><span class="ctx-row-val">${pending}</span></div>
+    <div class="ctx-row"><span class="ctx-row-label">Open decisions</span><span class="ctx-row-val v-warn">${blockers}</span></div>
+    <div class="ctx-row"><span class="ctx-row-label">Ready to start</span><span class="ctx-row-val v-info">${ready}</span></div>
+  `;
+
+  let waveRows = '';
+  for (const w of WAVE_ORDER) {
+    const wv = ws[w];
+    if (!wv || wv.total === 0) continue;
+    const pct = Math.round(wv.done / wv.total * 100);
+    waveRows += `<tr>
+      <td class="wt-id">${w}</td>
+      <td class="wt-name">${WAVE_LABELS[w]||w}</td>
+      <td class="wt-n">${wv.done}/${wv.total}</td>
+      <td class="wt-bar"><div class="wt-bar-track"><div class="wt-bar-fill" style="width:${pct}%"></div></div></td>
+    </tr>`;
+  }
+
+  document.getElementById('ctxPanel').innerHTML = `
+    <div class="ctx-section">
+      <div class="ctx-head">Progress</div>
+      ${rows}
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Wave breakdown</div>
+      <table class="wave-table"><tbody>${waveRows}</tbody></table>
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Documents</div>
+      <a href="cis-prd-v0.2.html" class="ctx-link">CIS PRD v0.2</a>
+      <a href="hub-ops-prd-v0.1.html" class="ctx-link">Hub Ops PRD v0.1</a>
+      <a href="cis-hubops-private-alpha-implementation-plan-v0.1.html" class="ctx-link">Implementation Plan v0.1</a>
+      <a href="cis-build-roadmap-instrument-v0.2.html" class="ctx-link">Build Roadmap v0.2</a>
+      <a href="builders-collection-map-v0.1.html" class="ctx-link">Builder&rsquo;s Collection Map</a>
+      <a href="AGENTS.md" class="ctx-link">AGENTS.md</a>
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Data source</div>
+      <div class="ctx-note">
+        Live read from <code>milestones/index.json</code>.<br>
+        Agents write status updates directly to this file. Reload to refresh.<br><br>
+        Human review is required before any milestone moves to <em>done</em>.
+      </div>
+    </div>
+  `;
+}
+
+/* ── explorer ── */
+const ALL_WAVES_EX = ['ALL', ...WAVE_ORDER];
+
+function renderFilterBar() {
+  document.getElementById('filterBar').innerHTML = ALL_WAVES_EX.map(w =>
+    `<button class="filter-btn${exFilter===w?' on':''}" onclick="setEx('${w}')" aria-pressed="${exFilter===w}">${w}</button>`
+  ).join('');
+}
+
+function setEx(w) { exFilter = w; renderFilterBar(); renderExplorer(DATA); }
+
+document.getElementById('searchBox').addEventListener('input', e => {
+  searchQ = e.target.value.toLowerCase();
+  renderExplorer(DATA);
+});
+
+function renderExplorer(nodes) {
+  if (!nodes) return;
+  let rows = nodes;
+  if (exFilter !== 'ALL') rows = rows.filter(n => n.wave === exFilter);
+  if (searchQ) rows = rows.filter(n =>
+    n.id.toLowerCase().includes(searchQ) ||
+    n.title.toLowerCase().includes(searchQ) ||
+    (n.owner||'').toLowerCase().includes(searchQ) ||
+    (n.verification||'').toLowerCase().includes(searchQ)
+  );
+
+  // sort: wave order, then numeric id within wave
+  const wi = w => { const i = WAVE_ORDER.indexOf(w); return i >= 0 ? i : 99; };
+  rows = [...rows].sort((a, b) => {
+    const dw = wi(a.wave) - wi(b.wave);
+    if (dw !== 0) return dw;
+    const na = parseInt((a.id.match(/\d+/) || ['0'])[0]);
+    const nb = parseInt((b.id.match(/\d+/) || ['0'])[0]);
+    const na2 = parseInt((a.id.match(/\d+\.(\d+)/) || [,0])[1]);
+    const nb2 = parseInt((b.id.match(/\d+\.(\d+)/) || [,0])[1]);
+    if (na !== nb) return na - nb;
+    return na2 - nb2;
+  });
+
+  const tbody = document.getElementById('exBody');
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--faint);text-align:center;padding:20px 10px;font-size:11px;">no results</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(n => `<tr>
+    <td class="c-id">${n.id}</td>
+    <td class="c-title">${n.title}</td>
+    <td class="c-wave">${n.wave}</td>
+    <td class="c-owner">${n.owner||''}</td>
+    <td class="c-status">${badge(n.status)}</td>
+    <td class="c-verif">${(n.verification||'').replace(/\+/g,' + ')}</td>
+  </tr>`).join('');
+}
+
+/* ── filter ── */
+function setWave(w) {
+  waveFilter = waveFilter === w ? null : w;
+  render();
+}
+
+/* ── render all ── */
+function render() {
+  if (!DATA) return;
+  renderRail(DATA);
+  renderChips(DATA);
+  renderMain(DATA);
+  renderCtx(DATA);
+  renderExplorer(DATA);
+  renderFilterBar();
+}
+
+/* ── fetch data ── */
+fetch('milestones/index.json')
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(d => {
+    DATA = enrich(d.nodes);
+    render();
+  })
+  .catch(e => {
+    document.getElementById('mainPanel').innerHTML =
+      `<div style="color:var(--warn);font-size:12px;padding:24px;line-height:1.7;">
+        Could not load <code>milestones/index.json</code>.<br>
+        ${e.message}<br><br>
+        <span style="color:var(--faint)">Open via GitHub Pages or a local server (not file://).</span>
+      </div>`;
+  });
+</script>
+</body>
+</html>
