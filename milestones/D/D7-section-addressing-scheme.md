@@ -4,12 +4,12 @@ title: "section addressing scheme"
 wave: D
 kind: decision
 owner: "organizers + counsel awareness"
-status: pending
+status: decided
 detail: briefed
 depends_on: []
 decision_refs: []
 success_state: >-
-  The draft-bylaws: prefix register exists in docs/citations.md and is recorded in docs/decisions/D7.md.
+  Version-anchored citations (v2, techne.institute/legal) are in use and recorded in docs/decisions/D7.md.
 verification: "human:organizers"
 ---
 
