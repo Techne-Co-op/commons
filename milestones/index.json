@@ -1,1787 +1,1787 @@
 {
- "schema": "milestones/schema.json",
- "entries": 71,
- "status_counts": {
-  "pending": 70,
-  "in_progress": 1,
-  "blocked": 0,
-  "review": 0,
-  "done": 0,
-  "verified": 0
- },
- "nodes": [
-  {
-   "id": "D1",
-   "title": "front-end framework",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D10",
-   "title": "lease-entity question",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "board",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:board"
-  },
-  {
-   "id": "D2",
-   "title": "application form host",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D3",
-   "title": "repository visibility and naming",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D4",
-   "title": "transactional email provider",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D5",
-   "title": "make.com adoption trigger",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D6",
-   "title": "alpha access posture",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D7",
-   "title": "section addressing scheme",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers + counsel awareness",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "D8",
-   "title": "attestation scope and key custody",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "working group (CIS \u00a717)",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:working-group"
-  },
-  {
-   "id": "D9",
-   "title": "EE liaison interface form",
-   "wave": "D",
-   "kind": "decision",
-   "owner": "organizers + EE team",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "R1",
-   "title": "bylaws ratification",
-   "wave": "R",
-   "kind": "ratification",
-   "owner": "counsel + membership",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "counsel"
-  },
-  {
-   "id": "R2",
-   "title": "hub membership agreement",
-   "wave": "R",
-   "kind": "ratification",
-   "owner": "counsel",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "counsel"
-  },
-  {
-   "id": "W0.1",
-   "title": "repo bootstrap and governance",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "human (admin) + agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [
-    "D3"
-   ],
-   "verification": "ci:repo-policy"
-  },
-  {
-   "id": "W0.10",
-   "title": "scheduling rails and job registry",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.9"
-   ],
-   "expanded_parents": [
-    "W0.9"
-   ],
-   "verification": "ci:db-verify + observed heartbeat rows"
-  },
-  {
-   "id": "W0.11",
-   "title": "email rail",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.9"
-   ],
-   "expanded_parents": [
-    "D4",
-    "W0.9"
-   ],
-   "verification": "ci:functions-deploy + human:operator (test send)"
-  },
-  {
-   "id": "W0.12",
-   "title": "portal scaffold and pages pipeline",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.1"
-   ],
-   "expanded_parents": [
-    "D1",
-    "D6",
-    "W0.1"
-   ],
-   "verification": "ci:pages-deploy + ci:portal-build"
-  },
-  {
-   "id": "W0.13",
-   "title": "design tokens and base components",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.12"
-   ],
-   "expanded_parents": [
-    "W0.12"
-   ],
-   "verification": "human:Todd (reference page) + ci:portal-build"
-  },
-  {
-   "id": "W0.14",
-   "title": "export paths and tested restore",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.10"
-   ],
-   "expanded_parents": [
-    "W0.10"
-   ],
-   "verification": "ci:db-verify (restore stage) + observed export artifacts"
-  },
-  {
-   "id": "W0.15",
-   "title": "chokepoint analysis as design artifact",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent (draft) + human (adoption)",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.1"
-   ],
-   "expanded_parents": [
-    "W0.1"
-   ],
-   "verification": "human:organizers"
-  },
-  {
-   "id": "W0.16",
-   "title": "grammar lint",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.1"
-   ],
-   "expanded_parents": [
-    "W0.1"
-   ],
-   "verification": "ci:grammar-lint"
-  },
-  {
-   "id": "W0.17",
-   "title": "observability and error sink",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.9"
-   ],
-   "expanded_parents": [
-    "W0.9"
-   ],
-   "verification": "ci:functions-deploy + human:operator"
-  },
-  {
-   "id": "W0.18",
-   "title": "build-status mirror",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.2",
-    "W0.9",
-    "W0.12"
-   ],
-   "expanded_parents": [
-    "W0.12",
-    "W0.2",
-    "W0.9"
-   ],
-   "verification": "ci:status-mirror + human:Todd (panel)"
-  },
-  {
-   "id": "W0.19",
-   "title": "library restructure and document manifest",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.2"
-   ],
-   "expanded_parents": [
-    "D3",
-    "W0.2"
-   ],
-   "verification": "ci:milestone-validate + human:organizers (URL scheme adopted)"
-  },
-  {
-   "id": "W0.2",
-   "title": "ledger scaffold, validator, status board",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.1"
-   ],
-   "expanded_parents": [
-    "W0.1"
-   ],
-   "verification": "ci:milestone-validate"
-  },
-  {
-   "id": "W0.20",
-   "title": "site build pipeline \u2014 derived views",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.19"
-   ],
-   "expanded_parents": [
-    "W0.19"
-   ],
-   "verification": "ci:pages-deploy + human:organizers (rendered surfaces reviewed)"
-  },
-  {
-   "id": "W0.21",
-   "title": "decision-coherence and site-exhaustiveness validation",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.2"
-   ],
-   "expanded_parents": [
-    "W0.2"
-   ],
-   "verification": "ci:milestone-validate"
-  },
-  {
-   "id": "W0.22",
-   "title": "decision and blocker signal loop",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "human (Todd) + agent",
-   "status": "in_progress",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [],
-   "verification": "ci:loop-probe + human:organizers (loop reviewed live)"
-  },
-  {
-   "id": "W0.3",
-   "title": "supabase project provisioning",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "human (credentials) + agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.1"
-   ],
-   "expanded_parents": [
-    "W0.1"
-   ],
-   "verification": "ci:db-verify (connection)"
-  },
-  {
-   "id": "W0.4",
-   "title": "migration pipeline and shadow verification",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.3"
-   ],
-   "expanded_parents": [
-    "W0.3"
-   ],
-   "verification": "ci:db-verify"
-  },
-  {
-   "id": "W0.5",
-   "title": "auth: invite-only identity layer",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.4"
-   ],
-   "expanded_parents": [
-    "D6",
-    "W0.4"
-   ],
-   "verification": "ci:rls-audit (auth probes)"
-  },
-  {
-   "id": "W0.6",
-   "title": "RLS baseline: default-deny, cite-as-you-enforce",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.4"
-   ],
-   "expanded_parents": [
-    "D7",
-    "W0.4"
-   ],
-   "verification": "ci:rls-audit"
-  },
-  {
-   "id": "W0.7",
-   "title": "REA core: agents, agreements, signatures, event envelope",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.6"
-   ],
-   "expanded_parents": [
-    "W0.6"
-   ],
-   "verification": "ci:db-verify"
-  },
-  {
-   "id": "W0.8",
-   "title": "role registry and access helpers",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.7",
-    "W0.5"
-   ],
-   "expanded_parents": [
-    "W0.5",
-    "W0.7"
-   ],
-   "verification": "ci:rls-audit"
-  },
-  {
-   "id": "W0.9",
-   "title": "edge functions scaffold and secrets boundary",
-   "wave": "W0",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.3"
-   ],
-   "expanded_parents": [
-    "W0.3"
-   ],
-   "verification": "ci:functions-deploy"
-  },
-  {
-   "id": "W1.1",
-   "title": "memberships and class model",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.7",
-    "W0.8"
-   ],
-   "expanded_parents": [
-    "W0.7",
-    "W0.8"
-   ],
-   "verification": "ci:rls-audit"
-  },
-  {
-   "id": "W1.2",
-   "title": "stock ledger",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W1.1"
-   ],
-   "expanded_parents": [
-    "W1.1"
-   ],
-   "verification": "ci:db-verify"
-  },
-  {
-   "id": "W1.3",
-   "title": "agreements repository, populated",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.7"
-   ],
-   "expanded_parents": [
-    "W0.7"
-   ],
-   "verification": "human:operator + ci:rls-audit"
-  },
-  {
-   "id": "W1.4",
-   "title": "signature capture",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W1.3",
-    "W0.5"
-   ],
-   "expanded_parents": [
-    "W0.5",
-    "W1.3"
-   ],
-   "verification": "ci:db-verify + human:operator"
-  },
-  {
-   "id": "W1.5",
-   "title": "member directory and profile",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W1.1",
-    "W0.13"
-   ],
-   "expanded_parents": [
-    "W0.13",
-    "W1.1"
-   ],
-   "verification": "human:Todd + ci:rls-audit"
-  },
-  {
-   "id": "W1.6",
-   "title": "admission and onboarding workflow",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W1.2",
-    "W1.3",
-    "W1.4",
-    "W0.11"
-   ],
-   "expanded_parents": [
-    "D2",
-    "W0.11",
-    "W1.2",
-    "W1.3",
-    "W1.4"
-   ],
-   "verification": "human:operator (walkthrough) + ci:db-verify"
-  },
-  {
-   "id": "W1.7",
-   "title": "nou v1: read-only, grounded, logged",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.9",
-    "W1.1",
-    "W1.3"
-   ],
-   "expanded_parents": [
-    "W0.9",
-    "W1.1",
-    "W1.3"
-   ],
-   "verification": "ci:rls-audit (nou probes) + human:Todd"
-  },
-  {
-   "id": "W1.8",
-   "title": "notices v1",
-   "wave": "W1",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.11",
-    "W1.1"
-   ],
-   "expanded_parents": [
-    "W0.11",
-    "W1.1"
-   ],
-   "verification": "ci:db-verify + human:operator"
-  },
-  {
-   "id": "W2.1",
-   "title": "hub schema extensions",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W0.6",
-    "W0.7",
-    "W0.8"
-   ],
-   "expanded_parents": [
-    "W0.6",
-    "W0.7",
-    "W0.8"
-   ],
-   "verification": "ci:rls-audit"
-  },
-  {
-   "id": "W2.2",
-   "title": "application and access",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.1",
-    "W0.12"
-   ],
-   "expanded_parents": [
-    "D2",
-    "W0.12",
-    "W2.1"
-   ],
-   "verification": "ci:rls-audit (anon insert scope) + human:operator"
-  },
-  {
-   "id": "W2.3",
-   "title": "co-working sessions",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.1"
-   ],
-   "expanded_parents": [
-    "W2.1"
-   ],
-   "verification": "human:operator + ci:db-verify"
-  },
-  {
-   "id": "W2.4",
-   "title": "events module",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.1"
-   ],
-   "expanded_parents": [
-    "W2.1"
-   ],
-   "verification": "human:operator + ci:rls-audit"
-  },
-  {
-   "id": "W2.5",
-   "title": "KPI and performance surface",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.3",
-    "W2.4"
-   ],
-   "expanded_parents": [
-    "W2.3",
-    "W2.4"
-   ],
-   "verification": "ci:db-verify (KPI fixtures) + human:Todd"
-  },
-  {
-   "id": "W2.6",
-   "title": "impact reporting",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.5",
-    "W1.7"
-   ],
-   "expanded_parents": [
-    "W1.7",
-    "W2.5"
-   ],
-   "verification": "human:organizer (first cycle) + ci:pages-deploy"
-  },
-  {
-   "id": "W2.7",
-   "title": "cross-pollination registry",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.1"
-   ],
-   "expanded_parents": [
-    "W2.1"
-   ],
-   "verification": "human:operator"
-  },
-  {
-   "id": "W2.8",
-   "title": "educational surface",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.1",
-    "W0.12"
-   ],
-   "expanded_parents": [
-    "W0.12",
-    "W2.1"
-   ],
-   "verification": "human:operator"
-  },
-  {
-   "id": "W2.9",
-   "title": "grant lifecycle",
-   "wave": "W2",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W2.5",
-    "W1.3"
-   ],
-   "expanded_parents": [
-    "D9",
-    "W1.3",
-    "W2.5"
-   ],
-   "verification": "human:organizer"
-  },
-  {
-   "id": "G1",
-   "title": "alpha gate",
-   "wave": "G",
-   "kind": "gate",
-   "owner": "composite",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [],
-   "expanded_parents": [
-    "D1",
-    "D2",
-    "D3",
-    "D4",
-    "D6",
-    "D7",
-    "W0.1",
-    "W0.10",
-    "W0.11",
-    "W0.12",
-    "W0.13",
-    "W0.14",
-    "W0.15",
-    "W0.16",
-    "W0.17",
-    "W0.18",
-    "W0.2",
-    "W0.3",
-    "W0.4",
-    "W0.5",
-    "W0.6",
-    "W0.7",
-    "W0.8",
-    "W0.9",
-    "W1.1",
-    "W1.2",
-    "W1.3",
-    "W1.4",
-    "W1.5",
-    "W1.6",
-    "W1.7",
-    "W1.8",
-    "W2.1",
-    "W2.2",
-    "W2.3",
-    "W2.4",
-    "W2.5",
-    "W2.6"
-   ],
-   "verification": "composite"
-  },
-  {
-   "id": "W3.0",
-   "title": "author the capital wave briefs",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W1"
-   ],
-   "expanded_parents": [
-    "W1.1",
-    "W1.2",
-    "W1.3",
-    "W1.4",
-    "W1.5",
-    "W1.6",
-    "W1.7",
-    "W1.8"
-   ],
-   "verification": "ci:milestone-validate"
-  },
-  {
-   "id": "W3.1",
-   "title": "capital accounts and capital events",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W3.2",
-   "title": "personal balance view",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W3.3",
-   "title": "manual allocation against the equal default",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W3.4",
-   "title": "mercury read-only ingestion",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W3.5",
-   "title": "tax records and K-1 preparation",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W3.6",
-   "title": "treasury views and distribution shape",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "D10",
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W3.7",
-   "title": "grant tranches joined to treasury",
-   "wave": "W3",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W3.0"
-   ],
-   "expanded_parents": [
-    "W3.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.0",
-   "title": "author the governance wave briefs",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W3"
-   ],
-   "expanded_parents": [
-    "W3.0",
-    "W3.1",
-    "W3.2",
-    "W3.3",
-    "W3.4",
-    "W3.5",
-    "W3.6",
-    "W3.7"
-   ],
-   "verification": "ci:milestone-validate"
-  },
-  {
-   "id": "W4.1",
-   "title": "meetings, attendance, proxies, quorum",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.2",
-   "title": "motions and immutable votes",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.3",
-   "title": "consents",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.4",
-   "title": "minutes drafting and ratification",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.5",
-   "title": "notices v2: receipt hardening",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.6",
-   "title": "voting interface, open-source",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W4.7",
-   "title": "attestation extension (optional)",
-   "wave": "W4",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "seeded",
-   "depends_on": [
-    "W4.0"
-   ],
-   "expanded_parents": [
-    "D8",
-    "W4.0"
-   ],
-   "verification": "to be authored"
-  },
-  {
-   "id": "W5.0",
-   "title": "author the lifecycle wave briefs",
-   "wave": "W5",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W4"
-   ],
-   "expanded_parents": [
-    "W4.0",
-    "W4.1",
-    "W4.2",
-    "W4.3",
-    "W4.4",
-    "W4.5",
-    "W4.6",
-    "W4.7"
-   ],
-   "verification": "ci:milestone-validate"
-  },
-  {
-   "id": "W6.0",
-   "title": "author the full-interface wave briefs",
-   "wave": "W6",
-   "kind": "step",
-   "owner": "agent",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W5"
-   ],
-   "expanded_parents": [
-    "W5.0"
-   ],
-   "verification": "ci:milestone-validate"
-  },
-  {
-   "id": "P1",
-   "title": "practice (CIS Phase 06)",
-   "wave": "P",
-   "kind": "practice",
-   "owner": "membership",
-   "status": "pending",
-   "detail": "briefed",
-   "depends_on": [
-    "W6"
-   ],
-   "expanded_parents": [
-    "W6.0"
-   ],
-   "verification": "lived, not shipped"
-  }
- ],
- "edges": [
-  [
-   "D3",
-   "W0.1"
-  ],
-  [
-   "W0.9",
-   "W0.10"
-  ],
-  [
-   "D4",
-   "W0.11"
-  ],
-  [
-   "W0.9",
-   "W0.11"
-  ],
-  [
-   "D1",
-   "W0.12"
-  ],
-  [
-   "D6",
-   "W0.12"
-  ],
-  [
-   "W0.1",
-   "W0.12"
-  ],
-  [
-   "W0.12",
-   "W0.13"
-  ],
-  [
-   "W0.10",
-   "W0.14"
-  ],
-  [
-   "W0.1",
-   "W0.15"
-  ],
-  [
-   "W0.1",
-   "W0.16"
-  ],
-  [
-   "W0.9",
-   "W0.17"
-  ],
-  [
-   "W0.12",
-   "W0.18"
-  ],
-  [
-   "W0.2",
-   "W0.18"
-  ],
-  [
-   "W0.9",
-   "W0.18"
-  ],
-  [
-   "D3",
-   "W0.19"
-  ],
-  [
-   "W0.2",
-   "W0.19"
-  ],
-  [
-   "W0.1",
-   "W0.2"
-  ],
-  [
-   "W0.19",
-   "W0.20"
-  ],
-  [
-   "W0.2",
-   "W0.21"
-  ],
-  [
-   "W0.1",
-   "W0.3"
-  ],
-  [
-   "W0.3",
-   "W0.4"
-  ],
-  [
-   "D6",
-   "W0.5"
-  ],
-  [
-   "W0.4",
-   "W0.5"
-  ],
-  [
-   "D7",
-   "W0.6"
-  ],
-  [
-   "W0.4",
-   "W0.6"
-  ],
-  [
-   "W0.6",
-   "W0.7"
-  ],
-  [
-   "W0.5",
-   "W0.8"
-  ],
-  [
-   "W0.7",
-   "W0.8"
-  ],
-  [
-   "W0.3",
-   "W0.9"
-  ],
-  [
-   "W0.7",
-   "W1.1"
-  ],
-  [
-   "W0.8",
-   "W1.1"
-  ],
-  [
-   "W1.1",
-   "W1.2"
-  ],
-  [
-   "W0.7",
-   "W1.3"
-  ],
-  [
-   "W0.5",
-   "W1.4"
-  ],
-  [
-   "W1.3",
-   "W1.4"
-  ],
-  [
-   "W0.13",
-   "W1.5"
-  ],
-  [
-   "W1.1",
-   "W1.5"
-  ],
-  [
-   "D2",
-   "W1.6"
-  ],
-  [
-   "W0.11",
-   "W1.6"
-  ],
-  [
-   "W1.2",
-   "W1.6"
-  ],
-  [
-   "W1.3",
-   "W1.6"
-  ],
-  [
-   "W1.4",
-   "W1.6"
-  ],
-  [
-   "W0.9",
-   "W1.7"
-  ],
-  [
-   "W1.1",
-   "W1.7"
-  ],
-  [
-   "W1.3",
-   "W1.7"
-  ],
-  [
-   "W0.11",
-   "W1.8"
-  ],
-  [
-   "W1.1",
-   "W1.8"
-  ],
-  [
-   "W0.6",
-   "W2.1"
-  ],
-  [
-   "W0.7",
-   "W2.1"
-  ],
-  [
-   "W0.8",
-   "W2.1"
-  ],
-  [
-   "D2",
-   "W2.2"
-  ],
-  [
-   "W0.12",
-   "W2.2"
-  ],
-  [
-   "W2.1",
-   "W2.2"
-  ],
-  [
-   "W2.1",
-   "W2.3"
-  ],
-  [
-   "W2.1",
-   "W2.4"
-  ],
-  [
-   "W2.3",
-   "W2.5"
-  ],
-  [
-   "W2.4",
-   "W2.5"
-  ],
-  [
-   "W1.7",
-   "W2.6"
-  ],
-  [
-   "W2.5",
-   "W2.6"
-  ],
-  [
-   "W2.1",
-   "W2.7"
-  ],
-  [
-   "W0.12",
-   "W2.8"
-  ],
-  [
-   "W2.1",
-   "W2.8"
-  ],
-  [
-   "D9",
-   "W2.9"
-  ],
-  [
-   "W1.3",
-   "W2.9"
-  ],
-  [
-   "W2.5",
-   "W2.9"
-  ],
-  [
-   "D1",
-   "G1"
-  ],
-  [
-   "D2",
-   "G1"
-  ],
-  [
-   "D3",
-   "G1"
-  ],
-  [
-   "D4",
-   "G1"
-  ],
-  [
-   "D6",
-   "G1"
-  ],
-  [
-   "D7",
-   "G1"
-  ],
-  [
-   "W0.1",
-   "G1"
-  ],
-  [
-   "W0.10",
-   "G1"
-  ],
-  [
-   "W0.11",
-   "G1"
-  ],
-  [
-   "W0.12",
-   "G1"
-  ],
-  [
-   "W0.13",
-   "G1"
-  ],
-  [
-   "W0.14",
-   "G1"
-  ],
-  [
-   "W0.15",
-   "G1"
-  ],
-  [
-   "W0.16",
-   "G1"
-  ],
-  [
-   "W0.17",
-   "G1"
-  ],
-  [
-   "W0.18",
-   "G1"
-  ],
-  [
-   "W0.2",
-   "G1"
-  ],
-  [
-   "W0.3",
-   "G1"
-  ],
-  [
-   "W0.4",
-   "G1"
-  ],
-  [
-   "W0.5",
-   "G1"
-  ],
-  [
-   "W0.6",
-   "G1"
-  ],
-  [
-   "W0.7",
-   "G1"
-  ],
-  [
-   "W0.8",
-   "G1"
-  ],
-  [
-   "W0.9",
-   "G1"
-  ],
-  [
-   "W1.1",
-   "G1"
-  ],
-  [
-   "W1.2",
-   "G1"
-  ],
-  [
-   "W1.3",
-   "G1"
-  ],
-  [
-   "W1.4",
-   "G1"
-  ],
-  [
-   "W1.5",
-   "G1"
-  ],
-  [
-   "W1.6",
-   "G1"
-  ],
-  [
-   "W1.7",
-   "G1"
-  ],
-  [
-   "W1.8",
-   "G1"
-  ],
-  [
-   "W2.1",
-   "G1"
-  ],
-  [
-   "W2.2",
-   "G1"
-  ],
-  [
-   "W2.3",
-   "G1"
-  ],
-  [
-   "W2.4",
-   "G1"
-  ],
-  [
-   "W2.5",
-   "G1"
-  ],
-  [
-   "W2.6",
-   "G1"
-  ],
-  [
-   "W1.1",
-   "W3.0"
-  ],
-  [
-   "W1.2",
-   "W3.0"
-  ],
-  [
-   "W1.3",
-   "W3.0"
-  ],
-  [
-   "W1.4",
-   "W3.0"
-  ],
-  [
-   "W1.5",
-   "W3.0"
-  ],
-  [
-   "W1.6",
-   "W3.0"
-  ],
-  [
-   "W1.7",
-   "W3.0"
-  ],
-  [
-   "W1.8",
-   "W3.0"
-  ],
-  [
-   "W3.0",
-   "W3.1"
-  ],
-  [
-   "W3.0",
-   "W3.2"
-  ],
-  [
-   "W3.0",
-   "W3.3"
-  ],
-  [
-   "W3.0",
-   "W3.4"
-  ],
-  [
-   "W3.0",
-   "W3.5"
-  ],
-  [
-   "D10",
-   "W3.6"
-  ],
-  [
-   "W3.0",
-   "W3.6"
-  ],
-  [
-   "W3.0",
-   "W3.7"
-  ],
-  [
-   "W3.0",
-   "W4.0"
-  ],
-  [
-   "W3.1",
-   "W4.0"
-  ],
-  [
-   "W3.2",
-   "W4.0"
-  ],
-  [
-   "W3.3",
-   "W4.0"
-  ],
-  [
-   "W3.4",
-   "W4.0"
-  ],
-  [
-   "W3.5",
-   "W4.0"
-  ],
-  [
-   "W3.6",
-   "W4.0"
-  ],
-  [
-   "W3.7",
-   "W4.0"
-  ],
-  [
-   "W4.0",
-   "W4.1"
-  ],
-  [
-   "W4.0",
-   "W4.2"
-  ],
-  [
-   "W4.0",
-   "W4.3"
-  ],
-  [
-   "W4.0",
-   "W4.4"
-  ],
-  [
-   "W4.0",
-   "W4.5"
-  ],
-  [
-   "W4.0",
-   "W4.6"
-  ],
-  [
-   "D8",
-   "W4.7"
-  ],
-  [
-   "W4.0",
-   "W4.7"
-  ],
-  [
-   "W4.0",
-   "W5.0"
-  ],
-  [
-   "W4.1",
-   "W5.0"
-  ],
-  [
-   "W4.2",
-   "W5.0"
-  ],
-  [
-   "W4.3",
-   "W5.0"
-  ],
-  [
-   "W4.4",
-   "W5.0"
-  ],
-  [
-   "W4.5",
-   "W5.0"
-  ],
-  [
-   "W4.6",
-   "W5.0"
-  ],
-  [
-   "W4.7",
-   "W5.0"
-  ],
-  [
-   "W5.0",
-   "W6.0"
-  ],
-  [
-   "W6.0",
-   "P1"
+  "schema": "milestones/schema.json",
+  "entries": 71,
+  "status_counts": {
+    "pending": 64,
+    "in_progress": 1,
+    "blocked": 0,
+    "review": 0,
+    "done": 6,
+    "verified": 0
+  },
+  "nodes": [
+    {
+      "id": "D1",
+      "title": "front-end framework",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers",
+      "status": "done",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D10",
+      "title": "lease-entity question",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "board",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:board"
+    },
+    {
+      "id": "D2",
+      "title": "application form host",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D3",
+      "title": "repository visibility and naming",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers",
+      "status": "done",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D4",
+      "title": "transactional email provider",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D5",
+      "title": "make.com adoption trigger",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers",
+      "status": "done",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D6",
+      "title": "alpha access posture",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers",
+      "status": "done",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D7",
+      "title": "section addressing scheme",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers + counsel awareness",
+      "status": "done",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "D8",
+      "title": "attestation scope and key custody",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "working group (CIS §17)",
+      "status": "done",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:working-group"
+    },
+    {
+      "id": "D9",
+      "title": "EE liaison interface form",
+      "wave": "D",
+      "kind": "decision",
+      "owner": "organizers + EE team",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "R1",
+      "title": "bylaws ratification",
+      "wave": "R",
+      "kind": "ratification",
+      "owner": "counsel + membership",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "counsel"
+    },
+    {
+      "id": "R2",
+      "title": "hub membership agreement",
+      "wave": "R",
+      "kind": "ratification",
+      "owner": "counsel",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "counsel"
+    },
+    {
+      "id": "W0.1",
+      "title": "repo bootstrap and governance",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "human (admin) + agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [
+        "D3"
+      ],
+      "verification": "ci:repo-policy"
+    },
+    {
+      "id": "W0.10",
+      "title": "scheduling rails and job registry",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.9"
+      ],
+      "expanded_parents": [
+        "W0.9"
+      ],
+      "verification": "ci:db-verify + observed heartbeat rows"
+    },
+    {
+      "id": "W0.11",
+      "title": "email rail",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.9"
+      ],
+      "expanded_parents": [
+        "D4",
+        "W0.9"
+      ],
+      "verification": "ci:functions-deploy + human:operator (test send)"
+    },
+    {
+      "id": "W0.12",
+      "title": "portal scaffold and pages pipeline",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.1"
+      ],
+      "expanded_parents": [
+        "D1",
+        "D6",
+        "W0.1"
+      ],
+      "verification": "ci:pages-deploy + ci:portal-build"
+    },
+    {
+      "id": "W0.13",
+      "title": "design tokens and base components",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.12"
+      ],
+      "expanded_parents": [
+        "W0.12"
+      ],
+      "verification": "human:Todd (reference page) + ci:portal-build"
+    },
+    {
+      "id": "W0.14",
+      "title": "export paths and tested restore",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.10"
+      ],
+      "expanded_parents": [
+        "W0.10"
+      ],
+      "verification": "ci:db-verify (restore stage) + observed export artifacts"
+    },
+    {
+      "id": "W0.15",
+      "title": "chokepoint analysis as design artifact",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent (draft) + human (adoption)",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.1"
+      ],
+      "expanded_parents": [
+        "W0.1"
+      ],
+      "verification": "human:organizers"
+    },
+    {
+      "id": "W0.16",
+      "title": "grammar lint",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.1"
+      ],
+      "expanded_parents": [
+        "W0.1"
+      ],
+      "verification": "ci:grammar-lint"
+    },
+    {
+      "id": "W0.17",
+      "title": "observability and error sink",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.9"
+      ],
+      "expanded_parents": [
+        "W0.9"
+      ],
+      "verification": "ci:functions-deploy + human:operator"
+    },
+    {
+      "id": "W0.18",
+      "title": "build-status mirror",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.2",
+        "W0.9",
+        "W0.12"
+      ],
+      "expanded_parents": [
+        "W0.12",
+        "W0.2",
+        "W0.9"
+      ],
+      "verification": "ci:status-mirror + human:Todd (panel)"
+    },
+    {
+      "id": "W0.19",
+      "title": "library restructure and document manifest",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.2"
+      ],
+      "expanded_parents": [
+        "D3",
+        "W0.2"
+      ],
+      "verification": "ci:milestone-validate + human:organizers (URL scheme adopted)"
+    },
+    {
+      "id": "W0.2",
+      "title": "ledger scaffold, validator, status board",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.1"
+      ],
+      "expanded_parents": [
+        "W0.1"
+      ],
+      "verification": "ci:milestone-validate"
+    },
+    {
+      "id": "W0.20",
+      "title": "site build pipeline — derived views",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.19"
+      ],
+      "expanded_parents": [
+        "W0.19"
+      ],
+      "verification": "ci:pages-deploy + human:organizers (rendered surfaces reviewed)"
+    },
+    {
+      "id": "W0.21",
+      "title": "decision-coherence and site-exhaustiveness validation",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.2"
+      ],
+      "expanded_parents": [
+        "W0.2"
+      ],
+      "verification": "ci:milestone-validate"
+    },
+    {
+      "id": "W0.22",
+      "title": "decision and blocker signal loop",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "human (Todd) + agent",
+      "status": "in_progress",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [],
+      "verification": "ci:loop-probe + human:organizers (loop reviewed live)"
+    },
+    {
+      "id": "W0.3",
+      "title": "supabase project provisioning",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "human (credentials) + agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.1"
+      ],
+      "expanded_parents": [
+        "W0.1"
+      ],
+      "verification": "ci:db-verify (connection)"
+    },
+    {
+      "id": "W0.4",
+      "title": "migration pipeline and shadow verification",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.3"
+      ],
+      "expanded_parents": [
+        "W0.3"
+      ],
+      "verification": "ci:db-verify"
+    },
+    {
+      "id": "W0.5",
+      "title": "auth: invite-only identity layer",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.4"
+      ],
+      "expanded_parents": [
+        "D6",
+        "W0.4"
+      ],
+      "verification": "ci:rls-audit (auth probes)"
+    },
+    {
+      "id": "W0.6",
+      "title": "RLS baseline: default-deny, cite-as-you-enforce",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.4"
+      ],
+      "expanded_parents": [
+        "D7",
+        "W0.4"
+      ],
+      "verification": "ci:rls-audit"
+    },
+    {
+      "id": "W0.7",
+      "title": "REA core: agents, agreements, signatures, event envelope",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.6"
+      ],
+      "expanded_parents": [
+        "W0.6"
+      ],
+      "verification": "ci:db-verify"
+    },
+    {
+      "id": "W0.8",
+      "title": "role registry and access helpers",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.7",
+        "W0.5"
+      ],
+      "expanded_parents": [
+        "W0.5",
+        "W0.7"
+      ],
+      "verification": "ci:rls-audit"
+    },
+    {
+      "id": "W0.9",
+      "title": "edge functions scaffold and secrets boundary",
+      "wave": "W0",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.3"
+      ],
+      "expanded_parents": [
+        "W0.3"
+      ],
+      "verification": "ci:functions-deploy"
+    },
+    {
+      "id": "W1.1",
+      "title": "memberships and class model",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.7",
+        "W0.8"
+      ],
+      "expanded_parents": [
+        "W0.7",
+        "W0.8"
+      ],
+      "verification": "ci:rls-audit"
+    },
+    {
+      "id": "W1.2",
+      "title": "stock ledger",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W1.1"
+      ],
+      "expanded_parents": [
+        "W1.1"
+      ],
+      "verification": "ci:db-verify"
+    },
+    {
+      "id": "W1.3",
+      "title": "agreements repository, populated",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.7"
+      ],
+      "expanded_parents": [
+        "W0.7"
+      ],
+      "verification": "human:operator + ci:rls-audit"
+    },
+    {
+      "id": "W1.4",
+      "title": "signature capture",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W1.3",
+        "W0.5"
+      ],
+      "expanded_parents": [
+        "W0.5",
+        "W1.3"
+      ],
+      "verification": "ci:db-verify + human:operator"
+    },
+    {
+      "id": "W1.5",
+      "title": "member directory and profile",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W1.1",
+        "W0.13"
+      ],
+      "expanded_parents": [
+        "W0.13",
+        "W1.1"
+      ],
+      "verification": "human:Todd + ci:rls-audit"
+    },
+    {
+      "id": "W1.6",
+      "title": "admission and onboarding workflow",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W1.2",
+        "W1.3",
+        "W1.4",
+        "W0.11"
+      ],
+      "expanded_parents": [
+        "D2",
+        "W0.11",
+        "W1.2",
+        "W1.3",
+        "W1.4"
+      ],
+      "verification": "human:operator (walkthrough) + ci:db-verify"
+    },
+    {
+      "id": "W1.7",
+      "title": "nou v1: read-only, grounded, logged",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.9",
+        "W1.1",
+        "W1.3"
+      ],
+      "expanded_parents": [
+        "W0.9",
+        "W1.1",
+        "W1.3"
+      ],
+      "verification": "ci:rls-audit (nou probes) + human:Todd"
+    },
+    {
+      "id": "W1.8",
+      "title": "notices v1",
+      "wave": "W1",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.11",
+        "W1.1"
+      ],
+      "expanded_parents": [
+        "W0.11",
+        "W1.1"
+      ],
+      "verification": "ci:db-verify + human:operator"
+    },
+    {
+      "id": "W2.1",
+      "title": "hub schema extensions",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W0.6",
+        "W0.7",
+        "W0.8"
+      ],
+      "expanded_parents": [
+        "W0.6",
+        "W0.7",
+        "W0.8"
+      ],
+      "verification": "ci:rls-audit"
+    },
+    {
+      "id": "W2.2",
+      "title": "application and access",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.1",
+        "W0.12"
+      ],
+      "expanded_parents": [
+        "D2",
+        "W0.12",
+        "W2.1"
+      ],
+      "verification": "ci:rls-audit (anon insert scope) + human:operator"
+    },
+    {
+      "id": "W2.3",
+      "title": "co-working sessions",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.1"
+      ],
+      "expanded_parents": [
+        "W2.1"
+      ],
+      "verification": "human:operator + ci:db-verify"
+    },
+    {
+      "id": "W2.4",
+      "title": "events module",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.1"
+      ],
+      "expanded_parents": [
+        "W2.1"
+      ],
+      "verification": "human:operator + ci:rls-audit"
+    },
+    {
+      "id": "W2.5",
+      "title": "KPI and performance surface",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.3",
+        "W2.4"
+      ],
+      "expanded_parents": [
+        "W2.3",
+        "W2.4"
+      ],
+      "verification": "ci:db-verify (KPI fixtures) + human:Todd"
+    },
+    {
+      "id": "W2.6",
+      "title": "impact reporting",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.5",
+        "W1.7"
+      ],
+      "expanded_parents": [
+        "W1.7",
+        "W2.5"
+      ],
+      "verification": "human:organizer (first cycle) + ci:pages-deploy"
+    },
+    {
+      "id": "W2.7",
+      "title": "cross-pollination registry",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.1"
+      ],
+      "expanded_parents": [
+        "W2.1"
+      ],
+      "verification": "human:operator"
+    },
+    {
+      "id": "W2.8",
+      "title": "educational surface",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.1",
+        "W0.12"
+      ],
+      "expanded_parents": [
+        "W0.12",
+        "W2.1"
+      ],
+      "verification": "human:operator"
+    },
+    {
+      "id": "W2.9",
+      "title": "grant lifecycle",
+      "wave": "W2",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W2.5",
+        "W1.3"
+      ],
+      "expanded_parents": [
+        "D9",
+        "W1.3",
+        "W2.5"
+      ],
+      "verification": "human:organizer"
+    },
+    {
+      "id": "G1",
+      "title": "alpha gate",
+      "wave": "G",
+      "kind": "gate",
+      "owner": "composite",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [],
+      "expanded_parents": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D6",
+        "D7",
+        "W0.1",
+        "W0.10",
+        "W0.11",
+        "W0.12",
+        "W0.13",
+        "W0.14",
+        "W0.15",
+        "W0.16",
+        "W0.17",
+        "W0.18",
+        "W0.2",
+        "W0.3",
+        "W0.4",
+        "W0.5",
+        "W0.6",
+        "W0.7",
+        "W0.8",
+        "W0.9",
+        "W1.1",
+        "W1.2",
+        "W1.3",
+        "W1.4",
+        "W1.5",
+        "W1.6",
+        "W1.7",
+        "W1.8",
+        "W2.1",
+        "W2.2",
+        "W2.3",
+        "W2.4",
+        "W2.5",
+        "W2.6"
+      ],
+      "verification": "composite"
+    },
+    {
+      "id": "W3.0",
+      "title": "author the capital wave briefs",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W1"
+      ],
+      "expanded_parents": [
+        "W1.1",
+        "W1.2",
+        "W1.3",
+        "W1.4",
+        "W1.5",
+        "W1.6",
+        "W1.7",
+        "W1.8"
+      ],
+      "verification": "ci:milestone-validate"
+    },
+    {
+      "id": "W3.1",
+      "title": "capital accounts and capital events",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W3.2",
+      "title": "personal balance view",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W3.3",
+      "title": "manual allocation against the equal default",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W3.4",
+      "title": "mercury read-only ingestion",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W3.5",
+      "title": "tax records and K-1 preparation",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W3.6",
+      "title": "treasury views and distribution shape",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "D10",
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W3.7",
+      "title": "grant tranches joined to treasury",
+      "wave": "W3",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W3.0"
+      ],
+      "expanded_parents": [
+        "W3.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.0",
+      "title": "author the governance wave briefs",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W3"
+      ],
+      "expanded_parents": [
+        "W3.0",
+        "W3.1",
+        "W3.2",
+        "W3.3",
+        "W3.4",
+        "W3.5",
+        "W3.6",
+        "W3.7"
+      ],
+      "verification": "ci:milestone-validate"
+    },
+    {
+      "id": "W4.1",
+      "title": "meetings, attendance, proxies, quorum",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.2",
+      "title": "motions and immutable votes",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.3",
+      "title": "consents",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.4",
+      "title": "minutes drafting and ratification",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.5",
+      "title": "notices v2: receipt hardening",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.6",
+      "title": "voting interface, open-source",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W4.7",
+      "title": "attestation extension (optional)",
+      "wave": "W4",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "seeded",
+      "depends_on": [
+        "W4.0"
+      ],
+      "expanded_parents": [
+        "D8",
+        "W4.0"
+      ],
+      "verification": "to be authored"
+    },
+    {
+      "id": "W5.0",
+      "title": "author the lifecycle wave briefs",
+      "wave": "W5",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W4"
+      ],
+      "expanded_parents": [
+        "W4.0",
+        "W4.1",
+        "W4.2",
+        "W4.3",
+        "W4.4",
+        "W4.5",
+        "W4.6",
+        "W4.7"
+      ],
+      "verification": "ci:milestone-validate"
+    },
+    {
+      "id": "W6.0",
+      "title": "author the full-interface wave briefs",
+      "wave": "W6",
+      "kind": "step",
+      "owner": "agent",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W5"
+      ],
+      "expanded_parents": [
+        "W5.0"
+      ],
+      "verification": "ci:milestone-validate"
+    },
+    {
+      "id": "P1",
+      "title": "practice (CIS Phase 06)",
+      "wave": "P",
+      "kind": "practice",
+      "owner": "membership",
+      "status": "pending",
+      "detail": "briefed",
+      "depends_on": [
+        "W6"
+      ],
+      "expanded_parents": [
+        "W6.0"
+      ],
+      "verification": "lived, not shipped"
+    }
+  ],
+  "edges": [
+    [
+      "D3",
+      "W0.1"
+    ],
+    [
+      "W0.9",
+      "W0.10"
+    ],
+    [
+      "D4",
+      "W0.11"
+    ],
+    [
+      "W0.9",
+      "W0.11"
+    ],
+    [
+      "D1",
+      "W0.12"
+    ],
+    [
+      "D6",
+      "W0.12"
+    ],
+    [
+      "W0.1",
+      "W0.12"
+    ],
+    [
+      "W0.12",
+      "W0.13"
+    ],
+    [
+      "W0.10",
+      "W0.14"
+    ],
+    [
+      "W0.1",
+      "W0.15"
+    ],
+    [
+      "W0.1",
+      "W0.16"
+    ],
+    [
+      "W0.9",
+      "W0.17"
+    ],
+    [
+      "W0.12",
+      "W0.18"
+    ],
+    [
+      "W0.2",
+      "W0.18"
+    ],
+    [
+      "W0.9",
+      "W0.18"
+    ],
+    [
+      "D3",
+      "W0.19"
+    ],
+    [
+      "W0.2",
+      "W0.19"
+    ],
+    [
+      "W0.1",
+      "W0.2"
+    ],
+    [
+      "W0.19",
+      "W0.20"
+    ],
+    [
+      "W0.2",
+      "W0.21"
+    ],
+    [
+      "W0.1",
+      "W0.3"
+    ],
+    [
+      "W0.3",
+      "W0.4"
+    ],
+    [
+      "D6",
+      "W0.5"
+    ],
+    [
+      "W0.4",
+      "W0.5"
+    ],
+    [
+      "D7",
+      "W0.6"
+    ],
+    [
+      "W0.4",
+      "W0.6"
+    ],
+    [
+      "W0.6",
+      "W0.7"
+    ],
+    [
+      "W0.5",
+      "W0.8"
+    ],
+    [
+      "W0.7",
+      "W0.8"
+    ],
+    [
+      "W0.3",
+      "W0.9"
+    ],
+    [
+      "W0.7",
+      "W1.1"
+    ],
+    [
+      "W0.8",
+      "W1.1"
+    ],
+    [
+      "W1.1",
+      "W1.2"
+    ],
+    [
+      "W0.7",
+      "W1.3"
+    ],
+    [
+      "W0.5",
+      "W1.4"
+    ],
+    [
+      "W1.3",
+      "W1.4"
+    ],
+    [
+      "W0.13",
+      "W1.5"
+    ],
+    [
+      "W1.1",
+      "W1.5"
+    ],
+    [
+      "D2",
+      "W1.6"
+    ],
+    [
+      "W0.11",
+      "W1.6"
+    ],
+    [
+      "W1.2",
+      "W1.6"
+    ],
+    [
+      "W1.3",
+      "W1.6"
+    ],
+    [
+      "W1.4",
+      "W1.6"
+    ],
+    [
+      "W0.9",
+      "W1.7"
+    ],
+    [
+      "W1.1",
+      "W1.7"
+    ],
+    [
+      "W1.3",
+      "W1.7"
+    ],
+    [
+      "W0.11",
+      "W1.8"
+    ],
+    [
+      "W1.1",
+      "W1.8"
+    ],
+    [
+      "W0.6",
+      "W2.1"
+    ],
+    [
+      "W0.7",
+      "W2.1"
+    ],
+    [
+      "W0.8",
+      "W2.1"
+    ],
+    [
+      "D2",
+      "W2.2"
+    ],
+    [
+      "W0.12",
+      "W2.2"
+    ],
+    [
+      "W2.1",
+      "W2.2"
+    ],
+    [
+      "W2.1",
+      "W2.3"
+    ],
+    [
+      "W2.1",
+      "W2.4"
+    ],
+    [
+      "W2.3",
+      "W2.5"
+    ],
+    [
+      "W2.4",
+      "W2.5"
+    ],
+    [
+      "W1.7",
+      "W2.6"
+    ],
+    [
+      "W2.5",
+      "W2.6"
+    ],
+    [
+      "W2.1",
+      "W2.7"
+    ],
+    [
+      "W0.12",
+      "W2.8"
+    ],
+    [
+      "W2.1",
+      "W2.8"
+    ],
+    [
+      "D9",
+      "W2.9"
+    ],
+    [
+      "W1.3",
+      "W2.9"
+    ],
+    [
+      "W2.5",
+      "W2.9"
+    ],
+    [
+      "D1",
+      "G1"
+    ],
+    [
+      "D2",
+      "G1"
+    ],
+    [
+      "D3",
+      "G1"
+    ],
+    [
+      "D4",
+      "G1"
+    ],
+    [
+      "D6",
+      "G1"
+    ],
+    [
+      "D7",
+      "G1"
+    ],
+    [
+      "W0.1",
+      "G1"
+    ],
+    [
+      "W0.10",
+      "G1"
+    ],
+    [
+      "W0.11",
+      "G1"
+    ],
+    [
+      "W0.12",
+      "G1"
+    ],
+    [
+      "W0.13",
+      "G1"
+    ],
+    [
+      "W0.14",
+      "G1"
+    ],
+    [
+      "W0.15",
+      "G1"
+    ],
+    [
+      "W0.16",
+      "G1"
+    ],
+    [
+      "W0.17",
+      "G1"
+    ],
+    [
+      "W0.18",
+      "G1"
+    ],
+    [
+      "W0.2",
+      "G1"
+    ],
+    [
+      "W0.3",
+      "G1"
+    ],
+    [
+      "W0.4",
+      "G1"
+    ],
+    [
+      "W0.5",
+      "G1"
+    ],
+    [
+      "W0.6",
+      "G1"
+    ],
+    [
+      "W0.7",
+      "G1"
+    ],
+    [
+      "W0.8",
+      "G1"
+    ],
+    [
+      "W0.9",
+      "G1"
+    ],
+    [
+      "W1.1",
+      "G1"
+    ],
+    [
+      "W1.2",
+      "G1"
+    ],
+    [
+      "W1.3",
+      "G1"
+    ],
+    [
+      "W1.4",
+      "G1"
+    ],
+    [
+      "W1.5",
+      "G1"
+    ],
+    [
+      "W1.6",
+      "G1"
+    ],
+    [
+      "W1.7",
+      "G1"
+    ],
+    [
+      "W1.8",
+      "G1"
+    ],
+    [
+      "W2.1",
+      "G1"
+    ],
+    [
+      "W2.2",
+      "G1"
+    ],
+    [
+      "W2.3",
+      "G1"
+    ],
+    [
+      "W2.4",
+      "G1"
+    ],
+    [
+      "W2.5",
+      "G1"
+    ],
+    [
+      "W2.6",
+      "G1"
+    ],
+    [
+      "W1.1",
+      "W3.0"
+    ],
+    [
+      "W1.2",
+      "W3.0"
+    ],
+    [
+      "W1.3",
+      "W3.0"
+    ],
+    [
+      "W1.4",
+      "W3.0"
+    ],
+    [
+      "W1.5",
+      "W3.0"
+    ],
+    [
+      "W1.6",
+      "W3.0"
+    ],
+    [
+      "W1.7",
+      "W3.0"
+    ],
+    [
+      "W1.8",
+      "W3.0"
+    ],
+    [
+      "W3.0",
+      "W3.1"
+    ],
+    [
+      "W3.0",
+      "W3.2"
+    ],
+    [
+      "W3.0",
+      "W3.3"
+    ],
+    [
+      "W3.0",
+      "W3.4"
+    ],
+    [
+      "W3.0",
+      "W3.5"
+    ],
+    [
+      "D10",
+      "W3.6"
+    ],
+    [
+      "W3.0",
+      "W3.6"
+    ],
+    [
+      "W3.0",
+      "W3.7"
+    ],
+    [
+      "W3.0",
+      "W4.0"
+    ],
+    [
+      "W3.1",
+      "W4.0"
+    ],
+    [
+      "W3.2",
+      "W4.0"
+    ],
+    [
+      "W3.3",
+      "W4.0"
+    ],
+    [
+      "W3.4",
+      "W4.0"
+    ],
+    [
+      "W3.5",
+      "W4.0"
+    ],
+    [
+      "W3.6",
+      "W4.0"
+    ],
+    [
+      "W3.7",
+      "W4.0"
+    ],
+    [
+      "W4.0",
+      "W4.1"
+    ],
+    [
+      "W4.0",
+      "W4.2"
+    ],
+    [
+      "W4.0",
+      "W4.3"
+    ],
+    [
+      "W4.0",
+      "W4.4"
+    ],
+    [
+      "W4.0",
+      "W4.5"
+    ],
+    [
+      "W4.0",
+      "W4.6"
+    ],
+    [
+      "D8",
+      "W4.7"
+    ],
+    [
+      "W4.0",
+      "W4.7"
+    ],
+    [
+      "W4.0",
+      "W5.0"
+    ],
+    [
+      "W4.1",
+      "W5.0"
+    ],
+    [
+      "W4.2",
+      "W5.0"
+    ],
+    [
+      "W4.3",
+      "W5.0"
+    ],
+    [
+      "W4.4",
+      "W5.0"
+    ],
+    [
+      "W4.5",
+      "W5.0"
+    ],
+    [
+      "W4.6",
+      "W5.0"
+    ],
+    [
+      "W4.7",
+      "W5.0"
+    ],
+    [
+      "W5.0",
+      "W6.0"
+    ],
+    [
+      "W6.0",
+      "P1"
+    ]
   ]
- ]
 }

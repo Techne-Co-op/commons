@@ -4,7 +4,7 @@ title: "section addressing scheme"
 wave: D
 kind: decision
 owner: "organizers + counsel awareness"
-status: decided
+status: done
 detail: briefed
 depends_on: []
 decision_refs: []

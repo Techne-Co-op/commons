@@ -4,7 +4,7 @@ title: "attestation scope and key custody"
 wave: D
 kind: decision
 owner: "working group (CIS §17)"
-status: decided
+status: done
 detail: briefed
 depends_on: []
 decision_refs: []

@@ -4,7 +4,7 @@ title: "alpha access posture"
 wave: D
 kind: decision
 owner: "organizers"
-status: decided
+status: done
 detail: briefed
 depends_on: []
 decision_refs: []
