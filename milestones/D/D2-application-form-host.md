@@ -4,7 +4,7 @@ title: "application form host"
 wave: D
 kind: decision
 owner: "organizers"
-status: pending
+status: done
 detail: briefed
 depends_on: []
 decision_refs: []
