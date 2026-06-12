@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="Developer reference for the RegenHub, LCA Common Information System. Milestone schema, CI/CD pipeline, design system, Supabase integration, agent operating contract, and conventions.">
+<meta name="robots" content="index,follow">
+<title>Developer Reference · RegenHub Commons</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
+<style>
+/* tokens, reset, site-nav, mode-btn, footer → commons.css */
+
+/* ── layout ── */
+.page { max-width: 760px; margin: 0 auto; padding: var(--s8) var(--s5) 96px; }
+
+/* ── type ── */
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--terra-text); margin-bottom: var(--s4);
+}
+h1 {
+  font-size: 34px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.5px; line-height: 1.25; margin-bottom: var(--s3);
+}
+.lede {
+  font-size: 18px; line-height: 1.75; color: var(--text);
+  margin-bottom: var(--s6); max-width: 62ch;
+}
+h2 {
+  font-size: 24px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.3px; line-height: 1.3;
+  margin: var(--s7) 0 var(--s4);
+}
+h3 {
+  font-size: 17px; font-weight: 700; color: var(--heading);
+  margin: var(--s5) 0 var(--s3); line-height: 1.4;
+}
+h4 {
+  font-family: var(--font-mono); font-size: 12.5px;
+  font-weight: 500; color: var(--terra-text);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin: var(--s4) 0 var(--s2);
+}
+p { margin-bottom: 18px; line-height: 1.8; }
+p:last-child { margin-bottom: 0; }
+a { color: var(--terra-text); text-decoration: none; transition: color var(--dur-micro) var(--ease); }
+a:hover { text-decoration: underline; }
+strong { font-weight: 700; color: var(--heading); }
+
+/* ── rule ── */
+.rule { margin: var(--s4) 0 var(--s6); }
+
+/* ── section spacing ── */
+section { margin-bottom: var(--s8); }
+
+/* ── code inline ── */
+code {
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* ── code block ── */
+.code-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: var(--s4) var(--s5);
+  margin: var(--s3) 0 var(--s5); overflow-x: auto;
+}
+.code-block pre {
+  margin: 0; font-family: var(--font-mono); font-size: 12.5px;
+  line-height: 1.7; color: var(--text);
+}
+
+/* ── schema table ── */
+.schema-table { width: 100%; border-collapse: collapse; margin: var(--s3) 0 var(--s5); font-size: 13px; }
+.schema-table th {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); text-align: left;
+  padding: 6px 12px 6px 0; border-bottom: 1px solid var(--border);
+}
+.schema-table td {
+  padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.55;
+}
+.schema-table td:first-child {
+  font-family: var(--font-mono); font-size: 12px; color: var(--terra-text);
+  white-space: nowrap; padding-right: var(--s4);
+}
+.schema-table td:nth-child(2) {
+  font-size: 12px; color: var(--muted); padding-right: var(--s4);
+}
+.schema-table td:nth-child(3) { color: var(--text); }
+
+/* ── rule list ── */
+.rule-list { list-style: none; margin: var(--s3) 0 var(--s5); padding: 0; display: flex; flex-direction: column; gap: var(--s3); }
+.rule-list li {
+  display: flex; gap: var(--s4); align-items: flex-start;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: var(--s3) var(--s4);
+  font-size: 14px; line-height: 1.6; color: var(--text);
+}
+.rule-num {
+  font-family: var(--font-mono); font-size: 11px; color: var(--terra-text);
+  padding-top: 2px; flex-shrink: 0; min-width: 2ch;
+}
+
+/* ── dir tree ── */
+.dir-tree {
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.75;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: var(--s4) var(--s5); margin: var(--s3) 0 var(--s5);
+  overflow-x: auto;
+}
+.dir-tree .d { color: var(--terra-text); }
+.dir-tree .c { color: var(--muted); }
+
+/* ── callout ── */
+.callout {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--terra); border-radius: 6px;
+  padding: var(--s4) var(--s5); margin: var(--s4) 0 var(--s5);
+  font-size: 14px; line-height: 1.7; color: var(--muted);
+}
+.callout strong { color: var(--text); }
+
+/* ── toc ── */
+.toc { margin: var(--s5) 0 var(--s6); display: flex; flex-direction: column; gap: 6px; }
+.toc a { font-size: 14px; color: var(--muted); display: flex; gap: var(--s3); align-items: baseline; }
+.toc a:hover { color: var(--terra-text); }
+.toc a .toc-num { font-family: var(--font-mono); font-size: 11px; color: var(--faint); }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Index</a></li>
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="design-system.html">Design</a></li>
+      <li><a href="AGENTS.md">AGENTS.md</a></li>
+    </ul>
+  </div>
+</nav>
+
+<button class="mode-btn" id="modeBtn">light</button>
+
+<div class="page">
+
+  <header style="margin-bottom: var(--s6);">
+    <div>
+      <div class="eyebrow">Developer Reference</div>
+      <h1>Commons</h1>
+      <p style="font-size:15px;color:var(--muted);margin-top:var(--s2);margin-bottom:0;line-height:1.65;">
+        Repository: <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+        &nbsp;&middot;&nbsp;
+        Maintained: Nou (agent) under human review
+        &nbsp;&middot;&nbsp;
+        June 2026
+      </p>
+    </div>
+  </header>
+
+  <p class="lede">The Common Information System is the milestone ledger, build instruments, and data layer for RegenHub, LCA. This reference covers everything a developer or agent needs to work in the repository without introducing inconsistency.</p>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#repo-map"><span class="toc-num">01</span>Repository map</a>
+    <a href="#quick-start"><span class="toc-num">02</span>Quick start</a>
+    <a href="#milestone-system"><span class="toc-num">03</span>Milestone system</a>
+    <a href="#ci-cd"><span class="toc-num">04</span>CI/CD pipeline</a>
+    <a href="#data-layer"><span class="toc-num">05</span>Supabase data layer</a>
+    <a href="#design-system"><span class="toc-num">06</span>Design system</a>
+    <a href="#agent-contract"><span class="toc-num">07</span>Agent operating contract</a>
+    <a href="#conventions"><span class="toc-num">08</span>Conventions</a>
+    <a href="#decisions"><span class="toc-num">09</span>Decision and ratification workflow</a>
+    <a href="#secrets"><span class="toc-num">10</span>Secrets boundary</a>
+    <a href="#quick-ref"><span class="toc-num">A</span>Quick reference</a>
+  </nav>
+
+  <div class="rule"></div>
+
+  <!-- 01 REPOSITORY MAP -->
+  <section id="repo-map">
+    <h2>01 &ensp; Repository map</h2>
+    <p>The repository is the ledger. Every unit of work is a file; every status change is a commit; the git history is the audit trail.</p>
+
+    <div class="dir-tree">
+      <span class="d">commons/</span><br>
+      ├── <span class="d">.github/</span><br>
+      │   ├── <span class="d">workflows/</span><br>
+      │   │   ├── loop-sync.yml           <span class="c"># pushes index.json to Supabase on main</span><br>
+      │   │   └── milestone-validate.yml  <span class="c"># validates schema, regenerates index</span><br>
+      │   └── PULL_REQUEST_TEMPLATE.md<br>
+      ├── <span class="d">docs/</span><br>
+      │   ├── CONVENTIONS.md              <span class="c"># naming, RLS template, event envelope, vocabulary</span><br>
+      │   ├── DESIGN.md                   <span class="c"># design system contributor guide</span><br>
+      │   ├── SECRETS.md                  <span class="c"># names (never values) of secrets used</span><br>
+      │   ├── VERIFICATION.md             <span class="c"># CI contract cards for each named check</span><br>
+      │   ├── citations.md                <span class="c"># bylaw/grant citation register (D7)</span><br>
+      │   └── <span class="d">decisions/</span>              <span class="c"># D1–D10, R1–R2 — human-authored records</span><br>
+      ├── <span class="d">milestones/</span><br>
+      │   ├── schema.json                 <span class="c"># JSON Schema for front matter validation</span><br>
+      │   ├── index.json                  <span class="c"># generated — do not hand-edit</span><br>
+      │   ├── STATUS.md                   <span class="c"># generated — do not hand-edit</span><br>
+      │   ├── <span class="d">D/</span>                      <span class="c"># decision entries (D1–D10)</span><br>
+      │   ├── <span class="d">R/</span>                      <span class="c"># ratification entries (R1–R2)</span><br>
+      │   ├── <span class="d">G/</span>                      <span class="c"># gate entries (G1 alpha gate)</span><br>
+      │   ├── <span class="d">P/</span>                      <span class="c"># practice entries</span><br>
+      │   ├── <span class="d">W0/</span>  <span class="d">W1/</span>  <span class="d">W2/</span>  <span class="d">W3/</span>  <span class="d">W4/</span>  <span class="d">W5/</span>  <span class="d">W6/</span><br>
+      ├── <span class="d">scripts/</span><br>
+      │   ├── validate.py                 <span class="c"># milestone validator — regenerates index + STATUS</span><br>
+      │   └── gen_seed.py                 <span class="c"># generates synthetic fixture data</span><br>
+      ├── loop.config.js                  <span class="c"># public Supabase config (anon key, URL)</span><br>
+      ├── commons.css                     <span class="c"># canonical design token layer and shared components</span><br>
+      ├── AGENTS.md                       <span class="c"># agent operating contract (read this first)</span><br>
+      ├── GOVERNANCE.md                   <span class="c"># ledger mechanics and status lifecycle</span><br>
+      ├── hud.html                        <span class="c"># implementation HUD — live milestone instrument</span><br>
+      ├── loop.html                       <span class="c"># decision–blocker signal loop instrument</span><br>
+      ├── index.html                      <span class="c"># CIS homepage / build state summary</span><br>
+      └── dev.html                        <span class="c"># this document</span>
+    </div>
+
+    <div class="callout">
+      <strong>Generated files.</strong> <code>milestones/index.json</code> and <code>milestones/STATUS.md</code> are regenerated by <code>scripts/validate.py</code> on every push to main. Never hand-edit them. If they appear stale, push a milestone change to trigger regeneration.
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 02 QUICK START -->
+  <section id="quick-start">
+    <h2>02 &ensp; Quick start</h2>
+
+    <h3>Clone and validate locally</h3>
+    <div class="code-block"><pre>git clone https://github.com/Techne-Co-op/commons.git
+cd commons
+pip install -r scripts/requirements.txt
+python scripts/validate.py</pre></div>
+    <p>The validator exits 0 on a clean ledger. Any schema error, duplicate id, broken dependency, or vocabulary hit is printed with a clear message before exit 1.</p>
+
+    <h3>Running the instruments locally</h3>
+    <p>The HTML instruments are static files. Serve them with any local server — <code>python -m http.server 8080</code> from the repo root is sufficient. The HUD and Loop instruments read live data from Supabase via <code>loop.config.js</code>; they fall back to <code>milestones/index.json</code> if the network call fails.</p>
+
+    <h3>Branch and commit conventions</h3>
+    <p>One branch per milestone step. Branch name: <code>step/&lt;id&gt;-&lt;short-name&gt;</code>, for example <code>step/W0.1-repo-bootstrap</code>. One step per PR. Commit format: <code>type(&lt;id&gt;): subject</code> — for example <code>feat(W0.3): provision Supabase project</code>. See the <a href="#quick-ref">quick reference appendix</a> for commit type tokens.</p>
+
+    <h3>Git identity for agent commits</h3>
+    <div class="code-block"><pre>git -c user.email="nou@techne.coop" -c user.name="Nou" commit -m "..."</pre></div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 03 MILESTONE SYSTEM -->
+  <section id="milestone-system">
+    <h2>03 &ensp; Milestone system</h2>
+    <p>Every milestone is a Markdown file whose YAML front matter is the sole source of truth for graph state. The document body holds the Brief (scope), Plain language (one sentence for members), and any author notes. <code>scripts/validate.py</code> validates every file against <code>milestones/schema.json</code> on every push.</p>
+
+    <h3>Front matter schema</h3>
+    <table class="schema-table">
+      <thead>
+        <tr><th>Field</th><th>Type / allowed values</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+          <td><code>string</code></td>
+          <td>Immutable. Pattern: <code>W0.1</code>, <code>D3</code>, <code>R2</code>, <code>G1</code>, <code>P1</code>. Must match the filename.</td>
+        </tr>
+        <tr>
+          <td>title</td>
+          <td><code>string</code></td>
+          <td>Lowercase slug phrase. Minimum 3 characters.</td>
+        </tr>
+        <tr>
+          <td>wave</td>
+          <td><code>D R W0 W1 W2 G W3 W4 W5 W6 P</code></td>
+          <td>The wave this entry belongs to.</td>
+        </tr>
+        <tr>
+          <td>kind</td>
+          <td><code>step decision ratification gate practice</code></td>
+          <td>Governs ownership rules and verification paths.</td>
+        </tr>
+        <tr>
+          <td>owner</td>
+          <td><code>string</code></td>
+          <td>Role or agent responsible. D and R entries must be human-owned.</td>
+        </tr>
+        <tr>
+          <td>status</td>
+          <td><code>pending in_progress blocked review done verified</code></td>
+          <td>The lifecycle state. Only <code>verified</code> unlocks dependents.</td>
+        </tr>
+        <tr>
+          <td>detail</td>
+          <td><code>briefed seeded</code></td>
+          <td><code>seeded</code> entries (W3.1–W3.7, W4.1–W4.7) carry summary scope only; full briefs are authored at the wave-boundary step.</td>
+        </tr>
+        <tr>
+          <td>depends_on</td>
+          <td><code>string[]</code></td>
+          <td>Array of milestone ids, or a wave token like <code>W1</code> (means: that whole wave verified). May be empty.</td>
+        </tr>
+        <tr>
+          <td>decision_refs</td>
+          <td><code>string[]</code></td>
+          <td>D or R ids this step requires to be in status <code>decided</code>. May be empty.</td>
+        </tr>
+        <tr>
+          <td>success_state</td>
+          <td><code>string</code></td>
+          <td>Prose statement of completion that the named verification checks. Never weakened to get green — change requires a human-reviewed PR.</td>
+        </tr>
+        <tr>
+          <td>verification</td>
+          <td><code>string</code></td>
+          <td>Named CI job (<code>ci:milestone-validate</code>), human role (<code>human:board</code>), or <code>counsel</code>. Contract cards live in <code>docs/VERIFICATION.md</code>.</td>
+        </tr>
+        <tr>
+          <td>blocked_reason</td>
+          <td><code>string</code></td>
+          <td>Required when <code>status: blocked</code>. States the blocker clearly; opens the question in the PR.</td>
+        </tr>
+        <tr>
+          <td>activates</td>
+          <td><code>string[]</code> (optional)</td>
+          <td>Dashed edges — enables behavior in dependents without blocking the build graph.</td>
+        </tr>
+        <tr>
+          <td>requires_steps / requires_decisions</td>
+          <td><code>string[]</code> (gate entries only)</td>
+          <td>Required fields for <code>kind: gate</code> entries. Lists all ids that must be verified for the gate to pass.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Status lifecycle</h3>
+    <div class="code-block"><pre>pending → in_progress → review → done → verified
+                    ↕
+                 blocked   (reachable from any state; blocked_reason required)</pre></div>
+    <p>Status changes occur by editing the milestone file in the same PR as the work. A step cannot leave <code>pending</code> until every expanded parent is <code>verified</code>. <code>done</code> (merged) is distinct from <code>verified</code> (success_state demonstrated on the merged commit). Only <code>verified</code> unlocks dependents — this separation is the audit property.</p>
+
+    <h3>Authoring a new milestone</h3>
+    <p>Create <code>milestones/&lt;WAVE&gt;/&lt;ID&gt;-&lt;slug&gt;.md</code>. The filename slug must match the <code>id</code> field and the title. Run <code>python scripts/validate.py</code> locally before opening a PR. The validator will catch schema errors, id conflicts, dependency cycles, and vocabulary violations. Adding a step is a PR like any other; the human owner reviews the scope before it merges.</p>
+
+    <h3>Wave tokens in depends_on</h3>
+    <p>Writing <code>depends_on: [W1]</code> means "all entries in wave W1 must reach <code>verified</code> before this step can begin." Wave tokens provide coarse gating between waves without enumerating every id. Fine-grained dependencies name specific ids.</p>
+
+    <h3>Seeded detail</h3>
+    <p>Entries marked <code>detail: seeded</code> carry summary scope only — their full briefs are authored at the wave-boundary step (W3.0 for wave 3, W4.0 for wave 4). Starting work on a seeded entry before its wave boundary is a validation error. This is deliberate: early detail is fictional; boundary detail is grounded.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 04 CI/CD PIPELINE -->
+  <section id="ci-cd">
+    <h2>04 &ensp; CI/CD pipeline</h2>
+    <p>Two GitHub Actions workflows. Both live in <code>.github/workflows/</code>. Additional jobs come into existence as their named verification steps are built (see <code>docs/VERIFICATION.md</code>).</p>
+
+    <h3>milestone-validate</h3>
+    <p>Triggers on every push and PR. Steps: install dependencies from <code>scripts/requirements.txt</code>, run <code>python scripts/validate.py</code>. The validator asserts schema validity, unique ids, filename-id match, dependency resolution including wave tokens, acyclicity, status gating, and human ownership of D/R entries. It regenerates <code>milestones/index.json</code> and <code>milestones/STATUS.md</code>; on main these are committed back by the <code>milestone-validate</code> bot if they drifted.</p>
+
+    <p>PR-only check — ledger exhaustiveness: if a PR changes files under <code>supabase/</code>, <code>apps/</code>, <code>design/</code>, or <code>scripts/</code> without touching any file under <code>milestones/</code>, the check fails. Code changes travel with a milestone status change.</p>
+
+    <h4>Required CI check</h4>
+    <p><code>milestone-validate</code> is a required check on branch protection. PRs cannot merge while it is red. Additional verification jobs (db-verify, rls-audit, grammar-lint, functions-deploy, portal-build) become required checks as their milestone steps are built and activated.</p>
+
+    <h3>loop-sync</h3>
+    <p>Triggers on push to main when <code>milestones/index.json</code> changes. POSTs the index to the <code>ledger-ingest</code> Supabase edge function, which rebuilds <code>ledger_entries</code>, opens threads for new D/R entries, and records a snapshot. Failure is non-blocking (<code>continue-on-error: true</code>) — the loop continues from the previous snapshot. The ingest endpoint authenticates via <code>LEDGER_INGEST_TOKEN</code> (a GitHub Actions secret; see <a href="#secrets">section 10</a>).</p>
+
+    <div class="callout">
+      <strong>loop-sync only fires when index.json changes.</strong> Pushing an HTML-only change does not trigger it. Push a milestone status change in the same commit to sync the ledger.
+    </div>
+
+    <h3>Future verification jobs</h3>
+    <p>The contract cards in <code>docs/VERIFICATION.md</code> specify every named CI job that appears in a <code>verification</code> field. When the step that builds a job merges, the job becomes a required check on all subsequent steps that reference it. The card defines exactly what the job asserts — a <code>success_state</code> is never circular, because the job's specification precedes its implementation.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 05 SUPABASE DATA LAYER -->
+  <section id="data-layer">
+    <h2>05 &ensp; Supabase data layer</h2>
+
+    <h3>Project coordinates</h3>
+    <div class="code-block"><pre>URL:       https://dgcoffcanzwsuwgpocbt.supabase.co
+Anon key:  see loop.config.js (public; safety is completeness of RLS)
+Service key: NEVER in this repository — stored in GitHub Actions and agent .secrets/</pre></div>
+
+    <p>The anon key is exposed in <code>loop.config.js</code> intentionally. It is a publishable key; its safety comes entirely from row-level security being correct and complete on every table. Do not treat it as a secret.</p>
+
+    <h3>loop.config.js</h3>
+    <p>Loaded by the Loop and HUD instruments. Provides <code>window.LOOP_CONFIG.supabaseUrl</code>, <code>.supabaseAnon</code>, and <code>.ledgerFallback</code> (the local JSON path used when the network call fails).</p>
+
+    <h3>Schema conventions</h3>
+    <p>All schema lives under migrations, not in ad-hoc SQL. See <a href="#conventions">section 08</a> for the full conventions: snake_case naming, REA primitive table comments, event envelopes, RLS template, and citation discipline. Views with aggregated or derived data carry <code>_as_of</code> or <code>_view</code> suffixes when the name is ambiguous.</p>
+
+    <h3>Key views</h3>
+    <p><code>v_decision_leverage</code> — derives open decision count, blocked milestone count, and wave status from the ingested ledger. Used by the Loop instrument. Built from <code>ledger_entries</code>; refreshed on every loop-sync ingest.</p>
+
+    <h3>Edge functions</h3>
+    <p>Edge functions live under <code>supabase/functions/</code> (to be provisioned at W0.9). The <code>ledger-ingest</code> function is already called by loop-sync; its full specification and deployment are part of W0.9. The <code>functions-deploy</code> CI job (also W0.9) deploys from CI and smoke-calls each function. A secret-scan step asserts that no service-role key or provider secret appears outside function environment variables.</p>
+
+    <h3>Migrations</h3>
+    <p>Files live under <code>supabase/migrations/</code> (to be created at W0.4). Convention: <code>&lt;timestamp&gt;_&lt;slug&gt;.sql</code>, timestamped, append-only, one concern per file. The <code>db-verify</code> CI job applies all migrations to a clean shadow database and runs pgTAP suites before promoting to the hosted project on main. No manual SQL against the hosted project, ever.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 06 DESIGN SYSTEM -->
+  <section id="design-system">
+    <h2>06 &ensp; Design system</h2>
+    <p>The canonical reference is <a href="design-system.html">design-system.html</a>. The contributor protocol is <code>docs/DESIGN.md</code>. This section summarizes what every page author needs.</p>
+
+    <h3>Two layout grammars — never mixed</h3>
+    <p><strong>Document grammar</strong> is for reading surfaces: PRDs, specifications, decision briefs, this page. Serif body (<code>Libre Baskerville</code>), <code>.page</code> at <code>max-width: 760px</code>, <code>.site-nav</code> at top, <code>.rule</code> dividers, no state-color chips.</p>
+    <p><strong>Instrument grammar</strong> is for watching surfaces: HUD, Loop, dashboards. Mono body (<code>IBM Plex Mono</code>), compact topbar with status chips, dense tiled layout, state colors (<code>--ok</code>, <code>--info</code>, <code>--warn</code>) permitted.</p>
+
+    <h3>Token layer</h3>
+    <p>All design tokens live in <code>commons.css</code> as CSS custom properties. Pages never declare <code>:root { }</code> blocks, never hardcode color values, and never re-declare spacing tokens. The only inline <code>&lt;style&gt;</code> a page carries is layout and components specific to that page.</p>
+
+    <h4>Key tokens</h4>
+    <div class="code-block"><pre>/* ground palette */
+--bg, --surface, --surface-raised, --border, --border-strong
+
+/* text ramp */
+--heading, --text, --muted, --faint
+
+/* accent — decorative only, not semantic */
+--terra, --terra-text, --terra-dim, --terra-glow
+
+/* state — instrument surfaces only */
+--ok, --ok-dim, --info, --info-dim, --warn, --warn-dim
+
+/* spacing (4px base) */
+--s1 --s2 --s3 --s4 --s5 --s6 --s7 --s8
+
+/* fonts */
+--font-serif, --font-mono   (--font-sans resolves to mono)</pre></div>
+
+    <h3>Mode toggle — canonical form</h3>
+    <div class="code-block"><pre>&lt;button class="mode-btn" id="modeBtn"&gt;light&lt;/button&gt;</pre></div>
+    <p>Text label is the mode you will switch <em>to</em>. No SVG icons. Class is <code>.mode-btn</code> (defined in <code>commons.css</code>). The canonical script:</p>
+    <div class="code-block"><pre>(function () {
+  var root = document.documentElement;
+  var btn  = document.getElementById('modeBtn');
+  var stored = null;
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+  });
+})();</pre></div>
+
+    <h3>Nav — document grammar</h3>
+    <div class="code-block"><pre>&lt;nav class="site-nav"&gt;
+  &lt;div class="site-nav-inner"&gt;
+    &lt;a class="nav-brand" href="index.html"&gt;CIS &amp;middot; Commons&lt;/a&gt;
+    &lt;ul class="nav-links"&gt;
+      &lt;li&gt;&lt;a href="#section"&gt;Section&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;</pre></div>
+
+    <h3>Footer — three spans</h3>
+    <div class="code-block"><pre>&lt;footer&gt;
+  &lt;span&gt;Techne-Co-op/commons&lt;/span&gt;
+  &amp;middot;
+  &lt;a href="https://github.com/Techne-Co-op/commons"&gt;github.com/Techne-Co-op/commons&lt;/a&gt;
+  &amp;middot;
+  &lt;span&gt;RegenHub, LCA &amp;middot; Boulder, Colorado &amp;middot; 2026&lt;/span&gt;
+&lt;/footer&gt;</pre></div>
+
+    <h3>Checklist for new pages</h3>
+    <ul class="rule-list">
+      <li><span class="rule-num">&#x2713;</span><code>&lt;link rel="stylesheet" href="commons.css"&gt;</code> in <code>&lt;head&gt;</code></li>
+      <li><span class="rule-num">&#x2713;</span><code>&lt;html lang="en" data-mode="dark"&gt;</code> on the root element</li>
+      <li><span class="rule-num">&#x2713;</span>No inline <code>:root { }</code> block — tokens come from commons.css</li>
+      <li><span class="rule-num">&#x2713;</span>No hardcoded color values — all values reference <code>--</code> custom properties</li>
+      <li><span class="rule-num">&#x2713;</span>No third typeface (Libre Baskerville + IBM Plex Mono only)</li>
+      <li><span class="rule-num">&#x2713;</span>No <code>--crit</code> in new code — use <code>--warn</code></li>
+      <li><span class="rule-num">&#x2713;</span>Light mode toggled via <code>data-mode</code> attribute only</li>
+      <li><span class="rule-num">&#x2713;</span>State colors (<code>--ok</code>, <code>--info</code>, <code>--warn</code>) absent from document grammar pages</li>
+      <li><span class="rule-num">&#x2713;</span>Page follows one layout grammar (document or instrument), not both</li>
+      <li><span class="rule-num">&#x2713;</span>Canonical mode button: <code>class="mode-btn" id="modeBtn"</code>, text label only</li>
+    </ul>
+
+    <h3>Voice</h3>
+    <p>Quiet, precise, grounded. Lead with the word. Name authority explicitly — "per AGENTS.md §7," "per draft-bylaws:§2.4." Be honest about what is not yet known. Do not use urgency language or alarm framing. Address the reader as "the member" or "the organizer" in governance documents, not "you."</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 07 AGENT OPERATING CONTRACT -->
+  <section id="agent-contract">
+    <h2>07 &ensp; Agent operating contract</h2>
+    <p>The full contract is <a href="AGENTS.md">AGENTS.md</a>. Every agent reads it first, every session. What follows is the distillation; the contract itself governs in any conflict.</p>
+
+    <h3>The loop</h3>
+    <ol style="padding-left:1.4em;line-height:2;font-size:14px;color:var(--text);">
+      <li>Select the lowest-indexed <code>pending</code> step whose <code>expanded_parents</code> are all <code>verified</code> and whose <code>decision_refs</code> are all <code>decided</code>. If none qualifies, report what is holding the front and stop.</li>
+      <li>Branch <code>step/&lt;id&gt;-&lt;short-name&gt;</code>. One step per branch, one step per PR.</li>
+      <li>Do exactly what the step's Brief and <code>success_state</code> describe. Nothing more.</li>
+      <li>Flip the milestone file's status in the same PR as the work (<code>pending → in_progress</code> at branch, <code>→ review</code> at PR open, <code>→ done</code> at merge). <code>verified</code> is set only when the named verification has passed on the merged commit.</li>
+      <li>Commit as <code>type(&lt;id&gt;): subject</code>. PR body follows the PR template and must include success-state evidence: a CI run link or the named human reviewer.</li>
+      <li>After merge, <code>scripts/validate.py</code> regenerates <code>STATUS.md</code> and <code>index.json</code>. If validation fails, fixing it precedes all other work.</li>
+    </ol>
+
+    <h3>Ten hard rules</h3>
+    <ul class="rule-list">
+      <li><span class="rule-num">1</span>No secrets, no member PII, ever, anywhere in this repository. Synthetic fixtures only. Secret names (never values) are documented in <code>docs/SECRETS.md</code>.</li>
+      <li><span class="rule-num">2</span>Schema changes travel only as migrations under <code>supabase/migrations/</code>. Never run manual SQL against the hosted project. Migrations are append-only.</li>
+      <li><span class="rule-num">3</span>Row-level security is inviolable. Every new table ships RLS-enabled and forced, default-deny, with a citation comment per <code>docs/CONVENTIONS.md</code>. Never weaken, bypass, or defer a policy to make something work.</li>
+      <li><span class="rule-num">4</span>Vocabulary quarantine. The Subchapter T terms listed in <code>docs/CONVENTIONS.md</code> do not appear in this repository's schema, UI strings, or documents. <code>ci:grammar-lint</code> enforces it.</li>
+      <li><span class="rule-num">5</span>Decisions and ratifications are human-only. An agent may draft a deliberation brief. An agent must never write a Record of decision, flip a D/R status, or proceed as if an open decision were made.</li>
+      <li><span class="rule-num">6</span>Verification is real. Never weaken a test, widen a tolerance, mock a check, or edit a <code>success_state</code> to get green. If a <code>success_state</code> is wrong, mark the step <code>blocked</code> and raise it as a human-reviewed PR.</li>
+      <li><span class="rule-num">7</span>Blocked beats improvised. Ambiguity, a missing input, or anything touching money movement, key custody, member data, or counsel territory: stop, set <code>blocked</code> with <code>blocked_reason</code>, open the question in the PR.</li>
+      <li><span class="rule-num">8</span>Citations are load-bearing. Every policy, schema comment, and UI assertion of authority carries a citation per <code>docs/citations.md</code>. A claim without a citation is incomplete work.</li>
+      <li><span class="rule-num">9</span>Scope is the step. Refactors and improvements outside the step's Brief are separate ledger entries, not fold-ins.</li>
+      <li><span class="rule-num">10</span>The ledger is exhaustive. A PR that changes code without touching its milestone file fails validation by design. Do not work around this.</li>
+    </ul>
+
+    <h3>Escalation</h3>
+    <p>When this contract conflicts with any other instruction, this contract wins and the conflict is reported in the PR. A clean refusal is a successful outcome; a quiet workaround is a failure.</p>
+
+    <h3>Provenance in PRs</h3>
+    <p>Every PR description names: the step id, what was read (milestone file, conventions, decisions consumed), what was produced, and the verification evidence. The git history is the cooperative's audit trail of its own construction; write for the member who reads it in five years.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 08 CONVENTIONS -->
+  <section id="conventions">
+    <h2>08 &ensp; Conventions</h2>
+    <p>Full source: <code>docs/CONVENTIONS.md</code>. The summary below covers the patterns every contributor touches.</p>
+
+    <h3>Naming</h3>
+    <p>Snake_case for tables and columns. REA primitive recorded in a table comment: <code>comment on table ... is 'REA: Event · anchor: draft-bylaws:§5.1'</code>. Derived views carry <code>_as_of</code> or <code>_view</code> suffixes when the name is ambiguous. No plural tables (<code>member</code> not <code>members</code>).</p>
+
+    <h3>RLS — cite-as-you-enforce</h3>
+    <p>Every new table ships in the same migration that creates it, with RLS enabled, forced, and default-deny. The canonical template:</p>
+    <div class="code-block"><pre>alter table public.&lt;table&gt; enable row level security;
+alter table public.&lt;table&gt; force row level security;
+
+create policy "&lt;table&gt;_member_own" on public.&lt;table&gt;
+  for select using (agent_id = app.current_agent_id());
+comment on policy "&lt;table&gt;_member_own" on public.&lt;table&gt; is
+  'draft-bylaws:§18.1 · member reads own records';</pre></div>
+    <p>Only the helper functions <code>app.is_member()</code>, <code>app.has_role(text)</code>, and <code>app.is_self(uuid)</code> appear in policy predicates — no raw auth calls. The <code>rls-audit</code> pgTAP suite asserts policy completeness on every schema change.</p>
+
+    <h3>Event envelope</h3>
+    <p>Every state change is an event row. Shared columns on event tables:</p>
+    <div class="code-block"><pre>id            uuid  primary key
+actor         uuid  not null
+occurred_at   timestamptz  not null  default now()
+entity        text
+entity_id     uuid
+prior_value   jsonb
+payload       jsonb
+citation      text  not null</pre></div>
+    <p>Mutations on enveloped tables write an audit row via the generic <code>app.record_event()</code> trigger. pgTAP asserts prior_value capture. <code>citation</code> is not null — a state change without authority is incomplete.</p>
+
+    <h3>Vocabulary quarantine</h3>
+    <p>Forbidden terms (word-boundary, case-insensitive) in schema, UI strings, and documents: <em>patronage dividend</em>, <em>written notice of allocation</em>, <em>per-unit retain</em>, <em>per unit retain allocation</em>, <em>qualified written notice</em>, <em>nonqualified written notice</em>, <em>Subchapter T</em> (outside <code>docs/CONVENTIONS.md</code> and <code>docs/decisions/</code>). The term <em>patronage</em> alone survives only as a scoped internal name for capital-account allocation under §704(b) — when in doubt, write "allocation."</p>
+    <p>Allowlist: <code>.grammar-allow</code> at repo root, one term per line plus a <code># why</code> comment. The <code>ci:grammar-lint</code> job (W0.16) enforces this on every push.</p>
+
+    <h3>Citation register</h3>
+    <p>All bylaw and grant citations used in policies, schema comments, and UI go through <code>docs/citations.md</code>. Format: <code>draft-bylaws:§x.y</code> (until R1 freezes addresses) or <code>grant:§n</code>. The signal-loop authority citations use the <code>contract:</code> prefix (<code>contract:agents§7</code>, etc.). A citation used in code that is absent from the register fails review.</p>
+
+    <h3>Fixtures</h3>
+    <p>Synthetic only, generated, obviously fake: <code>@example.coop</code> addresses, <code>FAKE-</code> prefixes. The persona pack is collection item C4 (not yet authored). Personas: <code>member-a</code>, <code>member-b</code>, <code>admin-1</code>, <code>applicant-1</code>, <code>liaison-1</code>.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 09 DECISION WORKFLOW -->
+  <section id="decisions">
+    <h2>09 &ensp; Decision and ratification workflow</h2>
+    <p>Decisions (D1–D10) and ratifications (R1–R2) are human-owned milestone entries. Their files are the cooperative's governance record; agents assist but never decide.</p>
+
+    <h3>File locations</h3>
+    <p>The ledger entry is <code>milestones/D/&lt;id&gt;-&lt;slug&gt;.md</code> or <code>milestones/R/&lt;id&gt;-&lt;slug&gt;.md</code> — tracks status only; agents never set it. The deliberation brief and Record of decision live at <code>docs/decisions/&lt;id&gt;.md</code>.</p>
+
+    <h3>Lifecycle</h3>
+    <p>An agent may draft or improve the context and options in <code>docs/decisions/&lt;id&gt;.md</code>. When a human owner decides, they add a Record of decision paragraph to that file, flip <code>status: decided</code> in the front matter, and update the ledger entry in the same PR. The milestone entry in <code>milestones/D/</code> reflects the ledger state but is never edited by agents.</p>
+
+    <h3>Blocking behavior</h3>
+    <p>An open decision blocks only the specific milestones that list it in <code>decision_refs</code>. The validator treats open D/R entries as blockers in the dependency graph. <code>hud.html</code> surfaces them as blocked chips; <code>loop.html</code> exposes them as open threads in the signal loop. When a decision closes, all steps that listed it become eligible to begin (subject to other dependencies).</p>
+
+    <h3>Ratifications</h3>
+    <p>R entries follow the same pattern as D entries. R1 (bylaws ratification) and R2 (Hub Membership Agreement) are not build blockers for W0–W3. They remain open and are tracked in the decision register on <code>index.html</code>.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 10 SECRETS BOUNDARY -->
+  <section id="secrets">
+    <h2>10 &ensp; Secrets boundary</h2>
+    <p>The protocol is: <strong>reference, not value.</strong> No secret ever enters a file committed to this repository, a conversation log, or a generated artifact. What lives here is names only.</p>
+
+    <h3>What never enters the repository</h3>
+    <ul class="rule-list">
+      <li><span class="rule-num">&times;</span>Supabase service role key or JWT — referenced as <code>SUPABASE_SERVICE_ROLE_KEY</code> in GitHub Actions secrets</li>
+      <li><span class="rule-num">&times;</span>Ledger ingest token — referenced as <code>LEDGER_INGEST_TOKEN</code> in GitHub Actions secrets</li>
+      <li><span class="rule-num">&times;</span>Any OAuth client secret, provider API key, or signing key</li>
+      <li><span class="rule-num">&times;</span>Member PII of any kind — production or otherwise</li>
+    </ul>
+
+    <h3>What is public by design</h3>
+    <ul class="rule-list">
+      <li><span class="rule-num">&#x2713;</span>Supabase anon key (in <code>loop.config.js</code>) — publishable key; safety is RLS correctness</li>
+      <li><span class="rule-num">&#x2713;</span>Supabase project URL — <code>https://dgcoffcanzwsuwgpocbt.supabase.co</code></li>
+    </ul>
+
+    <h3>Secrets inventory</h3>
+    <p>The full name register is <code>docs/SECRETS.md</code>. The names documented there are the contract — any secret added to the system must appear in that file before it is used. If a secret name is absent from the register, adding it is a human-reviewed PR.</p>
+
+    <h3>Agent-side secrets</h3>
+    <p>Agents working in the sandbox read secrets at runtime from <code>.secrets/</code>: <code>$(cat .secrets/workshop-key)</code> in command substitution. Never echo, print, or log a secret value. Never hardcode a value in a script or configuration file.</p>
+
+    <h3>If a secret is exposed</h3>
+    <p>Alert Todd Youngblood immediately. Rotate the exposed credential before doing anything else. Record the exposure in a post-incident note in <code>docs/</code> (name only, no value) and open a PR to remove the exposure from history.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- APPENDIX: QUICK REFERENCE -->
+  <section id="quick-ref">
+    <h2>A &ensp; Quick reference</h2>
+
+    <h3>Commit type tokens</h3>
+    <table class="schema-table">
+      <thead><tr><th>Token</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>feat</td><td>New milestone step completed</td></tr>
+        <tr><td>fix</td><td>Corrects a prior step or schema error</td></tr>
+        <tr><td>chore</td><td>Ledger regeneration, tooling, non-functional maintenance</td></tr>
+        <tr><td>docs</td><td>Documentation changes only (no code, no schema)</td></tr>
+        <tr><td>test</td><td>pgTAP suite additions or corrections</td></tr>
+        <tr><td>refactor</td><td>Structural change with no behavior change — requires a ledger entry</td></tr>
+        <tr><td>style</td><td>Design system or CSS changes only</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Branch naming</h3>
+    <div class="code-block"><pre>step/W0.3-supabase-provisioning
+step/D4-transactional-email
+step/G1-alpha-gate</pre></div>
+
+    <h3>Milestone id pattern</h3>
+    <div class="code-block"><pre>W0.1 – W6.n   build steps by wave
+D1 – D10       pre-build decisions
+R1 – R2        ratifications
+G1             alpha gate
+P1             practice entry</pre></div>
+
+    <h3>Verification reference</h3>
+    <table class="schema-table">
+      <thead><tr><th>Job name</th><th>Milestone</th><th>What it asserts</th></tr></thead>
+      <tbody>
+        <tr><td>milestone-validate</td><td>always</td><td>Schema, graph, vocabulary — see GOVERNANCE.md</td></tr>
+        <tr><td>repo-policy</td><td>W0.1</td><td>Governance files present, branch protection set</td></tr>
+        <tr><td>db-verify</td><td>W0.4</td><td>Clean migration apply + pgTAP green on shadow DB</td></tr>
+        <tr><td>rls-audit</td><td>W0.6</td><td>All tables RLS-enabled, all policies cited, zero probe leaks</td></tr>
+        <tr><td>grammar-lint</td><td>W0.16</td><td>Forbidden vocabulary absent from schema, UI, docs</td></tr>
+        <tr><td>functions-deploy</td><td>W0.9</td><td>Functions deploy + smoke-call green + secret-scan clean</td></tr>
+        <tr><td>portal-build</td><td>W0.12</td><td>Static build passes, deploys to Pages, 200 on alpha domain</td></tr>
+        <tr><td>status-mirror</td><td>W0.18</td><td>index.json POSTed to Supabase, row count matches</td></tr>
+        <tr><td>exports-cron</td><td>W0.14</td><td>Snapshots written to Storage, job_run event recorded</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Key file locations</h3>
+    <table class="schema-table">
+      <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>AGENTS.md</td><td>Agent operating contract — read first every session</td></tr>
+        <tr><td>GOVERNANCE.md</td><td>Ledger mechanics, status lifecycle, plan amendment</td></tr>
+        <tr><td>milestones/schema.json</td><td>JSON Schema for milestone front matter</td></tr>
+        <tr><td>milestones/index.json</td><td>Generated dependency graph — do not hand-edit</td></tr>
+        <tr><td>milestones/STATUS.md</td><td>Generated human-readable status board — do not hand-edit</td></tr>
+        <tr><td>docs/CONVENTIONS.md</td><td>Migrations, RLS, event envelope, naming, vocabulary quarantine</td></tr>
+        <tr><td>docs/DESIGN.md</td><td>Design system contributor protocol</td></tr>
+        <tr><td>docs/VERIFICATION.md</td><td>CI contract cards for all named verification jobs</td></tr>
+        <tr><td>docs/citations.md</td><td>Bylaw and grant citation register</td></tr>
+        <tr><td>docs/SECRETS.md</td><td>Secret name inventory (never values)</td></tr>
+        <tr><td>loop.config.js</td><td>Public Supabase config loaded by instruments</td></tr>
+        <tr><td>commons.css</td><td>Design token layer and shared components</td></tr>
+        <tr><td>design-system.html</td><td>Canonical design reference</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="rule"></div>
+
+  <p style="font-size:13px;color:var(--faint);line-height:1.7;">
+    This document is maintained by Nou (agent) under human review. Last substantive update: June 2026.
+    If this document and <a href="AGENTS.md">AGENTS.md</a> or <a href="GOVERNANCE.md">GOVERNANCE.md</a> disagree, those files govern.
+    Additions follow the same PR process as any other change to <code>docs/</code>.
+  </p>
+
+</div>
+
+<footer>
+  <span>Techne-Co-op/commons</span>
+  &middot;
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  &middot;
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.getElementById('modeBtn');
+  var stored = null;
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+  });
+})();
+</script>
+</body>
+</html>

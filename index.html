@@ -231,6 +231,7 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
       <li><a href="#repo">Repository</a></li>
       <li><a href="hud.html" style="color:var(--terra-text);">HUD</a></li>
       <li><a href="design-system.html">Design</a></li>
+      <li><a href="dev.html">Dev</a></li>
     </ul>
   </div>
 </nav>
@@ -314,7 +315,7 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <div class="section-label">Document library</div>
 
     <h2>Specifications, planning, and build artifacts</h2>
-    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Twelve documents in three groups: governing specifications and instruments, the Builder&rsquo;s Collection Map, and the C6&ndash;C11 artifact series. Start with the CIS PRD if you are new to the system; use the roadmap instrument to trace the build sequence.</p>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Thirteen documents in four groups: governing specifications and instruments, build planning, developer reference, and the C6&ndash;C11 artifact series. Start with the CIS PRD if you are new to the system; use the roadmap instrument to trace the build sequence; see the developer reference for repository conventions, CI/CD, and the design system.</p>
 
     <div class="doc-group">
       <div class="doc-group-label">Governing specifications</div>
@@ -371,6 +372,21 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
           <div class="doc-body">
             <div class="doc-title">Pre-Build Audit</div>
             <div class="doc-desc">Conducted June 2026 before W0 substrate work begins. Three consistency remediations applied, seven documentation gaps identified, eight architectural gaps noted, and four priority items called out as prerequisites for W1. Written for both technical contributors and non-technical co-op members. Includes a plain-language glossary.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="doc-group">
+      <div class="doc-group-label">Developer reference</div>
+      <div class="doc-list">
+
+        <a class="doc-item" href="dev.html">
+          <div class="doc-body">
+            <div class="doc-title">Developer Reference</div>
+            <div class="doc-desc">Comprehensive reference for contributors and agents: repository map, quick start, milestone schema and authoring, CI/CD pipeline (milestone-validate and loop-sync), Supabase data layer, design system grammar and page checklist, agent operating contract, naming and RLS conventions, citation register, decision workflow, and secrets boundary. The single document to read before making a change.</div>
           </div>
           <div class="doc-meta">v0.1 &middot; Jun 2026</div>
         </a>
