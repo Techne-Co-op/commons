@@ -230,6 +230,27 @@ code {
   padding: 2px 6px;
   border-radius: 4px;
 }
+
+pre {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--terra);
+  border-radius: 6px;
+  padding: var(--s4) var(--s5);
+  margin: var(--s5) 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
  
 /* ============================================================
    components
@@ -685,7 +706,53 @@ footer {
   <div class="rule"></div>
   <p>Contrast is verified in both modes. Body text exceeds AAA, and the readable terracotta token holds AA at label sizes on parchment. The state colors are tuned per mode to hold AA at chip sizes, and no condition is ever signaled by color alone: every chip pairs its color with a word and a dot. Faint text is decorative in both modes and never carries critical information. The mode toggle includes an <code>aria-label</code>, visible keyboard focus, and the reduced-motion override, and <code>color-scheme</code> is declared so form controls and scrollbars render correctly in dark mode.</p>
 </section>
- 
+
+<section>
+  <div class="label">Page Metadata</div>
+  <div class="rule"></div>
+  <p>Every HTML page published from this repository carries a required head block. Metadata is not decoration — it is the contract between the page and the systems that parse it: browsers, crawlers, link-unfurlers, and the sitemap. The requirements below apply to every file served under <code>techne-co-op.github.io/commons/</code>.</p>
+
+  <p>Pages divide into two categories. <em>Public pages</em> are indexed, canonical, Open Graph-tagged, and listed in <code>sitemap.xml</code>. <em>Internal documents</em> — working drafts, companion instruments, progressive definition records — carry <code>noindex,nofollow</code> and are excluded from the sitemap. The distinction is a deliberate editorial choice, not a technical afterthought. Every page still carries a description and a favicon, because those serve readers and link previews even when the page is not indexed.</p>
+
+  <table class="spec">
+    <thead><tr><th>Tag</th><th>Requirement</th><th>All pages</th></tr></thead>
+    <tbody>
+      <tr><td>charset</td><td><code>&lt;meta charset="UTF-8"&gt;</code></td><td>required</td></tr>
+      <tr><td>viewport</td><td><code>width=device-width, initial-scale=1.0</code></td><td>required</td></tr>
+      <tr><td>color-scheme</td><td><code>&lt;meta name="color-scheme" content="dark light"&gt;</code></td><td>required</td></tr>
+      <tr><td>description</td><td><code>&lt;meta name="description"&gt;</code>, unique per page, 120–160 characters</td><td>required</td></tr>
+      <tr><td>robots</td><td><code>index,follow</code> for public pages; <code>noindex,nofollow</code> for internal documents</td><td>required</td></tr>
+      <tr><td>favicon</td><td><code>&lt;link rel="icon" href="favicon.svg" type="image/svg+xml"&gt;</code></td><td>required</td></tr>
+      <tr><td>title</td><td>Format: <em>Page name &middot; RegenHub Commons</em></td><td>required</td></tr>
+    </tbody>
+  </table>
+
+  <p>Public pages additionally carry Open Graph tags, a Twitter card summary, and a canonical URL. These three travel together — a page that has one has all three.</p>
+
+  <pre><code>&lt;meta property="og:type" content="website"&gt;
+&lt;meta property="og:url" content="https://techne-co-op.github.io/commons/[page].html"&gt;
+&lt;meta property="og:title" content="[Page name] &amp;middot; RegenHub Commons"&gt;
+&lt;meta property="og:description" content="[same as meta description]"&gt;
+&lt;meta property="og:site_name" content="RegenHub Commons"&gt;
+&lt;meta name="twitter:card" content="summary"&gt;
+&lt;meta name="twitter:title" content="[Page name] &amp;middot; RegenHub Commons"&gt;
+&lt;meta name="twitter:description" content="[same as meta description]"&gt;
+&lt;link rel="canonical" href="https://techne-co-op.github.io/commons/[page].html"&gt;</code></pre>
+
+  <p>The sitemap lives at <code>sitemap.xml</code> in the repository root and is declared in <code>robots.txt</code>. It lists only public pages. When a new page is promoted to public status — when its <code>robots</code> tag changes from <code>noindex</code> to <code>index,follow</code> — it must be added to the sitemap in the same commit. A public page not in the sitemap is an oversight, not a policy.</p>
+
+  <table class="spec">
+    <thead><tr><th>Sitemap field</th><th>Guidance</th></tr></thead>
+    <tbody>
+      <tr><td>loc</td><td>Full absolute URL. No trailing slash on non-root pages.</td></tr>
+      <tr><td>changefreq</td><td><code>daily</code> for live instruments (HUD, Loop); <code>weekly</code> for index; <code>monthly</code> for reference docs.</td></tr>
+      <tr><td>priority</td><td>1.0 for index, 0.9 for primary instruments, 0.5 for reference pages.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Current public pages: <code>index.html</code>, <code>hud.html</code>, <code>loop.html</code>, <code>design-system.html</code>. Everything else in the repository is internal until explicitly promoted.</p>
+</section>
+
 <footer>
   co-op.us &middot; RegenHub, LCA &middot; Boulder, Colorado &middot; 2026
 </footer>
