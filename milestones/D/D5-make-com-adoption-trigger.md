@@ -4,7 +4,7 @@ title: "make.com adoption trigger"
 wave: D
 kind: decision
 owner: "organizers"
-status: pending
+status: decided
 detail: briefed
 depends_on: []
 decision_refs: []
