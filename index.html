@@ -169,33 +169,33 @@ code {
 .loop-card {
   background: var(--surface); border: 1px solid var(--border);
   border-top: 2px solid var(--terra); border-radius: 10px;
-  padding: 26px 28px 22px; margin-bottom: 48px;
+  padding: 20px 22px 16px; margin-bottom: 40px;
 }
 .loop-card-eyebrow {
   font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   letter-spacing: 0.28em; text-transform: uppercase; color: var(--terra-text);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .loop-card-title {
-  font-size: 18px; font-weight: 700; color: var(--heading);
-  letter-spacing: -0.2px; margin-bottom: 12px;
+  font-size: 15px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.1px; margin-bottom: 10px;
 }
-.loop-card p { font-size: 14.5px; line-height: 1.75; margin-bottom: 12px; color: var(--text); }
+.loop-card p { font-size: 13.5px; line-height: 1.7; margin-bottom: 10px; color: var(--text); }
 .loop-panels {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 8px; margin: 18px 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 7px; margin: 14px 0;
 }
 .loop-panel {
   background: var(--surface-raised); border: 1px solid var(--border);
-  border-radius: 6px; padding: 12px 14px;
+  border-radius: 6px; padding: 10px 12px;
 }
 .loop-panel-name {
-  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
-  color: var(--terra-text); font-weight: 500; margin-bottom: 5px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--terra-text); font-weight: 500; margin-bottom: 4px;
 }
-.loop-panel-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.loop-panel-desc { font-size: 11.5px; color: var(--muted); line-height: 1.6; }
 .loop-card-link {
-  display: inline-block; margin-top: 6px;
+  display: inline-block; margin-top: 4px;
   font-family: 'IBM Plex Mono', monospace; font-size: 12px;
   color: var(--terra-text); text-decoration: none;
   border-bottom: 1px solid var(--terra-dim);
@@ -243,29 +243,6 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <div class="tagline">The cooperative&rsquo;s shared knowledge layer &mdash; private alpha build workspace</div>
   </header>
 
-  <!-- ────────────── SIGNAL LOOP INTRO ────────────── -->
-  <div class="loop-card">
-    <div class="loop-card-eyebrow">Live instrument</div>
-    <div class="loop-card-title">Decision&ndash;Blocker Signal Loop</div>
-    <p>Building a cooperative information system involves many moving parts: milestones that depend on each other, decisions that only humans can make, and work that can quietly stall without anyone noticing. The signal loop is a live instrument that answers the three questions that matter most at the start of any working session.</p>
-    <div class="loop-panels">
-      <div class="loop-panel">
-        <div class="loop-panel-name">Front &mdash; workable now</div>
-        <div class="loop-panel-desc">Milestones whose dependencies are complete and that are ready to start. If this panel has entries, the next action is clear.</div>
-      </div>
-      <div class="loop-panel">
-        <div class="loop-panel-name">Decision queue</div>
-        <div class="loop-panel-desc">Open decisions ranked by how many milestones depend on them. The top item is the conversation with the most downstream unblocking value.</div>
-      </div>
-      <div class="loop-panel">
-        <div class="loop-panel-name">Blockers &amp; pulse</div>
-        <div class="loop-panel-desc">Explicit blockers flagged on active milestones, and a list of work that has been in progress the longest without resolution.</div>
-      </div>
-    </div>
-    <p style="margin-bottom:0; color:var(--muted);">The loop reads live from the database. It cannot write to the repository or record decisions &mdash; those actions belong to the organizers. It is an attention instrument, not an authority.</p>
-    <a class="loop-card-link" href="loop.html">Open the signal loop &rarr;</a>
-  </div>
-
   <div class="rule"></div>
 
   <!-- ────────────── WHAT ────────────── -->
@@ -306,6 +283,29 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <h3 style="margin-top: 28px;">What this repository is</h3>
     <p style="margin-top: 8px;">This is the build workspace. Everything needed to construct the CIS private alpha lives here: the full specification, a step-by-step build plan with 70 ordered milestones, an operating contract for the agents doing the work, and decision records that unlock the build tree. The build is designed for humans and AI agents working together under an explicit contract &mdash; <a class="inline" href="AGENTS.md">AGENTS.md</a> &mdash; that defines what agents may do, what they may not do, and when to stop and ask rather than invent.</p>
   </section>
+
+  <!-- ────────────── SIGNAL LOOP INTRO ────────────── -->
+  <div class="loop-card">
+    <div class="loop-card-eyebrow">Live instrument</div>
+    <div class="loop-card-title">Decision&ndash;Blocker Signal Loop</div>
+    <p>Building a cooperative information system involves many moving parts: milestones that depend on each other, decisions that only humans can make, and work that can quietly stall without anyone noticing. The signal loop is a live instrument that answers the three questions that matter most at the start of any working session.</p>
+    <div class="loop-panels">
+      <div class="loop-panel">
+        <div class="loop-panel-name">Front &mdash; workable now</div>
+        <div class="loop-panel-desc">Milestones whose dependencies are complete and that are ready to start. If this panel has entries, the next action is clear.</div>
+      </div>
+      <div class="loop-panel">
+        <div class="loop-panel-name">Decision queue</div>
+        <div class="loop-panel-desc">Open decisions ranked by how many milestones depend on them. The top item is the conversation with the most downstream unblocking value.</div>
+      </div>
+      <div class="loop-panel">
+        <div class="loop-panel-name">Blockers &amp; pulse</div>
+        <div class="loop-panel-desc">Explicit blockers flagged on active milestones, and a list of work that has been in progress the longest without resolution.</div>
+      </div>
+    </div>
+    <p style="margin-bottom:0; color:var(--muted);">The loop reads live from the database. It cannot write to the repository or record decisions &mdash; those actions belong to the organizers. It is an attention instrument, not an authority.</p>
+    <a class="loop-card-link" href="loop.html">Open the signal loop &rarr;</a>
+  </div>
 
   <div class="rule"></div>
 
