@@ -4,7 +4,7 @@ title: "EE liaison interface form"
 wave: D
 kind: decision
 owner: "organizers + EE team"
-status: pending
+status: done
 detail: briefed
 depends_on: []
 decision_refs: []
