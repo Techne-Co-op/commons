@@ -21,10 +21,16 @@ jobs:
           if echo "$CHANGED" | grep -Eq '^(supabase|apps|design|scripts)/' && \
              ! echo "$CHANGED" | grep -q '^milestones/'; then
             echo "::error::code changed without a milestone status change"; exit 1; fi
-      # On main, commit the regenerated board. NOTE: with branch protection on,
-      # allow github-actions[bot] to push, or route this through a PR instead.
+      # On main, commit the regenerated board back if the files drifted.
+      # Requires github-actions[bot] to have push access; if branch protection
+      # blocks the push (exit non-zero), the step is skipped gracefully — the
+      # validate check above still passed and the ledger is coherent.
+      # Long-term fix: W0.19/W0.20 migrate to Actions-based Pages deployment,
+      # at which point this step becomes unnecessary (generated files are never
+      # committed to main).
       - name: commit status board (main only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        continue-on-error: true
         run: |
           git config user.name "milestone-validate"
           git config user.email "actions@users.noreply.github.com"
