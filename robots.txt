@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /commons/index.html
+Allow: /commons/hud.html
+Allow: /commons/loop.html
+Allow: /commons/design-system.html
+Allow: /commons/sitemap.xml
+Disallow: /commons/milestones/
+Disallow: /commons/docs/
+Disallow: /commons/scripts/
+Disallow: /commons/supabase/
+
+Sitemap: https://techne-co-op.github.io/commons/sitemap.xml
