@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="A guide for RegenHub, LCA members to the Common Information System — the reasoning, logic, and use of the cooperative's shared build instrument.">
+<meta name="robots" content="index,follow">
+<title>Member Guide · RegenHub Commons</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
+<style>
+/* tokens, reset, site-nav, mode-btn, footer → commons.css */
+
+/* ── layout ── */
+.page { max-width: 760px; margin: 0 auto; padding: var(--s8) var(--s5) 96px; }
+
+/* ── type ── */
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--terra-text); margin-bottom: var(--s4);
+}
+h1 {
+  font-size: 34px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.5px; line-height: 1.25; margin-bottom: var(--s3);
+}
+.lede {
+  font-size: 19px; line-height: 1.75; color: var(--text);
+  margin-bottom: var(--s6); max-width: 58ch;
+  font-style: italic;
+}
+h2 {
+  font-size: 24px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.3px; line-height: 1.3;
+  margin: var(--s7) 0 var(--s4);
+}
+h3 {
+  font-size: 17px; font-weight: 700; color: var(--heading);
+  margin: var(--s5) 0 var(--s3); line-height: 1.4;
+}
+p { margin-bottom: 18px; line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+a { color: var(--terra-text); text-decoration: none; transition: color var(--dur-micro) var(--ease); }
+a:hover { text-decoration: underline; }
+em { font-style: italic; }
+strong { font-weight: 700; color: var(--heading); }
+
+/* ── rule ── */
+.rule { margin: var(--s5) 0 var(--s6); }
+
+/* ── section ── */
+section { margin-bottom: var(--s8); }
+
+/* ── inline label ── */
+.label {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--terra-text); display: block; margin-bottom: var(--s2);
+}
+
+/* ── wave cards — decorative, no state color ── */
+.wave-row { display: flex; flex-direction: column; gap: var(--s3); margin: var(--s4) 0 var(--s5); }
+.wave-item {
+  display: flex; gap: var(--s4); align-items: flex-start;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: var(--s3) var(--s4);
+}
+.wave-tag {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--terra-text);
+  flex-shrink: 0; padding-top: 2px; min-width: 2.5rem;
+}
+.wave-body { font-size: 14px; line-height: 1.6; color: var(--text); }
+.wave-name { font-weight: 700; color: var(--heading); margin-bottom: 2px; }
+.wave-desc { color: var(--muted); }
+
+/* ── principle list ── */
+.principle-list { list-style: none; margin: var(--s3) 0 var(--s5); padding: 0; display: flex; flex-direction: column; gap: var(--s3); }
+.principle-list li {
+  padding-left: var(--s5); position: relative;
+  font-size: 15px; line-height: 1.7; color: var(--text);
+}
+.principle-list li::before {
+  content: "—";
+  position: absolute; left: 0;
+  color: var(--terra-text); font-family: var(--font-mono);
+}
+
+/* ── callout ── */
+.callout {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--terra); border-radius: 6px;
+  padding: var(--s4) var(--s5); margin: var(--s4) 0 var(--s5);
+  font-size: 14.5px; line-height: 1.75; color: var(--text);
+}
+
+/* ── glossary ── */
+.glossary-list { display: flex; flex-direction: column; gap: var(--s4); margin: var(--s4) 0; }
+.glossary-entry { display: flex; gap: var(--s5); align-items: flex-start; }
+.glossary-term {
+  font-family: var(--font-mono); font-size: 12px; color: var(--terra-text);
+  flex-shrink: 0; min-width: 120px; padding-top: 3px; line-height: 1.5;
+}
+.glossary-def { font-size: 14px; line-height: 1.7; color: var(--text); }
+
+/* ── toc ── */
+.toc { margin: var(--s5) 0 var(--s6); display: flex; flex-direction: column; gap: 7px; }
+.toc a { font-size: 14px; color: var(--muted); display: flex; gap: var(--s3); align-items: baseline; }
+.toc a:hover { color: var(--terra-text); }
+.toc a .toc-num { font-family: var(--font-mono); font-size: 11px; color: var(--faint); }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Index</a></li>
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="dev.html">Dev</a></li>
+    </ul>
+  </div>
+</nav>
+
+<button class="mode-btn" id="modeBtn">light</button>
+
+<div class="page">
+
+  <div class="eyebrow">Member Guide</div>
+  <h1>The Common Information System</h1>
+  <p class="lede">What it is, why the cooperative built it, and what it means for you as a member.</p>
+
+  <p>This guide is written for members of RegenHub, LCA — people who have agreed to be part of this cooperative and who have a stake in what it builds. It does not assume technical background. It does assume you care about honest accounting of where the work stands and why decisions are made the way they are.</p>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#why"><span class="toc-num">01</span>Why the cooperative builds its own system</a>
+    <a href="#what"><span class="toc-num">02</span>What the Common Information System is</a>
+    <a href="#waves"><span class="toc-num">03</span>How the build is organized — waves</a>
+    <a href="#decisions"><span class="toc-num">04</span>Decisions — what they are and who makes them</a>
+    <a href="#milestones"><span class="toc-num">05</span>Milestones — units of verifiable work</a>
+    <a href="#instruments"><span class="toc-num">06</span>The instruments — what you can read</a>
+    <a href="#agents"><span class="toc-num">07</span>Agents — what they do and don't do</a>
+    <a href="#audit"><span class="toc-num">08</span>The audit trail — why the record matters</a>
+    <a href="#your-role"><span class="toc-num">09</span>Your role as a member</a>
+    <a href="#alpha"><span class="toc-num">10</span>The alpha gate — when the system opens</a>
+    <a href="#glossary"><span class="toc-num">A</span>Glossary</a>
+  </nav>
+
+  <div class="rule"></div>
+
+  <!-- 01 WHY -->
+  <section id="why">
+    <h2>01 &ensp; Why the cooperative builds its own system</h2>
+
+    <p>A cooperative is distinct from a company in a specific way: it is owned and governed by the people it serves. That ownership is not rhetorical — it is structural. Members have rights to information, rights to participate in decisions, and rights to see how the organization accounts for itself. These are not optional features of a cooperative; they are what makes it one.</p>
+
+    <p>RegenHub, LCA is a Colorado Limited Cooperative Association. The draft bylaws, following standard cooperative law, give every member the right to examine the cooperative's records — the books, the decisions, the accounting. When the cooperative is also building the software platform that tracks member contributions, allocations, and governance, that software is itself a cooperative record. Its construction is part of what members have a right to understand.</p>
+
+    <p>This is why the Common Information System is built in public. Not because transparency is a brand value, but because it is a legal and ethical obligation. Every decision, every status change, every completed milestone is recorded in a way that any member can read. The system is its own ledger — from the Old French <em>legier</em>, something that lies fixed. A ledger does not speculate; it records what happened.</p>
+
+    <p>The alternative — buying a project management tool, closing the development into a private repository, building toward a launch reveal — would be cheaper and faster in the short term. It would also be inconsistent with what the cooperative is. Building in public is slower. It is also the right way to do it.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 02 WHAT -->
+  <section id="what">
+    <h2>02 &ensp; What the Common Information System is</h2>
+
+    <p>The CIS — Common Information System — is three things at once.</p>
+
+    <p>First, it is a <strong>ledger of work</strong>. Every piece of the member portal, every database table, every governance tool has a corresponding milestone in the ledger. Each milestone records: what needs to be done, who owns it, what its current status is, and how completion will be verified. The ledger is not aspirational — it is a record of state. When something is marked done, it means a defined condition was met and checked.</p>
+
+    <p>Second, it is a <strong>set of instruments</strong> — documents and live tools that let members and organizers read the state of the build without having to interpret code. The Index (the page you are on) gives a human-readable overview. The HUD gives a live, detailed view of all 70 milestones. The Loop surfaces the signal between open decisions and blocked work. These instruments exist because the build is a cooperative activity — it should be legible to every member, not just the people who write code.</p>
+
+    <p>Third, it is a <strong>set of conventions</strong> — agreed ways of naming things, recording authority, and handling sensitive information. These conventions are not bureaucratic overhead; they are what allow the cooperative to make defensible claims about its own records. A database policy that cites the bylaw section it enforces is a different thing from one that does not. The citation creates a chain of authority that any member can follow.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 03 WAVES -->
+  <section id="waves">
+    <h2>03 &ensp; How the build is organized — waves</h2>
+
+    <p>The build is organized into waves. A wave is a coherent phase of work: everything in a wave must be completed and verified before the next wave begins. This is not a waterfall — the waves are not a rigid plan that ignores reality. It is a discipline: the cooperative does not start building the member directory (Wave 1) until the substrate — the database, the authentication layer, the schema — is solid (Wave 0).</p>
+
+    <p>Think of waves as tide. Each arrives, does its work, and when it recedes the shore is changed. The cooperative does not try to manage seven tides at once.</p>
+
+    <div class="wave-row">
+      <div class="wave-item">
+        <div class="wave-tag">W0</div>
+        <div class="wave-body">
+          <div class="wave-name">Substrate</div>
+          <div class="wave-desc">The foundation: repository structure, database provisioning, authentication, row-level security, the REA schema, edge functions, the portal scaffold, and the CI/CD pipeline. 22 milestones. Nothing in W1 or later can begin until W0 is verified.</div>
+        </div>
+      </div>
+      <div class="wave-item">
+        <div class="wave-tag">W1</div>
+        <div class="wave-body">
+          <div class="wave-name">Member layer</div>
+          <div class="wave-desc">Membership classes, the stock ledger, agreement repository, signature capture, the member directory, onboarding, and Nou's first grounded read-only interface. 8 milestones. When W1 is done, a real member can sign in, see what governs them, and appear in the directory.</div>
+        </div>
+      </div>
+      <div class="wave-item">
+        <div class="wave-tag">W2</div>
+        <div class="wave-body">
+          <div class="wave-name">Hub operations</div>
+          <div class="wave-desc">The surface that serves the Boulder Ethereum Community Hub: applications, co-working sessions, events, KPI tracking, impact reporting, the cross-pollination registry, education, and grant lifecycle. 9 milestones.</div>
+        </div>
+      </div>
+      <div class="wave-item">
+        <div class="wave-tag">W3</div>
+        <div class="wave-body">
+          <div class="wave-name">Capital accounts</div>
+          <div class="wave-desc">The financial layer: member capital accounts per §704(b), personal balance views, allocation tools, Mercury read-only ingestion, tax records. This is the wave where the cooperative's financial architecture becomes a live member surface. 7 milestones.</div>
+        </div>
+      </div>
+      <div class="wave-item">
+        <div class="wave-tag">W4</div>
+        <div class="wave-body">
+          <div class="wave-name">Governance</div>
+          <div class="wave-desc">Meetings, motions, immutable votes, consents, minutes, and notices. The wave that makes governance a first-class recorded system rather than a file in a folder. 7 milestones.</div>
+        </div>
+      </div>
+      <div class="wave-item">
+        <div class="wave-tag">W5 &ndash; W6</div>
+        <div class="wave-body">
+          <div class="wave-name">Lifecycle and full interface</div>
+          <div class="wave-desc">Member onboarding flows and the full member portal. These waves are briefed at the boundaries where their detail can be real rather than invented early.</div>
+        </div>
+      </div>
+      <div class="wave-item">
+        <div class="wave-tag">G1</div>
+        <div class="wave-body">
+          <div class="wave-name">Alpha gate</div>
+          <div class="wave-desc">The bar the system must clear before real members rely on it. G1 is met when all of W0, W1, and most of W2 are verified: a member can sign in, sign their agreement, ask Nou a question and get a cited answer, and the Hub team can run operations in production.</div>
+        </div>
+      </div>
+    </div>
+
+    <p>Waves are not promises about when things will be done. They are a structure for making decisions about what must be done first. The cooperative does not pick a ship date and work backward; it picks a discipline and works forward.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 04 DECISIONS -->
+  <section id="decisions">
+    <h2>04 &ensp; Decisions — what they are and who makes them</h2>
+
+    <p>Some questions cannot be answered by building software. They require judgment — judgment that belongs to the humans of the cooperative, not to agents or tools. The CIS names these questions explicitly as decisions, and it records them.</p>
+
+    <p>There are ten pre-build decisions (D1 through D10). Each is a question the cooperative had to answer before construction could begin — questions like: which framework builds the member portal? Which provider handles transactional email? What is the scope of the attestation layer? These are architectural decisions with long-term consequences for cost, portability, and member rights. They were deliberated, proposed, and recorded by the people who own them.</p>
+
+    <div class="callout">
+      All ten pre-build decisions (D1&ndash;D10) were recorded by the organizers in June 2026. No work on a milestone begins until the decisions it depends on are resolved. Decisions are noted in the decision register on the <a href="index.html">Index</a> and as individual records in the repository.
+    </div>
+
+    <p>There are also two ratification items (R1 and R2): the bylaws ratification and the Hub Membership Agreement. These are not decisions to be made by a single organizer — they are the full membership's to ratify. Until R1 closes, all bylaw citations in the system use the prefix "draft-bylaws" to be honest that the addresses are not yet frozen. When R1 closes, a single sweep updates every citation to its ratified form. The audit trail will record that sweep.</p>
+
+    <p>The rule is simple: <strong>decisions belong to humans.</strong> An agent may draft context, lay out options, or propose a default. It may never write a Record of decision, change a decision's status from open to decided, or proceed as though an open decision were closed. If an agent finds a decision it depends on is still open, it stops and says so. This is not a limitation — it is the cooperative's authority being exercised correctly.</p>
+
+    <h3>How decisions are recorded</h3>
+    <p>Each decision has two files. The deliberation brief lives in the repository's documents, and records the question, the context, the options, any proposed defaults, and — once the human owner resolves it — the Record of decision: who decided, on what date, and what they decided and why. The ledger entry tracks only the status (open or decided). These together are the cooperative's governance record of that question. They do not disappear after the decision is made; they remain as the evidence chain for every downstream piece of work that depends on them.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 05 MILESTONES -->
+  <section id="milestones">
+    <h2>05 &ensp; Milestones — units of verifiable work</h2>
+
+    <p>A milestone is a unit of work with a specific, verifiable completion condition. The word comes from the Roman road marker — a stone that says: here is where we are. The CIS uses milestones as its unit of progress because progress needs to be claimed against something real, not asserted.</p>
+
+    <p>Every milestone has a <em>success state</em> — a precise prose description of what must be true when the work is done. And it has a named <em>verification</em> — either an automated check (a CI job that runs the test suite and passes) or a named human reviewer whose approval is the evidence of completion. This distinction matters: the cooperative does not accept "I think it's done" as a ledger entry.</p>
+
+    <h3>Done is not verified</h3>
+    <p>One of the most important distinctions in the CIS is between <em>done</em> and <em>verified</em>. A milestone marked done means the work has been merged into the main branch. Verified means the named verification has passed on that merged commit — the automated test suite ran and passed, or the human reviewer confirmed and approved the success state evidence.</p>
+
+    <p>Only a verified milestone unlocks the work that depends on it. This is not bureaucracy. It is the cooperative protecting itself from the kind of drift that happens when people say "good enough for now" and move on. In five years, when a member reads the audit trail, they should see not just that something was done but that it was demonstrated.</p>
+
+    <h3>The cooperative has 70 milestones</h3>
+    <p>Across all waves, there are 70 milestones — 22 in W0, 8 in W1, 9 in W2, and so on through W6. Some are steps (units of construction), some are decisions (governance choices), some are gates (checkpoints the whole cooperative crosses before the next phase begins). All are tracked in a single ledger. None can be removed or modified without a human-reviewed change recorded in the same ledger.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 06 INSTRUMENTS -->
+  <section id="instruments">
+    <h2>06 &ensp; The instruments — what you can read</h2>
+
+    <p>The CIS provides three instruments for reading build state. They are designed to be legible to members at any level of technical familiarity. You do not need to read code to understand what is happening.</p>
+
+    <h3>The Index</h3>
+    <p>The <a href="index.html">Index</a> is the starting point. It gives a human-readable overview of the cooperative's build: the wave structure, the decision register (all ten pre-build decisions with their current status), the document library (specifications, planning documents, this guide), and the build status summary. If you want to understand the current state of the cooperative's construction at a glance, start here.</p>
+
+    <h3>The HUD</h3>
+    <p>The <a href="hud.html">Implementation HUD</a> is a live instrument. It reads from the same ledger that the CI system writes, and shows the state of all 70 milestones: how many are complete, how many are in progress, which decisions are open, and what is blocked by what. The HUD is designed for widescreen use — it is the surface organizers and agents watch during active build phases. Members who want to understand the current build state in detail should use it.</p>
+
+    <p>When the W0 wave is selected in the HUD, a section of the right panel lists the four actions required before W1 can begin — the pre-build audit's findings made visible in the live instrument.</p>
+
+    <h3>The Loop</h3>
+    <p>The Loop instrument surfaces the signal between open decisions and blocked milestones. It is the "decision–blocker signal loop": every time the ledger is updated, the Loop reads the state and reports which decisions are holding which work. If D4 (transactional email provider) were still open, the Loop would show you that W0.11 (the email rail) is blocked on it, and how many other milestones depend on that chain. The Loop is how the cooperative avoids the common project failure mode of unresolved questions silently blocking progress.</p>
+
+    <h3>The instruments are read-only</h3>
+    <p>None of these instruments accept input. They display state; they do not change it. The state changes through the milestone files in the repository, through PRs reviewed by humans, through CI checks running and passing. The instruments are windows into the cooperative's record, not controls over it.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 07 AGENTS -->
+  <section id="agents">
+    <h2>07 &ensp; Agents — what they do and don't do</h2>
+
+    <p>The cooperative uses two AI agents in its build process: Nou (collective intelligence, perception and coordination) and Dianoia (execution intelligence). Their names come from classical Greek philosophy — <em>nous</em> is the faculty that perceives first principles; <em>dianoia</em> is discursive reasoning, the kind that moves from premise to conclusion. The naming is not ornamental; it describes what each agent is for.</p>
+
+    <p>Agents are tools that work under human direction, not members of the cooperative. They do not vote, decide, or ratify. They cannot move money, modify member records, or change a bylaw. They execute the work that a milestone's brief describes, under the operating contract that the cooperative's organizers have written.</p>
+
+    <h3>What agents do</h3>
+    <ul class="principle-list">
+      <li>Build software artifacts: database migrations, edge functions, UI pages, test suites — per a milestone's brief and success state</li>
+      <li>Draft deliberation context for decisions — options, trade-offs, proposed defaults — for human review and resolution</li>
+      <li>Read and write the build instruments — HUD, Loop, Index — to surface current state</li>
+      <li>Coordinate through the Workshop, a structured coordination surface where agents propose work, claim sprints, and submit for human review</li>
+      <li>Maintain their own memory files — curated notes about the cooperative's state, not the authoritative record itself</li>
+    </ul>
+
+    <h3>What agents cannot do</h3>
+    <ul class="principle-list">
+      <li>Write a Record of decision or change a D/R status — decisions belong to humans</li>
+      <li>Weaken a test, widen a threshold, or edit a success state to make something pass — verification is real</li>
+      <li>Store secrets, member PII, or wallet private keys — the secrets boundary is inviolable</li>
+      <li>Proceed when blocked — the operating contract says explicitly: blocked beats improvised</li>
+      <li>Take actions affecting money movement, key custody, or counsel territory without explicit human instruction</li>
+    </ul>
+
+    <p>The hard rules of the operating contract are not arbitrary restrictions — they reflect the cooperative's values made concrete. An agent that quietly works around a missing input is not more capable; it is less trustworthy. A clean refusal is a successful outcome. The audit trail should show, for any point in time, exactly what the agent was given to do and exactly what it did.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 08 AUDIT TRAIL -->
+  <section id="audit">
+    <h2>08 &ensp; The audit trail — why the record matters</h2>
+
+    <p>Verification comes from the Latin <em>verus</em> (true) and <em>facere</em> (to make). To verify is not to assert something is true — it is to demonstrate it. The CIS is designed around this distinction at every level.</p>
+
+    <p>Every status change in the ledger is a commit in the repository's git history. That history is append-only — it cannot be edited without creating a new record of the edit. The cooperative's construction is its own audit trail; the record of how the system was built is part of the system itself. A member who reads the git history in five years should be able to trace any decision, any milestone, any change back to the human who authorized it and the evidence that supported it.</p>
+
+    <h3>Why this matters for a cooperative specifically</h3>
+    <p>A conventional software company can decide in private, build in private, and release to users who have no rights to the process. A cooperative cannot. Its members are not users — they are part owners, with rights to information about how the organization accounts for itself. The audit trail is not a nice-to-have feature of the CIS; it is the mechanism through which the cooperative discharges its obligation to its members.</p>
+
+    <p>This also shapes how the system handles its financial layer. When Wave 3 (capital accounts) is built, the accounts will be event-sourced — every allocation, every capital event, every adjustment will be a row in a ledger table with an actor, a timestamp, a citation to the bylaw section that authorizes it, and an immutable prior-value record. A member's balance is not a number stored somewhere; it is the sum of a chain of recorded events, each of which names its authority. The balance is the ledger.</p>
+
+    <h3>The citation discipline</h3>
+    <p>Every policy in the database that restricts or grants access to member records carries a comment citing the bylaw section that authorizes it. For example: a policy that lets a member read their own capital account cites draft-bylaws:§18.1 (member information rights). This citation is not decorative — it means the policy's existence is grounded in the cooperative's governing documents, and if those documents change, the policy must change too. An automated check asserts that every policy carries a citation. A policy without one is incomplete work.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 09 YOUR ROLE -->
+  <section id="your-role">
+    <h2>09 &ensp; Your role as a member</h2>
+
+    <p>The cooperative is not asking members to become developers. It is asking members to be engaged owners — to read the instruments periodically, to bring judgment to decisions when asked, and to ratify the governing documents that the cooperative operates under.</p>
+
+    <h3>What you can do now</h3>
+    <ul class="principle-list">
+      <li>Read the <a href="index.html">Index</a> to understand the current build state and the decision register</li>
+      <li>Use the <a href="hud.html">HUD</a> to see milestone detail — how many steps are complete, which wave is active, what is blocked</li>
+      <li>Read the <a href="cis-prd-v0.2.html">CIS PRD</a> if you want to understand the full scope of what is being built — the roles, the modules, the long-term structure</li>
+      <li>Bring questions to the organizers when the record is unclear or incomplete</li>
+      <li>Notice when something in the instruments doesn't match what you understand to be true — that signal is valuable</li>
+    </ul>
+
+    <h3>What you will do as the build progresses</h3>
+    <ul class="principle-list">
+      <li>Ratify the bylaws (R1) and the Hub Membership Agreement (R2) — these are the membership's to ratify, not any single organizer's to decide</li>
+      <li>Review and comment on decision briefs as they are circulated — your perspective on trade-offs is part of the deliberation process</li>
+      <li>Participate in governance through the W4 wave tools: meetings, motions, consents, minutes — all recorded</li>
+      <li>See your capital account when W3 is built — your allocations, contributions, and balance in real time, with every event cited to its authorization</li>
+    </ul>
+
+    <h3>Human review is the default completion path</h3>
+    <p>The operating contract states this explicitly: agents do not self-complete public-facing work. Every milestone that results in something a member will use — a policy, a contract, a financial record, a governance tool — requires a human review step before it is marked verified. That human reviewer's approval is the evidence of completion that enters the ledger. This is not a bottleneck; it is the cooperative's authority being exercised at the right moment.</p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 10 ALPHA GATE -->
+  <section id="alpha">
+    <h2>10 &ensp; The alpha gate — when the system opens</h2>
+
+    <p>The alpha gate (G1) is the bar the Common Information System must clear before real members rely on it. It is a composite milestone — a gate — that requires specific milestones from W0, W1, and W2 to be verified, and specific decisions to be resolved.</p>
+
+    <p>When G1 passes, a real invited member will be able to: sign in, see the documents that govern them, sign their agreement, appear in the member directory, and ask Nou a question and receive an answer that cites its source. The Hub team will be able to run applications, sessions, events, the KPI dashboard, and monthly reporting against production data.</p>
+
+    <p>G1 is not a finished product. It is the moment when the cooperative begins using what it built on itself — when the system stops being an exercise and starts being the operational record of a real cooperative. Everything from W3 onward — capital accounts, governance tools, the full member portal — proceeds against the same ledger after the gate.</p>
+
+    <div class="callout">
+      W0 substrate work is the current active phase. All ten pre-build decisions are recorded. A pre-build audit conducted June 2026 identified four prerequisites before W1 can begin. Those actions are tracked in the HUD. The cooperative is in the work.
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <h2>A &ensp; Glossary</h2>
+    <p>Plain language definitions of terms used throughout the CIS instruments and documents.</p>
+
+    <div class="glossary-list">
+      <div class="glossary-entry">
+        <div class="glossary-term">Agent</div>
+        <div class="glossary-def">An AI system that works under human direction to execute defined tasks. Not a member of the cooperative. Cannot decide, vote, ratify, or move money.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Alpha gate (G1)</div>
+        <div class="glossary-def">The composite milestone that marks when the system is ready for real members to rely on. Requires W0, W1, and key W2 milestones to be verified.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Audit trail</div>
+        <div class="glossary-def">The complete, append-only record of every status change, decision, and milestone in the ledger. Stored in the git history of the repository. Cannot be edited without creating a new record of the edit.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Capital account</div>
+        <div class="glossary-def">The financial record of a member's ownership stake in the cooperative: contributions, allocations, withdrawals. Built in Wave 3. Computed from a ledger of events, each citing its authorization.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Citation</div>
+        <div class="glossary-def">A reference to the specific bylaw section or grant agreement that authorizes a database policy, a financial record, or a governance rule. Citations are required; a claim without one is incomplete work.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">CIS</div>
+        <div class="glossary-def">Common Information System — the ledger, instruments, and data layer for RegenHub, LCA.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Decision (D)</div>
+        <div class="glossary-def">A governance question that a human owner must resolve before dependent milestones can begin. Recorded with context, options, and a Record of decision. D1&ndash;D10 are the pre-build decisions.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Done</div>
+        <div class="glossary-def">A milestone has been merged into the main branch. Not the same as verified.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Gate (G)</div>
+        <div class="glossary-def">A composite milestone that requires a defined set of steps and decisions to be verified before the cooperative can proceed. G1 is the alpha gate.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">HUD</div>
+        <div class="glossary-def">Implementation HUD — the live instrument that shows the state of all 70 milestones. Readable by any member; designed for widescreen use.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Ledger</div>
+        <div class="glossary-def">The system's complete record of milestones, decisions, and status changes. From Old French <em>legier</em> — something that lies fixed. Does not speculate; records what happened.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Loop</div>
+        <div class="glossary-def">The decision&ndash;blocker signal loop — the instrument and the process that keeps open decisions visible. When a decision is unresolved, the Loop surfaces which work is blocked on it.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Milestone</div>
+        <div class="glossary-def">A unit of work with a specific, verifiable completion condition. Every milestone has a success state (what must be true when it's done) and a named verification (the check that demonstrates it).</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Ratification (R)</div>
+        <div class="glossary-def">A governance item that the full membership ratifies — not a single organizer's decision. R1 is bylaws ratification; R2 is the Hub Membership Agreement.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">REA</div>
+        <div class="glossary-def">Resource-Event-Agent — an accounting ontology that structures the CIS's core tables. Financial events in the system are recorded as REA events: what resource moved, what event occurred, which agent was involved.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Row-level security (RLS)</div>
+        <div class="glossary-def">Database policies that control which members can read which records. Every policy cites the bylaw section that authorizes it. Default: a member can only read their own records unless a policy explicitly grants broader access.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Supabase</div>
+        <div class="glossary-def">The cloud database and authentication platform the CIS uses. An open-source service; the cooperative's data is exportable at any time.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Verified</div>
+        <div class="glossary-def">A milestone's named verification has passed on the merged commit — either an automated test suite passed, or a named human reviewer confirmed and approved the evidence. Only verified milestones unlock dependent work.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Wave</div>
+        <div class="glossary-def">A phase of the build. Everything in a wave must be verified before the next wave begins. W0&ndash;W6, plus G (gate). Each wave's work is coherent and discrete.</div>
+      </div>
+      <div class="glossary-entry">
+        <div class="glossary-term">Workshop</div>
+        <div class="glossary-def">The cooperative's coordination surface for agent work. Agents propose sprints, claim work, and submit for human review through the Workshop. Human review is the default completion path.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <p style="font-size:13px;color:var(--faint);line-height:1.7;">
+    This guide is written for members of RegenHub, LCA and maintained under human review.
+    Last substantive update: June 2026.
+    Questions, corrections, and additions are welcome — bring them to the organizers or open a PR.
+    The <a href="dev.html">developer reference</a> covers the same system for technical contributors.
+  </p>
+
+</div>
+
+<footer>
+  <span>Techne-Co-op/commons</span>
+  &middot;
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  &middot;
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.getElementById('modeBtn');
+  var stored = null;
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+  });
+})();
+</script>
+</body>
+</html>
