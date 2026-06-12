@@ -590,6 +590,63 @@
       border-radius: 2px;
       padding: 1px 5px;
     }
+
+    /* ── loop module ── */
+    .lp-decision-card { cursor: pointer; transition: background .15s; }
+    .lp-decision-card:hover { background: var(--surface2); }
+    .lp-decision-card.expanded .lp-card-detail { display: block; }
+    .lp-card-detail {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 10.5px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .lp-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; width: 100%; }
+    .lp-leverage {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .lp-leverage-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .lp-leverage-fill  { height: 100%; background: var(--terra); border-radius: 2px; transition: width .3s; }
+    .lp-leanings { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+    .lp-lean { font-size: 9px; padding: 1px 6px; border-radius: 10px; background: var(--surface2); color: var(--muted); }
+    .lp-lean-adopt  { background: var(--ok-dim);   color: var(--ok); }
+    .lp-lean-prefer { background: var(--info-dim); color: var(--info); }
+    .lp-lean-defer  { background: var(--warn-dim); color: var(--warn); }
+    .lp-state {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      align-self: flex-start;
+      white-space: nowrap;
+    }
+    .lp-state-deliberating    { background: var(--info-dim); color: var(--info); }
+    .lp-state-ready_to_record { background: var(--warn-dim); color: var(--warn); }
+    .lp-state-recorded        { background: var(--ok-dim);   color: var(--ok); }
+    .lp-state-no_thread       { background: var(--surface2); color: var(--muted); }
+    .lp-counts { display: flex; gap: 4px; flex-wrap: wrap; }
+    .lp-count  { font-size: 9px; padding: 2px 7px; border-radius: 3px; background: var(--surface2); color: var(--muted); }
+    .lp-count-done   { background: var(--ok-dim);   color: var(--ok); }
+    .lp-count-active { background: var(--info-dim); color: var(--info); }
+    .lp-count-blocked{ background: var(--warn-dim); color: var(--warn); }
+    .lp-banner {
+      padding: 7px 11px;
+      border-radius: 3px;
+      font-size: 10px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .lp-banner-warn { background: var(--warn-dim); color: var(--warn); border-left: 2px solid var(--warn); }
+    .lp-banner-ok   { background: var(--ok-dim);   color: var(--ok);   border-left: 2px solid var(--ok); }
+    .lp-front-note  { font-size: 10px; color: var(--faint); margin-top: 3px; }
   </style>
 </head>
 <body>
@@ -601,6 +658,7 @@
   <span class="topbar-title">CIS Implementation HUD</span>
   <span class="topbar-sub">70 milestones &middot; W0 substrate + 6 build waves</span>
   <span class="chip c-terra" title="Hub Operations · EE Grant · Phase 01 active" onclick="setHub()" style="cursor:pointer" id="hubChip">HUB OPS &middot; Ph01</span>
+  <span class="chip" title="Decision–Blocker Signal Loop" onclick="setLoop()" style="cursor:pointer" id="loopChip">LOOP</span>
   <div class="topbar-chips" id="topChips"></div>
   <button class="mode-btn" id="modeBtn">light</button>
 </div>
@@ -727,6 +785,17 @@ let waveFilter = null;   // null = all
 let exFilter = 'ALL';
 let searchQ = '';
 let hubMode = false;
+let loopMode = false;
+let loopLoaded = false;
+let loopSb = null;
+let loopState = {
+  connected: false,
+  pulse: null,
+  front: [],
+  decisions: [],
+  blockers: [],
+  aging: []
+};
 
 /* ── computations ── */
 function enrich(nodes) {
@@ -778,6 +847,18 @@ function renderRail(nodes) {
     <span class="wave-btn-id">HUB</span>
     <span class="wave-btn-name">EE Grant · Ph01</span>
     <span class="wave-pips">${hubPips}</span>
+  </button>`;
+
+  /* loop entry */
+  const loopPips = [
+    loopState.front.length > 0 ? 'done' : '',
+    loopState.decisions.length > 0 ? 'active' : '',
+    loopState.blockers.filter(b => b.state === 'open').length > 0 ? 'active' : ''
+  ].map(c => `<span class="wave-pip ${c}"></span>`).join('');
+  h += `<button class="wave-btn${loopMode ? ' on' : ''}" onclick="setLoop()" aria-pressed="${loopMode}">
+    <span class="wave-btn-id">LOOP</span>
+    <span class="wave-btn-name">Signal loop</span>
+    <span class="wave-pips">${loopPips}</span>
   </button>`;
 
   const groups = [
@@ -1105,10 +1186,303 @@ function renderHubCtx() {
 
 function setHub() {
   hubMode = !hubMode;
-  if (hubMode) waveFilter = null;
+  if (hubMode) { waveFilter = null; loopMode = false; }
   const hc = document.getElementById('hubChip');
   if (hc) hc.style.outline = hubMode ? '2px solid var(--terra)' : '';
+  const lc = document.getElementById('loopChip');
+  if (lc) lc.style.outline = '';
   render();
+}
+
+/* ── loop module ── */
+function setLoop() {
+  loopMode = !loopMode;
+  if (loopMode) {
+    hubMode = false;
+    waveFilter = null;
+    const hc = document.getElementById('hubChip');
+    if (hc) hc.style.outline = '';
+    if (!loopLoaded) loopLoad();
+  }
+  const lc = document.getElementById('loopChip');
+  if (lc) lc.style.outline = loopMode ? '2px solid var(--info)' : '';
+  render();
+}
+
+async function loopLoad() {
+  /* lazy-load loop.config.js if not already present */
+  if (!window.LOOP_CONFIG) {
+    await new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src = 'loop.config.js';
+      s.onload = resolve;
+      s.onerror = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  const cfg = window.LOOP_CONFIG ?? {};
+  if (!cfg.supabaseUrl || !cfg.supabaseAnon) {
+    await loopLoadFallback(cfg.ledgerFallback ?? 'milestones/index.json');
+    return;
+  }
+  /* lazy-load Supabase CDN if not already present */
+  if (typeof supabase === 'undefined') {
+    await new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+      s.onload = resolve;
+      s.onerror = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  try {
+    if (typeof supabase !== 'undefined') {
+      loopSb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnon);
+      await loopLoadAll();
+    } else {
+      await loopLoadFallback(cfg.ledgerFallback ?? 'milestones/index.json');
+    }
+  } catch(e) {
+    await loopLoadFallback(cfg.ledgerFallback ?? 'milestones/index.json');
+  }
+}
+
+async function loopLoadAll() {
+  const [pulseRes, frontRes, decRes, blockRes, agingRes] = await Promise.all([
+    loopSb.from('v_pulse').select('*').limit(1).maybeSingle(),
+    loopSb.from('v_front').select('*').order('wave').order('id'),
+    loopSb.from('v_decision_leverage').select('*'),
+    loopSb.from('blockers').select('*,raised_by(display_name)').eq('state','open').eq('visibility','public').order('created_at'),
+    loopSb.from('v_aging').select('*').order('age',{ascending:false}).limit(20)
+  ]);
+  if (pulseRes.error) throw new Error(pulseRes.error.message);
+  loopState.connected = true;
+  loopState.pulse     = pulseRes.data;
+  loopState.front     = frontRes.data ?? [];
+  loopState.decisions = decRes.data ?? [];
+  loopState.blockers  = blockRes.data ?? [];
+  loopState.aging     = agingRes.data ?? [];
+  loopLoaded = true;
+  if (loopMode) render();
+}
+
+async function loopLoadFallback(path) {
+  try {
+    const r = await fetch(path);
+    if (!r.ok) throw new Error(r.status);
+    const index = await r.json();
+    const nodes = index.nodes ?? [];
+    loopState.connected = false;
+    loopState.front     = [];
+    loopState.decisions = nodes.filter(n =>
+      (n.wave === 'D' || n.wave === 'R') && n.status !== 'done' && n.status !== 'verified'
+    );
+    loopState.blockers  = [];
+    loopState.aging     = [];
+    loopState.pulse     = {
+      status_counts: index.status_counts ?? {},
+      entry_count: nodes.length,
+      sync_sha: null, synced_at: null, _fallback: true
+    };
+  } catch(e) { /* silently handled — empty state renders gracefully */ }
+  loopLoaded = true;
+  if (loopMode) render();
+}
+
+function loopFmtAge(interval) {
+  if (!interval) return '—';
+  if (typeof interval === 'number') {
+    const d = Math.floor(interval / 86400000);
+    const h = Math.floor((interval % 86400000) / 3600000);
+    return d > 0 ? `${d}d ${h}h` : `${h}h`;
+  }
+  const str = String(interval);
+  const days  = str.match(/(\d+)\s+day/);
+  const hours = str.match(/(\d+):(\d+):/);
+  if (days)  return `${days[1]}d ${hours ? hours[1]+'h' : ''}`.trim();
+  if (hours && parseInt(hours[1]) > 0) return `${hours[1]}h ${hours[2]}m`;
+  if (hours) return `${hours[2]}m`;
+  return str.slice(0, 12);
+}
+
+function loopToggleExpand(card) {
+  const was = card.classList.contains('expanded');
+  document.querySelectorAll('.lp-decision-card.expanded').forEach(c => c.classList.remove('expanded'));
+  if (!was) card.classList.add('expanded');
+}
+
+function renderLoopMain() {
+  const offline = !loopState.connected;
+  let h = '';
+
+  if (!loopLoaded) {
+    document.getElementById('mainPanel').innerHTML =
+      '<p style="font-size:11px;color:var(--faint);padding:24px 0;">Connecting to signal loop&hellip;</p>';
+    return;
+  }
+
+  if (offline) {
+    h += `<div class="lp-banner lp-banner-warn">Offline &middot; showing from milestones/index.json. Decision gating and blockers require Supabase connection.</div>`;
+  }
+
+  /* ── Front ── */
+  h += `<div class="sh" style="margin-top:0"><span>Front &middot; workable now</span><span class="sh-count">${loopState.front.length}</span></div>`;
+  if (!loopState.front.length) {
+    h += `<p class="empty-note">${offline
+      ? 'Decision gating not computed in offline mode.'
+      : 'No steps workable yet — all paths blocked by unverified parents or open decisions.'}</p>`;
+  } else {
+    for (const e of loopState.front) {
+      h += `<div class="m-card t-ok">
+        <span class="m-id" style="color:var(--ok)">${e.id}</span>
+        <div class="m-body">
+          <div class="m-title" style="color:var(--ok)">${e.title}</div>
+          <div class="m-meta">${e.wave} &middot; ${e.kind ?? ''} &middot; owner: ${e.owner ?? '—'}</div>
+          ${e.verification ? `<div class="lp-front-note">verify: ${e.verification}</div>` : ''}
+        </div>
+        <span class="m-badge" style="border-color:var(--ok);color:var(--ok);background:var(--ok-dim)">${e.status}</span>
+      </div>`;
+    }
+  }
+
+  /* ── Decision queue ── */
+  h += `<div class="sh"><span>Decision queue &middot; leverage-ranked</span><span class="sh-count">${loopState.decisions.length}</span></div>`;
+  h += `<div class="lp-banner lp-banner-warn">Leanings are non-binding signals. Decisions are human-only (contract:agents§5).</div>`;
+  if (!loopState.decisions.length) {
+    h += `<p class="empty-note">No open decisions.</p>`;
+  } else {
+    const maxGated = Math.max(1, ...loopState.decisions.map(d => d.total_gated ?? 0));
+    for (const d of loopState.decisions) {
+      const gated = d.total_gated ?? 0;
+      const pct   = Math.round((gated / maxGated) * 100);
+      const leans = d.leanings_summary ?? {};
+      const stKey = (d.thread_state ?? 'no_thread').replace(/\s/g,'_');
+      const stLbl = (d.thread_state ?? 'no thread').replace(/_/g,' ');
+      let leansH  = '';
+      if (Object.keys(leans).length) {
+        leansH = `<div class="lp-leanings">
+          ${leans.adopt_default       ? `<span class="lp-lean lp-lean-adopt">adopt ${leans.adopt_default}</span>`       : ''}
+          ${leans.prefer_alternative  ? `<span class="lp-lean lp-lean-prefer">prefer alt ${leans.prefer_alternative}</span>` : ''}
+          ${leans.defer               ? `<span class="lp-lean lp-lean-defer">defer ${leans.defer}</span>`               : ''}
+          ${leans.need_more_information ? `<span class="lp-lean">need info ${leans.need_more_information}</span>`       : ''}
+        </div>`;
+      }
+      h += `<div class="m-card t-terra lp-decision-card" onclick="loopToggleExpand(this)">
+        <div class="lp-card-header">
+          <div style="flex:1;min-width:0">
+            <span class="m-id">${d.id}</span>
+            <div class="m-title" style="margin-top:2px">${d.title}</div>
+          </div>
+          <span class="lp-state lp-state-${stKey}">${stLbl}</span>
+        </div>
+        <div class="lp-leverage">
+          <span>${gated} gated</span>
+          <div class="lp-leverage-track"><div class="lp-leverage-fill" style="width:${pct}%"></div></div>
+        </div>
+        ${leansH}
+        ${d.recorded_pr_url ? `<div style="font-size:10px;margin-top:4px"><a href="${d.recorded_pr_url}" target="_blank" style="color:var(--info)">&rarr; recorded PR</a></div>` : ''}
+        <div class="lp-card-detail">
+          Wave: ${d.wave} &middot; Status: ${d.decision_status ?? '—'}<br>
+          <a href="docs/decisions/${d.id}.md" style="color:var(--info)" target="_blank">&rarr; brief in docs/decisions/</a>
+          <div style="margin-top:6px;color:var(--terra-text)">To record: <code>decision-record-draft</code> (authenticated organiser) &rarr; PR &rarr; loop updates on next push.</div>
+        </div>
+      </div>`;
+    }
+  }
+
+  /* ── Blockers ── */
+  h += `<div class="sh"><span>Blockers</span><span class="sh-count">${loopState.blockers.length}</span></div>`;
+  if (!loopState.blockers.length) {
+    h += `<p class="empty-note" style="color:${offline ? 'var(--faint)' : 'var(--ok)'}">${offline ? 'Blocker data requires Supabase connection.' : 'No open blockers.'}</p>`;
+  } else {
+    for (const b of loopState.blockers) {
+      const age    = loopFmtAge(b.age ?? '');
+      const isCrit = b.age_band === 'critical';
+      const lclr   = isCrit ? 'var(--warn)' : 'var(--info)';
+      const detail = b.detail ? String(b.detail).replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+      h += `<div class="m-card" style="border-left:2px solid ${lclr}">
+        <div class="lp-card-header" style="margin-bottom:4px">
+          <span class="m-badge b-pending" style="font-size:8.5px">${b.kind}</span>
+          <span class="m-badge ${isCrit ? 'b-review' : ''}" style="${isCrit ? 'border-color:var(--warn);color:var(--warn)' : ''}">${age}</span>
+        </div>
+        <div class="m-body">
+          <div class="m-title">${b.summary}</div>
+          ${b.entry_id ? `<div class="m-meta">entry: <code>${b.entry_id}</code></div>` : ''}
+          ${detail ? `<div class="m-meta" style="font-style:italic">${detail}</div>` : ''}
+          <div class="m-meta">raised by: ${b.raised_by?.display_name ?? '—'}</div>
+        </div>
+      </div>`;
+    }
+  }
+
+  document.getElementById('mainPanel').innerHTML = h;
+}
+
+function renderLoopCtx() {
+  const p       = loopState.pulse;
+  const sc      = p?.status_counts ?? {};
+  const offline = !loopState.connected;
+  const critical = loopState.aging.filter(x => x.age_band === 'critical');
+  const openB   = loopState.blockers.filter(b => b.state === 'open').length;
+
+  const countsH = Object.entries(sc).filter(([,v]) => v > 0).map(([k,v]) => {
+    const cls = (k==='done'||k==='verified') ? 'lp-count-done' : k==='in_progress' ? 'lp-count-active' : k==='blocked' ? 'lp-count-blocked' : '';
+    return `<span class="lp-count ${cls}">${k} ${v}</span>`;
+  }).join('');
+
+  let agingH = '';
+  if (critical.length) {
+    agingH = `<div class="ctx-section">
+      <div class="ctx-head" style="color:var(--warn)">Age alerts</div>
+      ${critical.map(x => `<div class="ctx-row">
+        <span class="ctx-row-label" style="font-size:9px">${x.ref_id} &middot; ${x.title.slice(0,26)}${x.title.length>26?'&hellip;':''}</span>
+        <span class="ctx-row-val v-warn">${loopFmtAge(x.age)}</span>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  document.getElementById('ctxPanel').innerHTML = `
+    <div class="ctx-section">
+      <div class="ctx-head">Signal loop</div>
+      <div class="ctx-row">
+        <span class="ctx-row-label">Status</span>
+        <span class="ctx-row-val ${offline ? 'v-warn' : 'v-ok'}">${offline ? 'offline' : 'live'}</span>
+      </div>
+      ${p && !p._fallback ? `
+      <div class="ctx-row">
+        <span class="ctx-row-label">Sync SHA</span>
+        <span class="ctx-row-val" style="font-size:9px"><code>${(p.sync_sha ?? '').slice(0,7) || '—'}</code></span>
+      </div>
+      <div class="ctx-row">
+        <span class="ctx-row-label">Entries</span>
+        <span class="ctx-row-val">${p.entry_count ?? '—'}</span>
+      </div>
+      <div class="ctx-row">
+        <span class="ctx-row-label">Synced</span>
+        <span class="ctx-row-val" style="font-size:9px">${p.synced_at ? new Date(p.synced_at).toLocaleDateString() : '—'}</span>
+      </div>` : ''}
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Front</div>
+      <div class="ctx-row"><span class="ctx-row-label">Workable</span><span class="ctx-row-val v-ok">${loopState.front.length}</span></div>
+      <div class="ctx-row"><span class="ctx-row-label">Open decisions</span><span class="ctx-row-val ${loopState.decisions.length ? 'v-warn' : 'v-ok'}">${loopState.decisions.length}</span></div>
+      <div class="ctx-row"><span class="ctx-row-label">Open blockers</span><span class="ctx-row-val ${openB ? 'v-warn' : 'v-ok'}">${openB}</span></div>
+    </div>
+    ${countsH ? `<div class="ctx-section">
+      <div class="ctx-head">Status counts</div>
+      <div class="lp-counts">${countsH}</div>
+    </div>` : ''}
+    ${agingH}
+    <div class="ctx-section">
+      <div class="ctx-head">Constraint</div>
+      <div class="ctx-note">The loop cannot flip a decision, write to the repo, or mark anything <em>recorded</em> without a URL pointing into the canonical record. Authority stays where AGENTS.md rule&nbsp;5 puts it.</div>
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Links</div>
+      <a href="loop.html" class="ctx-link">&rarr; full loop instrument</a>
+      <a href="hud.html" class="ctx-link">&rarr; ledger HUD (this page)</a>
+    </div>
+  `;
 }
 
 /* ── explorer ── */
@@ -1169,7 +1543,12 @@ function renderExplorer(nodes) {
 /* ── filter ── */
 function setWave(w) {
   hubMode = false;
+  loopMode = false;
   waveFilter = waveFilter === w ? null : w;
+  const hc = document.getElementById('hubChip');
+  if (hc) hc.style.outline = '';
+  const lc = document.getElementById('loopChip');
+  if (lc) lc.style.outline = '';
   render();
 }
 
@@ -1178,7 +1557,10 @@ function render() {
   if (!DATA) return;
   renderRail(DATA);
   renderChips(DATA);
-  if (hubMode) {
+  if (loopMode) {
+    renderLoopMain();
+    renderLoopCtx();
+  } else if (hubMode) {
     renderHubMain();
     renderHubCtx();
   } else {
