@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>C10 · Wave-Boundary Authoring Guide · CIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'Libre Baskerville',Georgia,serif;font-size:16px;line-height:1.85;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);}
+.page{max-width:760px;margin:0 auto;padding:var(--s8) var(--s5);}
+header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--s7);gap:var(--s4);}
+h1{font-size:36px;font-weight:700;color:var(--heading);letter-spacing:-.5px;line-height:1.25;}
+.subtitle{font-style:italic;font-size:18px;color:var(--text);margin-top:var(--s2);}
+.version{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);margin-top:var(--s3);line-height:1.9;}
+.mode-toggle{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);background:var(--surface);
+border:1px solid var(--border);border-radius:999px;padding:7px 16px;cursor:pointer;display:flex;align-items:center;gap:var(--s2);flex-shrink:0;
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+.mode-toggle svg{width:15px;height:15px;stroke:currentColor;}
+.lede{font-size:19px;line-height:1.7;color:var(--text);margin-bottom:var(--s6);max-width:60ch;}
+section{margin-bottom:var(--s8);}
+.label{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.rule{width:48px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s3) 0 var(--s6);}
+p{margin-bottom:20px;}
+p:last-child{margin-bottom:0;}
+em{font-style:italic;}
+code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.85em;color:var(--terra-text);background:var(--terra-dim);padding:2px 6px;border-radius:4px;}
+pre{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;line-height:1.75;color:var(--text);background:var(--surface);
+border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:8px;padding:var(--s4);overflow-x:auto;margin:var(--s4) 0 var(--s5);}
+pre .c{color:var(--faint);}
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted);
+background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:5px 12px;
+transition:border-color var(--dur-micro) var(--ease);}
+.prov:hover{border-color:var(--terra);}
+.prov .cite{color:var(--terra-text);}
+.prov .sep{color:var(--faint);}
+.chip-row{display:flex;flex-wrap:wrap;gap:var(--s3);margin:var(--s4) 0 0;align-items:center;}
+.src{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;color:var(--terra-text);}
+.table-scroll{overflow-x:auto;margin:var(--s5) 0;}
+.spec{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;}
+.spec th{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--faint);text-align:left;
+padding:var(--s2) var(--s3);border-bottom:1px solid var(--border-strong);}
+.spec td{padding:var(--s2) var(--s3);border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.7;}
+.spec td:first-child{color:var(--terra-text);white-space:nowrap;}
+h3{font-size:18px;color:var(--heading);font-weight:700;margin:var(--s6) 0 var(--s4);line-height:1.4;}
+h3 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;color:var(--terra-text);margin-right:var(--s3);font-weight:400;}
+footer{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--faint);border-top:1px solid var(--border);
+padding-top:var(--s5);text-align:center;}
+@media (max-width:560px){h1{font-size:27px;}.lede{font-size:17px;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <h1>Wave-Boundary Authoring Guide</h1>
+    <div class="subtitle">How the ledger writes its own next chapter</div>
+    <div class="version">C10 &middot; VERSION 0.1 &middot; DRAFT FOR REVIEW &middot; JUNE 2026<br>REGENHUB, LCA &middot; PREPARED BY NOU &middot; consumed at W3.0, W4.0, W5.0, W6.0 &middot; repo home: docs/wave-boundary-guide.md</div>
+    <div class="chip-row">
+      <span class="prov"><span class="cite">GOVERNANCE.md</span><span class="sep">&middot;</span>seeded-detail rule</span>
+      <span class="prov"><span class="cite">milestones/schema.json</span><span class="sep">&middot;</span>the form being filled</span>
+      <span class="prov"><span class="cite">AGENTS.md</span><span class="sep">&middot;</span>the conduct that governs</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+    <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);text-decoration:none;letter-spacing:.1em;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a>
+    <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+      <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+      <span id="modeLabel">dark</span>
+    </button>
+  </div>
+</header>
+
+<p class="lede">Sixteen ledger entries are stubs on purpose: W3.1 through W3.7 and W4.1 through W4.7, plus the seeded scopes of W5.0 and W6.0, carry summary lines instead of briefs because detail invented early is detail invented wrong. This guide is the procedure that turns a stub into a brief at the boundary where the detail becomes real, and it is the last artifact this collection needs from outside itself.</p>
+
+<section id="s01">
+  <div class="label">01 &middot; What a Boundary Is</div>
+  <div class="rule"></div>
+  <p>A wave boundary is an ordinary ledger step whose deliverable is milestone files. W3.0 depends on the coarse token <code>W1</code>, meaning every W1 step verified; its success state is that W3.1 through W3.7 exist as schema-complete entries; its verification is <code>ci:milestone-validate</code>, the same gatekeeper as everything else. Nothing about authoring is special except its subject matter, and that is the point: the plan extends through the same PR, review, and validation discipline as the code, so the history of the plan stays part of the audit trail of the build (GOVERNANCE.md, amending the plan).</p>
+  <p>Authoring is agent-executable under the AGENTS.md contract; adoption is human, through review of the boundary PR. The boundary author proposes structure; it decides nothing. Open decisions stay in <code>docs/decisions/</code>, and a brief that quietly resolves one fails review.</p>
+</section>
+
+<section id="s02">
+  <div class="label">02 &middot; Preconditions and Inputs</div>
+  <div class="rule"></div>
+  <p>Before authoring begins, three things must be true: the boundary step's own dependencies are verified, so the wave being detailed sits on built reality rather than intention; the findings routed to this boundary (&sect;04) have been read; and the system as it actually exists has been inspected, meaning the live migrations, the views that exist, and the matrix and fixture files as they stand after earlier waves amended them.</p>
+  <p>The reading list for any boundary, in order: the seeded entries themselves; <code>milestones/index.json</code> for the wave's current graph; the C6 schema card entries for every table the wave touches, including silences; the C7 matrix rows for those tables, especially clay cells awaiting adoption; the C4 fixture inventory and the invariants; the decision records that gate or activate anything in the wave; <code>docs/citations.md</code> for the addresses the briefs will cite; and <code>docs/findings.md</code>, the register &sect;04 establishes. The plan document itself is background, not source: where the plan and the built system disagree, the built system wins and the disagreement becomes a finding.</p>
+</section>
+
+<section id="s03">
+  <div class="label">03 &middot; The Procedure</div>
+  <div class="rule"></div>
+  <p>Six moves, in order, all inside one branch named <code>step/W&lt;n&gt;.0-wave-briefs</code>.</p>
+  <p><em>Inventory.</em> List the wave's entries with <code>detail: seeded</code> from index.json. Each will end the PR as briefed, split, or retired; none may remain seeded, and none may vanish without a recorded rationale in the PR body.</p>
+  <p><em>Gather.</em> Pull the boundary's routed findings from the register and the wave's open decisions. Each routed item must surface in exactly one brief, or convert to a decision record, or be explicitly re-deferred with a new finding number. Silence about a routed finding fails the definition of done.</p>
+  <p><em>Decompose.</em> Size each entry to one PR of work: one schema concern, one surface, or one workflow per step. A seeded entry that turns out to contain two migrations and an interface is two or three entries; allocate new ids by appending to the wave (W3.8 onward) rather than renumbering, since ids are immutable once committed.</p>
+  <p><em>Edge.</em> Replace the coarse boundary dependency with real parents. After authoring, an entry depends on the boundary step only if it genuinely has no other parent; in-wave fine edges (W3.2 after W3.1) and cross-wave fine edges (W3.4 after W0.10) are both expected. Decision gates move into <code>decision_refs</code> where they bind, as D10 binds W3.6. Later boundaries keep their coarse token: W4.0 still reads <code>depends_on: [W3]</code>, because that edge is real at this altitude.</p>
+  <p><em>Write.</em> Fill the form per &sect;05. The discipline that matters most: a success state is a falsifiable observation about the system, written against tables and views that will exist, checkable by the named verification.</p>
+  <p><em>Extend.</em> This is the move that makes the collection self-extending, and it is mandatory, not courteous. Any new table the wave introduces gets, in the same PR: a C6 schema-card entry at <code>docs/schema-card.md</code> with sources tagged; a C7 matrix row at <code>docs/probe-matrix.json</code> with every role's cell cited, clay where proposed; C4 fixture rows and any new persona at <code>supabase/seed/fixtures.json</code>, with counts declared forced or chosen; and register updates to <code>docs/citations.md</code> for any new address and <code>docs/findings.md</code> for anything surfaced. The collection's artifacts have repo homes precisely so that boundaries grow them by PR instead of waiting for a hand like mine.</p>
+</section>
+
+<section id="s04">
+  <div class="label">04 &middot; The Findings Register</div>
+  <div class="rule"></div>
+  <p>Fourteen findings and five schema silences accumulated across C6 through C9, living until now inside the artifacts that surfaced them. This section establishes <code>docs/findings.md</code> as their register and seeds it with the consolidated routing below; future numbers are allocated there, monotonically, never reused. Finding F15 is the register's own birth certificate: the series had no repo home, and now it does.</p>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>item</th><th>question</th><th>routed to</th><th>state</th></tr></thead>
+    <tbody>
+      <tr><td>S1 (C6)</td><td>conflict &amp; disclosure module has no table</td><td>W4.0</td><td>open</td></tr>
+      <tr><td>S2 (C6)</td><td>lifecycle state-machine storage unnamed</td><td>W5.0</td><td>open</td></tr>
+      <tr><td>S3 (C6)</td><td>tax-identifier encryption mechanism</td><td>W3.0, beside W3.5, with security review</td><td>open</td></tr>
+      <tr><td>S4 (C6)</td><td>second notice channel beyond email</td><td>W4.0, with W4.5</td><td>open</td></tr>
+      <tr><td>S5 (C6)</td><td>Preferred Stock fields</td><td>investor framework &middot; counsel; parked outside waves</td><td>parked</td></tr>
+      <tr><td>F1</td><td>cooperative application has no table</td><td>W1.6 + C6 addendum</td><td>open, pre-G1</td></tr>
+      <tr><td>F2</td><td>minutes open vs &sect;2.9 attended materials</td><td>W4.0</td><td>open</td></tr>
+      <tr><td>F3</td><td>suspended member's narrow reading</td><td>R1 counsel; touches W5.0 briefs</td><td>open</td></tr>
+      <tr><td>F4</td><td>ballots sealed from administrators</td><td>W4.0, before W4.2</td><td>open</td></tr>
+      <tr><td>F5</td><td>investor cells are placeholders</td><td>parked with S5</td><td>parked</td></tr>
+      <tr><td>F6</td><td>no president persona</td><td>W4.0 &middot; extend C4</td><td>open</td></tr>
+      <tr><td>F7</td><td>committee materials park in agreements</td><td>W4.0, with S1</td><td>open</td></tr>
+      <tr><td>F8</td><td>proxy semantics are light</td><td>W4.0, &sect;2.6.4 reading</td><td>open</td></tr>
+      <tr><td>F9</td><td>governance fixtures one director deep</td><td>W4.0 &middot; extend C4</td><td>open</td></tr>
+      <tr><td>F10, F11</td><td>gateway's privileged act; absent vs denied</td><td>W1.7</td><td>consumed at step</td></tr>
+      <tr><td>F12&ndash;F14</td><td>KPI readings: counting, capacity, band and calendar</td><td>W2.5</td><td>consumed at step</td></tr>
+      <tr><td>F15</td><td>findings had no repo home</td><td>this guide &middot; docs/findings.md established</td><td>resolved here</td></tr>
+      <tr><td>F16</td><td>gen_seed.py would clobber authored briefs if rerun</td><td>W0.2 &middot; guard below</td><td>open</td></tr>
+    </tbody>
+  </table></div>
+  <p>F16 deserves its mechanism stated: <code>scripts/gen_seed.py</code> was the bootstrap source of truth and stops being one the moment W0.2 lands the files in the live repository. From then on the milestone files are the truth, edited directly. The guard is small and unambiguous: the generator exits with an error if <code>milestones/</code> already exists unless passed <code>--force-bootstrap</code>, and the W0.2 brief includes adding that guard plus moving the script to <code>scripts/bootstrap/</code>. An agent that regenerates after a boundary has authored would silently erase human-reviewed work, which is exactly the class of failure the ledger exists to make impossible.</p>
+</section>
+
+<section id="s05">
+  <div class="label">05 &middot; Required Sections and Rules</div>
+  <div class="rule"></div>
+  <p>Front matter exactly per <code>milestones/schema.json</code>, with <code>detail</code> flipped from <code>seeded</code> to <code>briefed</code> in the authoring PR and <code>status</code> left at <code>pending</code>; the boundary authors work, it does not start it. The body carries Brief and Plain language as everywhere else, and authored entries add a third section, Verification notes, naming the probes or pgTAP suites the success state implies, with pointers into the matrix rows and fixtures that serve them.</p>
+  <p>Four rules bind the writing. <em>Falsifiability:</em> a success state describes an observable end state, never activity; "migrations exist and pgTAP proves a credit without a matching debit fails" passes, "implement capital accounts" does not. <em>Named verification:</em> the verification field names a CI job from docs/VERIFICATION.md or a human role from the registry; inventing a job name creates an obligation to spec it in the same PR. <em>Citation:</em> every claim of authority uses the D7 register addresses, and a brief needing an address the register lacks adds it there, flagged draft. <em>Vocabulary:</em> grammar-lint applies to briefs as to everything; the boundary author writes in Subchapter K's tongue or not at all.</p>
+</section>
+
+<section id="s06">
+  <div class="label">06 &middot; A Worked Example of Form</div>
+  <div class="rule"></div>
+  <p>The seeded W3.1 today, in full:</p>
+<pre>---
+id: W3.1
+title: "capital accounts and capital events"
+wave: W3
+kind: step
+owner: "agent"
+status: pending
+detail: seeded
+depends_on: [W3.0]
+decision_refs: []
+success_state: >-
+  Brief and success state authored at the wave boundary (W3.0).
+verification: "to be authored"
+---</pre>
+  <p>And one shape it could take after authoring. This block is an <em>illustration of form only</em>: the real content belongs to W3.0, written against the system as it exists then, and committing this example as if authored would defeat the boundary principle it demonstrates.</p>
+<pre><span class="c"># illustration of form · not pre-authored content · do not commit</span>
+---
+id: W3.1
+title: "capital accounts and capital events"
+wave: W3
+kind: step
+owner: "agent"
+status: pending
+detail: briefed
+depends_on: [W1.2]            <span class="c"># fine edge replaces the boundary token</span>
+decision_refs: []
+success_state: >-
+  capital_accounts and capital_events exist per the C6 card with the
+  shared envelope; a database constraint rejects an event leg without
+  its balancing pair; book and tax amounts are distinct columns; the
+  conservation pgTAP sums fixture legs to zero; member-a reads own
+  rows, member-b's probe returns zero.
+verification: "ci:db-verify + ci:rls-audit"
+---
+## Brief
+Double-entry per draft-bylaws:\u00a75.1 ... <span class="c">[cites C6 entry, C7 cells, C4 S5]</span>
+## Plain language
+Member capital accounts with a history that cannot lose money silently.
+## Verification notes
+Conservation suite over FIXTURE legs (C4 invariant I8); twin probes
+per matrix rows capital_accounts, capital_events.</pre>
+</section>
+
+<section id="s07">
+  <div class="label">07 &middot; Definition of Done</div>
+  <div class="rule"></div>
+  <p>The boundary PR merges when every line below holds, and the PR body states each with its proof, in the order given.</p>
+  <div class="table-scroll"><table class="spec">
+    <thead><tr><th>condition</th><th>proof</th></tr></thead>
+    <tbody>
+      <tr><td>no seeded entries remain in the wave</td><td>index.json shows detail: briefed throughout, or the PR records split/retire rationale</td></tr>
+      <tr><td>no orphan coarse edges</td><td>no in-wave entry depends solely on the boundary step without stated cause</td></tr>
+      <tr><td>routed findings each addressed</td><td>findings register updated: resolved-in-brief, converted-to-decision, or re-deferred with new number</td></tr>
+      <tr><td>collection homes extended</td><td>schema card, matrix, fixtures, citations diffs present for every new table or address</td></tr>
+      <tr><td>success states falsifiable</td><td>human reviewer attests; any "implement X" phrasing fails</td></tr>
+      <tr><td>validator green</td><td>ci:milestone-validate on the head commit</td></tr>
+      <tr><td>nothing decided</td><td>docs/decisions diffs contain context only; no Record of decision written by the author</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s08">
+  <div class="label">08 &middot; Anti-Patterns</div>
+  <div class="rule"></div>
+  <p>Named so review can point at them. <em>Authoring early:</em> writing W4 briefs while W3 is unbuilt reintroduces the invented detail the seeding avoided; the precondition exists to prevent it. <em>Plan transcription:</em> copying the plan's summary line into success_state without making it falsifiable against built reality; the plan is background. <em>Quiet resolution:</em> a brief whose wording forecloses an open decision or adopts a clay cell; adoption has its own PRs. <em>Scope smuggling:</em> new capability appearing inside an existing entry's brief instead of as a new entry; the ledger is exhaustive or it is nothing. <em>Verification softening:</em> renaming a hard check to a human review because the check is inconvenient; AGENTS.md rule six applies to authors as to builders. <em>Token lingering:</em> leaving <code>depends_on: [W3.0]</code> on entries that have real parents, which flattens the graph the instrument exists to show.</p>
+</section>
+
+<section id="s09">
+  <div class="label">09 &middot; Closing the Series</div>
+  <div class="rule"></div>
+  <p>With this guide the collection is complete in the only sense that matters: C1 governs conduct, C2 holds the ledger, C3 makes verification specifiable, C4 through C9 give the build its references and its test substance, and C10 makes the next references a product of the ledger itself. Wave briefs come from boundary steps; schema cards, matrix rows, fixtures, citations, and findings grow through the Extend move; the map at C0 takes one final status edit and then describes a closed loop. What never enters the loop is deliberate and worth restating at the end: decisions and ratifications, the adoption of every clay cell, chosen count, and open reading, the counsel questions, and the practice phase P1, which is lived rather than shipped. The system can now write its own next chapter; choosing the story remains, as it should, with the people whose cooperative this is.</p>
+</section>
+
+<footer>
+  CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeToggle');
+  var label = document.getElementById('modeLabel');
+  var icon = document.getElementById('modeIcon');
+  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+  function apply(mode) {
+    root.setAttribute('data-mode', mode);
+    label.textContent = mode;
+    icon.innerHTML = mode === 'dark' ? moon : sun;
+  }
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  apply(prefersLight.matches ? 'light' : 'dark');
+  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>

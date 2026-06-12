@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>C11 · Wave Gates · CIS · Hub Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);overflow:hidden;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+button:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+.app{height:100vh;display:flex;flex-direction:column;}
+.top{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s5);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.top h1{font-family:'Libre Baskerville',Georgia,serif;font-size:19px;font-weight:700;color:var(--heading);letter-spacing:-.3px;white-space:nowrap;}
+.top .sub{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
+.top .grow{flex:1;}
+.mode-toggle{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 13px;display:flex;align-items:center;gap:var(--s2);
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle svg{width:14px;height:14px;stroke:currentColor;}
+.seg{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--surface);}
+.seg button{padding:5px 13px;font-size:11.5px;color:var(--muted);letter-spacing:.06em;}
+.seg button[aria-pressed="true"]{color:var(--terra-text);background:var(--terra-dim);}
+.main{flex:1;display:grid;grid-template-columns:216px minmax(0,1fr) 408px;gap:var(--s4);padding:var(--s4) var(--s5) var(--s3);min-height:0;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;min-height:0;
+transition:background-color var(--dur-mode) var(--ease);}
+.phead{padding:var(--s3) var(--s4) 0;}
+.plabel{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.prule{width:40px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s2) 0 var(--s3);}
+.pscroll{overflow:auto;padding:0 var(--s4) var(--s4);min-height:0;scrollbar-width:thin;}
+.itm{width:100%;text-align:left;border:1px solid var(--border);border-radius:8px;padding:5px var(--s3);margin-bottom:6px;background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.itm:hover{border-color:var(--terra);}
+.itm[aria-pressed="true"]{border-color:var(--terra);background:var(--terra-dim);}
+.itm .ia{font-size:10px;letter-spacing:.14em;color:var(--terra-text);margin-right:var(--s2);}
+.itm .in{color:var(--text);font-size:11.5px;}
+.railnote{font-size:10px;color:var(--faint);line-height:1.7;margin:var(--s2) 0 var(--s3);}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);padding:var(--s3) var(--s4);}
+.tile{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:var(--s3) var(--s3) var(--s2);}
+.tile .tl{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.tile .fig{font-size:21px;font-weight:500;color:var(--heading);font-variant-numeric:tabular-nums;line-height:1.15;}
+.tile .ts{font-size:10.5px;color:var(--muted);}
+.gbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;padding:0 var(--s4) var(--s3);}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;}
+.lg .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.lg.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.lg.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.lg.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.gnote{font-size:10px;color:var(--faint);}
+.mwrap{overflow:auto;flex:1;min-height:0;padding:var(--s2) var(--s4) var(--s4);scrollbar-width:thin;}
+/* spine */
+.spine{display:flex;flex-direction:column;gap:0;}
+.srow{display:flex;align-items:stretch;gap:var(--s3);}
+.wv{flex:1;border:1px solid var(--border);border-radius:10px;background:var(--bg);padding:var(--s2) var(--s3);margin:var(--s2) 0;cursor:pointer;
+transition:border-color var(--dur-micro) var(--ease);}
+.wv:hover{border-color:var(--border-strong);}
+.wv .wt{font-size:11px;color:var(--heading);}
+.wv .ws{font-size:9.5px;color:var(--faint);}
+.gt{border:1px solid var(--terra);border-left:3px solid var(--terra);border-radius:10px;background:var(--terra-dim);
+padding:var(--s2) var(--s3);margin:var(--s2) 0;cursor:pointer;transition:box-shadow var(--dur-micro) var(--ease);}
+.gt:hover{box-shadow:0 0 0 1px var(--terra);}
+.gt.sel{box-shadow:0 0 0 2px var(--terra);}
+.gt .gtt{font-size:11.5px;color:var(--terra-text);letter-spacing:.08em;}
+.gt .gts{font-size:9.5px;color:var(--muted);}
+.conn{width:1px;background:linear-gradient(var(--border-strong),var(--border));height:10px;margin-left:26px;}
+.par{display:flex;gap:var(--s3);}
+.par .wv{margin:var(--s2) 0;}
+.gnew{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--warn);margin-left:var(--s2);}
+.gex{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ok);margin-left:var(--s2);}
+/* detail */
+.det .dhead{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2);}
+.det .did{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-text);}
+.det h2{font-family:'Libre Baskerville',Georgia,serif;font-size:16.5px;font-weight:700;color:var(--heading);line-height:1.4;}
+.det .plain{font-family:'Libre Baskerville',Georgia,serif;font-style:italic;font-size:13.5px;color:var(--text);line-height:1.75;margin:var(--s2) 0 var(--s3);}
+.det .blk{margin-bottom:var(--s4);}
+.det .bk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.det .bv{font-size:11.5px;line-height:1.8;color:var(--text);}
+.det .bv.serif{font-family:'Libre Baskerville',Georgia,serif;font-size:13px;}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid;margin:0 6px 4px 0;}
+.chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.chip.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.chip.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.chip.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-size:10.5px;color:var(--muted);background:var(--bg);
+border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:4px 10px;}
+.prov .cite{color:var(--terra-text);}
+.det pre{font-size:10px;line-height:1.7;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;
+padding:var(--s3);overflow:auto;max-height:280px;}
+.foot{font-size:10px;color:var(--faint);text-align:center;padding:var(--s2) var(--s5) var(--s3);border-top:1px solid var(--border);}
+.viewseg{display:none;}
+@media (max-width:980px){
+ body{overflow:auto;}.app{height:100dvh;}
+ .main{grid-template-columns:1fr;overflow:hidden;}
+ .panel{display:none;}
+ body[data-view="rail"] .panel.rail,body[data-view="sp"] .panel.mid,body[data-view="detail"] .panel.det{display:flex;}
+ .viewseg{display:flex;margin:0 var(--s5) var(--s3);}
+ .viewseg button{flex:1;}
+ .tiles{grid-template-columns:repeat(2,1fr);}
+ .top h1{font-size:16px;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body data-view="sp">
+<div class="app">
+<div class="top">
+  <div><a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-decoration:none;letter-spacing:.1em;display:block;margin-bottom:3px;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a><h1>Wave Gates</h1><div class="sub">c11 &middot; testing gates between waves &middot; parts are proven by steps; the whole is proven here</div></div>
+  <div class="grow"></div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</div>
+
+<div class="seg viewseg" role="group" aria-label="View">
+  <button data-v="rail" aria-pressed="false">index</button>
+  <button data-v="sp" aria-pressed="true">spine</button>
+  <button data-v="detail" aria-pressed="false">detail</button>
+</div>
+
+<div class="main">
+  <div class="panel rail">
+    <div class="phead"><div class="plabel">Gates</div><div class="prule"></div></div>
+    <div class="pscroll" id="rail"></div>
+  </div>
+  <div class="panel mid">
+    <div class="tiles" id="tiles"></div>
+    <div class="gbar" id="gbar"></div>
+    <div class="mwrap"><div class="spine" id="spine"></div></div>
+  </div>
+  <div class="panel det">
+    <div class="phead"><div class="plabel" id="detLabel">Detail</div><div class="prule"></div></div>
+    <div class="pscroll det" id="detail"></div>
+  </div>
+</div>
+<div class="foot">extension to the closed series, entering through C10's own loop: gate files \u2192 milestones/G/ \u00b7 validator rules \u2192 C2 \u00b7 gate-attest card \u2192 C3 \u00b7 F17 \u2192 docs/findings.md \u00b7 co-op.us \u00b7 regenhub, lca \u00b7 2026</div>
+</div>
+
+<script>
+/* ---------- gates ---------- */
+const G=[
+ {id:"G0",t:"security floor",ex:0,after:"inside W0, before member data",
+  req:"W0.4 \u00b7 W0.5 \u00b7 W0.6 \u00b7 W0.7 \u00b7 W0.8 \u00b7 W0.9 \u00b7 W0.14 \u00b7 W0.17",dec:"D6",
+  edges:["W1.1 depends_on += G0","W2.1 depends_on += G0","G1 requires_steps += G0"],
+  story:"No row of member or applicant data exists until the perimeter is proven and a restore has been rehearsed. The deliberate trade: this serializes the tested restore (W0.14) ahead of the first member-data migration, on the principle that the cooperative never holds data it has not practiced recovering.",
+  suites:[["rls-audit \u00b7 zero gaps, anon and cross probes","ok"],["secret-scan \u00b7 clean across repo and functions","ok"],["auth probe \u00b7 non-invited rejection","ok"],["restore drill #1 \u00b7 logged job_run referenced by id","warn"],["security walkthrough \u00b7 organizer attestation","warn"]],
+  human:"an organizer signs the security walkthrough on the gate PR",
+  file:`---
+id: G0
+title: "security floor"
+wave: G
+kind: gate
+owner: "composite"
+status: pending
+detail: briefed
+depends_on: []
+decision_refs: []
+requires_steps: [W0.4, W0.5, W0.6, W0.7, W0.8,
+                 W0.9, W0.14, W0.17]
+requires_decisions: [D6]
+success_state: >-
+  Cumulative security suite green on the gate commit; restore
+  drill #1 logged and referenced; organizer security attestation
+  recorded. No member-data migration may merge before this gate
+  verifies (enforced by the W1.1 and W2.1 edges).
+verification: "composite \u00b7 ci:gate-attest + human:organizers"
+---`},
+ {id:"G1",t:"alpha gate",ex:1,after:"after W1 + W2 core",
+  req:"existing fan-in of 38 (all W0, W1.1\u20138, W2.1\u20136) + G0",dec:"D1 D2 D3 D4 D6 D7 (existing)",
+  edges:["G1 requires_steps += G0 (amendment)","verification notes += regression re-attest + restore drill #2"],
+  story:"Already in the ledger; this architecture amends rather than replaces it. The operational definition stands: an invited member signs in, sees what governs them, signs, appears, asks Nou and gets a cited answer; the Hub team runs its surface on production data. Added: the cumulative regression attest and the second restore drill, so the alpha bar includes the recovery habit.",
+  suites:[["existing composite walkthrough \u00b7 per G1 file","ok"],["regression \u00b7 full historical suite green on gate commit","warn"],["restore drill #2 \u00b7 logged and referenced","warn"],["nou pairwise re-run \u00b7 all tables at alpha","warn"]],
+  human:"the existing G1 human walkthroughs, unchanged",
+  file:`# amendment to milestones/G/G1-alpha-gate.md
+requires_steps: [..., G0]        # one addition
+## Verification notes (appended)
+Regression: every CI suite green on the gate commit.
+Restore drill #2 logged as a job_run, referenced here.
+Nou pairwise probe re-run across all tables present at alpha.`},
+ {id:"G2",t:"capital gate",ex:0,after:"after W3",
+  req:"W3 (wave token \u00b7 expands per amended rule)",dec:"(D10 binds via W3.6)",
+  edges:["W4.0 depends_on: [W3] \u2192 [G2]"],
+  story:"Money is allowed to be boring only after it is proven boring. The gate's own suites are cross-module: conservation swept across every account at once, the stock ledger reconciled against capital accounts, and a restore followed by re-verification of balances, because a backup of a financial record is only real if the arithmetic survives the round trip.",
+  suites:[["conservation sweep \u00b7 all legs sum to zero per account; zero orphan legs","warn"],["stock \u2194 account consistency \u00b7 every active share has exactly one open account","warn"],["manual allocation path \u00b7 equal default exercised end to end (pre-R1 posture)","warn"],["mercury read-only proof \u00b7 token scope asserted; ingest rows immutable","warn"],["tax_records closed-table probe \u00b7 re-run","ok"],["restore drill #3 + balance re-verify after restore","warn"]],
+  human:"the Treasurer attests a synthetic month-close walkthrough",
+  file:`---
+id: G2
+title: "capital gate"
+wave: G
+kind: gate
+owner: "composite"
+status: pending
+detail: briefed
+depends_on: []
+decision_refs: []
+requires_steps: [W3]              # wave token \u00b7 F17 rule applies
+requires_decisions: []
+success_state: >-
+  Conservation sweep, stock\u2013account consistency, manual
+  allocation path, Mercury read-only proof, and restore-then-
+  reverify all green; Treasurer month-close attestation recorded.
+verification: "composite \u00b7 ci:gate-attest + human:treasurer"
+---`},
+ {id:"G3",t:"governance gate",ex:0,after:"after W4",
+  req:"W4 (wave token)",dec:"explicitly not R1",
+  edges:["W5.0 depends_on: [W4] \u2192 [G3]"],
+  story:"The machinery of meetings, motions, ballots, and minutes proven on synthetic governance before any of it binds. The design rule worth stating twice: R1 is an activation, never a gate requirement. G3 verifies that the machine works; ratification flips what the machine's outputs mean, and holding a ratification hostage to a build gate would invert the constitution of the thing.",
+  suites:[["vote immutability \u00b7 UPDATE and DELETE refused by trigger","ok"],["quorum \u00b7 live computation equals hand calculation on the extended board fixture (F9 resolved)","warn"],["ballot privacy \u00b7 per the F4 resolution, sealed cells probed","warn"],["proxy semantics \u00b7 per the \u00a72.6.4 reading (F8 resolved)","warn"],["minutes roundtrip \u00b7 draft, ratify, Secretary act authoritative","warn"],["notice receipt hardening \u00b7 W4.5 posture asserted","warn"]],
+  human:"the Secretary runs one full synthetic meeting end to end; the recorded outcome matches the expected fixture outcome",
+  file:`---
+id: G3
+title: "governance gate"
+wave: G
+kind: gate
+owner: "composite"
+status: pending
+detail: briefed
+depends_on: []
+decision_refs: []
+requires_steps: [W4]              # wave token
+requires_decisions: []            # R1 is activation, never gated
+success_state: >-
+  Immutability, quorum, ballot privacy, proxy, minutes-roundtrip,
+  and receipt suites green; Secretary's synthetic meeting
+  attestation recorded. R1 status noted, not required.
+verification: "composite \u00b7 ci:gate-attest + human:secretary"
+---`},
+ {id:"G4",t:"lifecycle gate",ex:0,after:"after W5",
+  req:"W5 (wave token)",dec:"F3 reading as confirmed at R1 reflected in probes",
+  edges:["W6.0 depends_on: [W5] \u2192 [G4]"],
+  story:"Joining was proven at G1; leaving is proven here. The transition matrix is the centerpiece: every legal state change demands a signed, logged event, every illegal one is refused by the database, and the withdrawal arithmetic ties back to G2's conservation so that what a departing member is owed is the same number the capital ledger has always carried.",
+  suites:[["transition matrix \u00b7 illegal transitions refused; legal ones demand signed events","warn"],["withdrawal window \u00b7 fourteen-day notice function tested at boundaries","warn"],["redemption arithmetic \u00b7 schedules to five years; equity equals capital balance (ties to G2)","warn"],["suspension clock \u00b7 start, accrual, expiry math","warn"],["restore drill #4 \u00b7 lifecycle tables included","warn"]],
+  human:"an organizer runs the withdrawal walkthrough on a clone of the former-member persona",
+  file:`---
+id: G4
+title: "lifecycle gate"
+wave: G
+kind: gate
+owner: "composite"
+status: pending
+detail: briefed
+depends_on: []
+decision_refs: []
+requires_steps: [W5]              # wave token
+requires_decisions: []
+success_state: >-
+  Transition-matrix, withdrawal-window, redemption-arithmetic,
+  and suspension-clock suites green; restore drill #4 logged;
+  organizer withdrawal walkthrough attested.
+verification: "composite \u00b7 ci:gate-attest + human:organizers"
+---`},
+ {id:"G5",t:"stewardship gate",ex:0,after:"after W6, before P1",
+  req:"W6 (wave token)",dec:"\u2014",
+  edges:["P1 depends_on: [W6] \u2192 [G5]"],
+  story:"The walkaway made real. A member who is not an organizer exports their own complete record unaided; the full export restores into a clean environment and the portal reads against it; the benefit report's public floor is probed as anon; and analytics are proven derived, never drifting stores. Practice (P1) begins only after the cooperative has demonstrated it could leave every vendor and still be itself.",
+  suites:[["member export completeness \u00b7 every table holding the persona's rows appears in the archive","warn"],["walkaway drill \u00b7 export \u2192 clean restore \u2192 portal reads (CR Phase 05)","warn"],["benefit report public floor \u00b7 anon probe","ok"],["derived-only analytics \u00b7 no stored aggregate diverges from the event log","warn"],["regression \u00b7 the entire historical suite, one last full pass","warn"]],
+  human:"a non-organizer member performs their own export unaided; the board reviews the benefit report on the gate PR",
+  file:`---
+id: G5
+title: "stewardship gate"
+wave: G
+kind: gate
+owner: "composite"
+status: pending
+detail: briefed
+depends_on: []
+decision_refs: []
+requires_steps: [W6]              # wave token
+requires_decisions: []
+success_state: >-
+  Member-export completeness, walkaway drill, public-floor probe,
+  derived-only sweep, and full regression green; non-organizer
+  export and board review attested. P1 follows this gate.
+verification: "composite \u00b7 ci:gate-attest + human:member + board"
+---`}
+];
+/* ---------- spine ---------- */
+const SPINE=[
+ {k:"w",t:"W0 \u00b7 substrate",s:"18 steps"},
+ {k:"g",id:"G0"},
+ {k:"p",t:["W1 \u00b7 shared core \u00b7 8","W2 \u00b7 hub operations \u00b7 9"]},
+ {k:"g",id:"G1"},
+ {k:"w",t:"W3 \u00b7 capital",s:"boundary + 7 seeded"},
+ {k:"g",id:"G2"},
+ {k:"w",t:"W4 \u00b7 governance",s:"boundary + 7 seeded"},
+ {k:"g",id:"G3"},
+ {k:"w",t:"W5 \u00b7 lifecycle",s:"boundary, scope seeded"},
+ {k:"g",id:"G4"},
+ {k:"w",t:"W6 \u00b7 full interface",s:"boundary, scope seeded"},
+ {k:"g",id:"G5"},
+ {k:"w",t:"P1 \u00b7 practice",s:"lived, not shipped \u00b7 never gated, follows G5"}
+];
+const AMEND=[
+ ["validator \u00b7 token expansion in gates","requires_steps accepts wave tokens, expanded with the same rule as depends_on. Negative test: a gate naming an empty wave fails.","info"],
+ ["validator \u00b7 the F17 rule","a gate whose token expands over a wave containing any detail: seeded entry cannot reach verified; the seeded stubs would otherwise let G4 pass after only W5.0 existed.","info"],
+ ["C3 \u00b7 ci:gate-attest card","triggers on a gate status flip to verified: asserts every expanded requirement verified, zero seeded entries in token waves, drill job_run rows referenced by id, and an attestation block present naming the human roles.","warn"],
+ ["gate report \u00b7 docs/gates/","each verified gate emits a generated report: suite results, drill references, attestations; the build panel renders gates as the spine's load-bearing points.","warn"]
+];
+const F17=["F17","Tokens over seeded waves are a trapdoor.","Wave tokens expand to existing step entries only, so a gate over a mostly-seeded wave would be satisfiable by its boundary step alone. The rule: a gate cannot verify while any entry in its token-expanded waves remains detail: seeded. Lands as a validator amendment with its own negative test, registered at docs/findings.md."];
+
+const S={sel:null};
+function rRail(){
+ const el=document.getElementById("rail");
+ let h='<div class="railnote">six gates \u00b7 one existing, five introduced \u00b7 click a gate</div>';
+ G.forEach((g,i)=>{h+=`<button class="itm" data-g="${i}" aria-pressed="${S.sel===i}"><span class="ia">${g.id}</span><span class="in">${g.t}</span></button>`;});
+ h+=`<button class="itm" data-a="1" style="margin-top:var(--s3)"><span class="in">mechanics \u00b7 4 amendments</span></button>`;
+ h+=`<button class="itm" data-f="1"><span class="in">finding \u00b7 F17</span></button>`;
+ h+=`<button class="itm" data-j="1"><span class="in">machine view \u00b7 json</span></button>`;
+ el.innerHTML=h;
+ el.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.sel=+b.dataset.g;rAll();showGate(+b.dataset.g);setMobile("detail");});
+ el.querySelector("[data-a]").onclick=()=>{showAmend();setMobile("detail");};
+ el.querySelector("[data-f]").onclick=()=>{showF17();setMobile("detail");};
+ el.querySelector("[data-j]").onclick=()=>{showJson();setMobile("detail");};
+}
+function rTiles(){
+ const suites=G.reduce((a,g)=>a+g.suites.length,0);
+ const drills=5;
+ document.getElementById("tiles").innerHTML=
+ `<div class="tile"><div class="tl">gates</div><div class="fig">6</div><div class="ts">1 existing \u00b7 5 introduced</div></div>
+  <div class="tile"><div class="tl">gate suites</div><div class="fig">${suites}</div><div class="ts">cross-cutting, gate-owned</div></div>
+  <div class="tile"><div class="tl">drills</div><div class="fig">${drills}+1</div><div class="ts">restore at every gate \u00b7 walkaway at G5</div></div>
+  <div class="tile"><div class="tl">edge edits</div><div class="fig">7</div><div class="ts">gates become load-bearing</div></div>`;
+}
+function rGbar(){
+ document.getElementById("gbar").innerHTML=
+ `<span class="lg ok"><span class="dot"></span>existing check, re-attested</span>
+  <span class="lg warn"><span class="dot"></span>new suite or attestation, proposed</span>
+  <span class="lg info"><span class="dot"></span>amendment to an existing home</span>
+  <span class="gnote">all gates honestly pending \u00b7 R1 and R2 are activations and are never gate requirements</span>`;
+}
+function rSpine(){
+ const el=document.getElementById("spine");
+ let h="";
+ SPINE.forEach((n,i)=>{
+  if(i>0)h+='<div class="conn"></div>';
+  if(n.k==="w")h+=`<div class="wv"><span class="wt">${n.t}</span><br><span class="ws">${n.s}</span></div>`;
+  else if(n.k==="p")h+=`<div class="par">${n.t.map(t=>`<div class="wv"><span class="wt">${t.split(" \u00b7 ").slice(0,2).join(" \u00b7 ")}</span><br><span class="ws">${t.split(" \u00b7 ")[2]} steps \u00b7 parallel</span></div>`).join("")}</div>`;
+  else{const gi=G.findIndex(g=>g.id===n.id);const g=G[gi];
+   h+=`<div class="gt ${S.sel===gi?"sel":""}" data-g="${gi}"><span class="gtt">${g.id} \u00b7 ${g.t}</span><span class="${g.ex?"gex":"gnew"}">${g.ex?"existing":"introduced"}</span><br><span class="gts">${g.after} \u00b7 ${g.suites.length} suites</span></div>`;}
+ });
+ el.innerHTML=h;
+ el.querySelectorAll(".gt").forEach(b=>b.onclick=()=>{S.sel=+b.dataset.g;rAll();showGate(+b.dataset.g);setMobile("detail");});
+ el.querySelectorAll(".wv").forEach(w=>w.onclick=()=>{showDefault();});
+}
+const det=()=>document.getElementById("detail");
+const dlab=t=>document.getElementById("detLabel").textContent=t;
+function chip(s,t){return `<span class="chip ${s}"><span class="dot"></span>${t}</span>`;}
+function showGate(i){
+ const g=G[i];dlab("Detail \u00b7 "+g.id);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${g.id} \u00b7 ${g.after}</span>${g.ex?chip("ok","existing"):chip("warn","introduced")}</div>
+  <h2>${g.t}</h2>
+  <p class="plain">${g.story}</p>
+  <div class="blk"><div class="bk">requires</div><div class="bv">${g.req}${g.dec!=="\u2014"?" \u00b7 decisions: "+g.dec:""}</div></div>
+  <div class="blk"><div class="bk">gate-owned suites and attestations</div>${g.suites.map(s=>`<div class="bv">${chip(s[1],s[1]==="ok"?"re-attest":"new")} ${s[0]}</div>`).join("")}</div>
+  <div class="blk"><div class="bk">human attestation</div><div class="bv serif">${g.human}.</div></div>
+  <div class="blk"><div class="bk">edge edits</div><div class="bv">${g.edges.join("<br>")}</div></div>
+  <div class="blk"><div class="bk">${g.ex?"amendment text":"ready-to-commit file \u00b7 milestones/G/"}</div><pre>${g.file.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre></div>`;
+}
+function showAmend(){
+ dlab("Detail \u00b7 mechanics");
+ det().innerHTML=`<div class="dhead"><span class="did">mechanics</span></div>
+  <h2>How gates enter the ledger</h2>
+  <p class="plain">Gates are ordinary entries of kind gate, validated like everything else. Four amendments make them load-bearing rather than decorative, each landing in the home C10 assigned it.</p>`+
+  AMEND.map(a=>`<div class="blk"><div class="bk">${chip(a[2],a[2]==="info"?"C2":"C3")} ${a[0]}</div><div class="bv serif">${a[1]}</div></div>`).join("")+
+  `<div class="blk"><div class="bk">sequencing note</div><div class="bv serif">If the gates land before W0.2 wires the seed into the live repository, they enter through a gen_seed patch; after W0.2 the generator is frozen per F16, and the files above are committed by hand under an ordinary ledger PR.</div></div>`;
+}
+function showF17(){
+ dlab("Detail \u00b7 F17");
+ det().innerHTML=`<div class="dhead"><span class="did">${F17[0]}</span></div>
+  <h2>${F17[1]}</h2>
+  <p class="plain">${F17[2]}</p>
+  <div class="blk"><div class="bk">register</div><span class="prov"><span class="cite">docs/findings.md \u00b7 allocated F17</span></span></div>`;
+}
+function showJson(){
+ dlab("Detail \u00b7 machine view");
+ const data={gates:G.map(g=>({id:g.id,title:g.t,placement:g.after,existing:!!g.ex,
+   requires:g.req,suites:g.suites.map(s=>s[0]),human:g.human,edge_edits:g.edges})),
+  edge_edits_total:7,
+  validator_amendments:["requires_steps accepts wave tokens (expansion as depends_on)","gate cannot verify while token-expanded waves contain detail: seeded (F17)"],
+  new_verification_card:"ci:gate-attest \u00b7 docs/VERIFICATION.md",
+  gate_reports:"docs/gates/<id>-report.md \u00b7 generated on verify",
+  activation_rule:"R1 and R2 are never gate requirements",
+  drills:{restore:"at every gate, numbered","walkaway":"G5 only"},
+  finding:"F17 \u2192 docs/findings.md"};
+ det().innerHTML=`<div class="dhead"><span class="did">extension manifest</span></div>
+  <h2>Machine view</h2>
+  <p class="plain">The whole extension as diffs: five files, one amendment, two validator rules, one verification card, one finding. Nothing here is freestanding; every line has a home the series already built.</p>
+  <pre>${JSON.stringify(data,null,1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>`;
+}
+function showDefault(){
+ dlab("Detail");
+ det().innerHTML=`
+  <div class="dhead"><span class="did">how to read this</span></div>
+  <h2>Steps prove parts; gates prove the whole</h2>
+  <p class="plain">Every step already carries its own verification, but some truths belong to no single step: that all the old probes still pass, that a backup survives the round trip with its arithmetic intact, that conservation holds across every account at once, that a person in the named role can actually drive the machine. Gates own those truths. Six of them sit on the spine, one existing and five introduced, each a bar of cumulative regression, re-run drills, cross-module invariants, and a named human attestation.</p>
+  <div class="blk"><div class="bk">three design rules</div><div class="bv serif">Gates are load-bearing: the next wave's boundary depends on the gate, not the wave. Ratifications are never gated: R1 activates meaning and is not a build bar. And tokens over seeded waves cannot satisfy a gate, the F17 rule, so a gate never opens on stubs.</div></div>
+  <div class="blk"><div class="bk">entering through the loop</div><div class="bv serif">This is the first extension after the series closed, and it arrives the way C10 says extensions must: as ready-to-commit files and diffs to the homes that already exist, reviewed and adopted by people.</div></div>
+  <div class="blk"><div class="bk">provenance</div>
+   <span class="prov"><span class="cite">G1 file \u00b7 schema.json gate kind \u00b7 C10 \u00a703 extend \u00b7 CR phases 04\u201305</span></span></div>`;
+}
+function rAll(){rRail();rTiles();rGbar();rSpine();}
+document.querySelectorAll(".viewseg button").forEach(b=>b.onclick=()=>setMobile(b.dataset.v,true));
+function setMobile(v,force){if(!window.matchMedia("(max-width:980px)").matches&&!force)return;
+ document.body.dataset.view=v;document.querySelectorAll(".viewseg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));}
+(function(){var root=document.documentElement,btn=document.getElementById("modeToggle"),label=document.getElementById("modeLabel"),icon=document.getElementById("modeIcon");
+var moon='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+var sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+function apply(m){root.setAttribute("data-mode",m);label.textContent=m;icon.innerHTML=m==="dark"?moon:sun;}
+var pl=window.matchMedia("(prefers-color-scheme: light)");apply(pl.matches?"light":"dark");
+pl.addEventListener("change",e=>apply(e.matches?"light":"dark"));
+btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark"));})();
+rAll();showDefault();
+</script>
+</body>
+</html>
