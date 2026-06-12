@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark light">
-<meta name="description" content="Pre-build audit of the RegenHub, LCA Commons repository and published site. Self-referential consistency, documentation gaps, and architectural gaps assessed before W0 substrate work begins.">
+<meta name="description" content="Pre-build assessment protocol for the RegenHub, LCA Commons. Conducted June 2026. The protocol failed. Three categories of failure, eight learnings, four W0 actions.">
 <meta name="robots" content="noindex,nofollow">
 <title>Pre-Build Audit v0.1 · RegenHub Commons</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -13,123 +13,107 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="commons.css">
 <style>
-:root {
-  color-scheme: dark;
-  --bg: #0f0f0f; --surface: #1a1a1a; --surface-raised: #232220;
-  --border: #333333; --border-strong: #4a4a4a;
-  --terra: #c4956a; --terra-text: #c4956a;
-  --terra-dim: rgba(196,149,106,0.12); --terra-glow: rgba(196,149,106,0.06);
-  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
-  --ok: #94ae84; --ok-dim: rgba(148,174,132,0.14);
-  --info: #8da3b5; --info-dim: rgba(141,163,181,0.14);
-  --warn: #c0705c; --warn-dim: rgba(192,112,92,0.14);
-  --dur-mode: 400ms; --dur-micro: 160ms; --ease: cubic-bezier(0.4,0,0.2,1);
-  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;
+/* ── page layout ── */
+.page { max-width: 760px; margin: 0 auto; padding: var(--s8) var(--s5); }
+
+header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: var(--s7); gap: var(--s4);
 }
-@media (prefers-color-scheme: light) {
-  :root:not([data-mode="dark"]) {
-    color-scheme: light;
-    --bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;
-    --border:#e2ddd5;--border-strong:#c9c2b8;
-    --terra:#c4956a;--terra-text:#96704a;
-    --terra-dim:rgba(196,149,106,0.14);--terra-glow:rgba(196,149,106,0.08);
-    --heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
-    --ok:#5f7a52;--info:#5b7286;--warn:#9e4f3d;
-    --ok-dim:rgba(95,122,82,0.12);--info-dim:rgba(91,114,134,0.12);--warn-dim:rgba(158,79,61,0.12);
-  }
+h1 { font-size: 34px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; line-height: 1.25; }
+.subtitle { font-style: italic; font-size: 18px; color: var(--text); margin-top: var(--s2); }
+.version { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin-top: var(--s3); line-height: 1.9; }
+
+.lede { font-size: 19px; line-height: 1.7; color: var(--text); margin-bottom: var(--s6); max-width: 60ch; }
+
+section { margin-bottom: var(--s8); }
+.label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text); }
+.rule { margin: var(--s3) 0 var(--s6); }
+
+p { margin-bottom: 20px; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--terra-text); text-decoration: none; transition: color var(--dur-micro) var(--ease); }
+a:hover { text-decoration: underline; }
+
+h2 { font-size: 26px; color: var(--heading); font-weight: 700; margin: var(--s6) 0 var(--s4); line-height: 1.3; }
+h3 { font-size: 18px; color: var(--heading); font-weight: 700; margin: var(--s5) 0 var(--s3); line-height: 1.4; }
+
+/* ── failure banner ── */
+.verdict {
+  border: 1px solid var(--warn);
+  background: var(--warn-dim);
+  border-radius: 8px;
+  padding: var(--s4) var(--s5);
+  margin-bottom: var(--s7);
 }
-[data-mode="light"] {
-  color-scheme: light;
-  --bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;
-  --border:#e2ddd5;--border-strong:#c9c2b8;
-  --terra:#c4956a;--terra-text:#96704a;
-  --terra-dim:rgba(196,149,106,0.14);--terra-glow:rgba(196,149,106,0.08);
-  --heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
-  --ok:#5f7a52;--info:#5b7286;--warn:#9e4f3d;
-  --ok-dim:rgba(95,122,82,0.12);--info-dim:rgba(91,114,134,0.12);--warn-dim:rgba(158,79,61,0.12);
+.verdict .v-label {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--warn); margin-bottom: var(--s2);
 }
-[data-mode="dark"] { color-scheme: dark; }
+.verdict p { font-size: 14.5px; color: var(--text); line-height: 1.7; }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-html{background:var(--bg);}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Libre Baskerville',Georgia,serif;
-  font-size:16px;line-height:1.85;
-  transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);
+/* ── score grid ── */
+.score-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: var(--s4); margin: var(--s5) 0 var(--s7);
 }
-.page{max-width:760px;margin:0 auto;padding:var(--s8) var(--s5);}
-
-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--s7);gap:var(--s4);}
-h1{font-size:34px;font-weight:700;color:var(--heading);letter-spacing:-0.5px;line-height:1.25;}
-.subtitle{font-style:italic;font-size:18px;color:var(--text);margin-top:var(--s2);}
-.version{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);margin-top:var(--s3);line-height:1.9;}
-.mode-toggle{
-  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);
-  background:var(--surface);border:1px solid var(--border);border-radius:999px;
-  padding:7px 16px;cursor:pointer;display:flex;align-items:center;gap:var(--s2);flex-shrink:0;
-  transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);
+@media(max-width: 560px) { .score-grid { grid-template-columns: 1fr 1fr; } }
+.score-cell {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: var(--s4); text-align: center;
 }
-.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
-.mode-toggle svg{width:15px;height:15px;stroke:currentColor;}
+.score-cell .sc-num { font-family: var(--font-mono); font-size: 28px; font-weight: 500; line-height: 1; }
+.score-cell .sc-num.warn { color: var(--warn); }
+.score-cell .sc-num.ok   { color: var(--ok); }
+.score-cell .sc-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--faint); margin-top: var(--s2);
+}
 
-.lede{font-size:19px;line-height:1.7;color:var(--text);margin-bottom:var(--s6);max-width:60ch;}
-section{margin-bottom:var(--s8);}
-.label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--terra-text);}
-.rule{width:48px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s3) 0 var(--s6);}
-p{margin-bottom:20px;}
-p:last-child{margin-bottom:0;}
-em{font-style:italic;}
-a{color:var(--terra-text);text-decoration:none;transition:color var(--dur-micro) var(--ease);}
-a:hover{text-decoration:underline;}
-code{font-family:'IBM Plex Mono',monospace;font-size:0.85em;color:var(--terra-text);background:var(--terra-dim);padding:2px 6px;border-radius:4px;}
+/* ── finding cards ── */
+.finding-list { display: flex; flex-direction: column; gap: var(--s3); margin: var(--s5) 0; }
+.finding {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: var(--s4) var(--s5);
+}
+.finding.fail { border-left: 3px solid var(--warn); }
+.finding.ok   { border-left: 3px solid var(--ok); }
+.finding.learn { border-left: 3px solid var(--info); }
 
-h2{font-size:26px;color:var(--heading);font-weight:700;margin:var(--s6) 0 var(--s4);line-height:1.3;}
-h3{font-size:18px;color:var(--heading);font-weight:700;margin:var(--s5) 0 var(--s3);line-height:1.4;}
+.finding .f-head { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; margin-bottom: var(--s2); }
+.finding .f-id {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--terra-text);
+}
+.finding .f-tag {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 7px;
+  border-radius: 3px;
+}
+.finding .f-tag.fail   { background: var(--warn-dim); color: var(--warn); }
+.finding .f-tag.ok     { background: var(--ok-dim);   color: var(--ok); }
+.finding .f-tag.learn  { background: var(--info-dim); color: var(--info); }
+.finding .f-tag.action { background: var(--terra-dim); color: var(--terra-text); }
 
-/* finding cards */
-.finding-list{display:flex;flex-direction:column;gap:var(--s3);margin:var(--s5) 0;}
-.finding{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:var(--s4) var(--s5);}
-.finding.ok{border-left:3px solid var(--ok);}
-.finding.warn{border-left:3px solid var(--warn);}
-.finding.info{border-left:3px solid var(--info);}
-.finding .f-head{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2);}
-.finding .f-id{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--terra-text);}
-.finding .f-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;font-weight:400;}
-.finding .f-tag.resolved{background:var(--ok-dim);color:var(--ok);}
-.finding .f-tag.gap{background:var(--warn-dim);color:var(--warn);}
-.finding .f-tag.noted{background:var(--info-dim);color:var(--info);}
-.finding .f-title{font-size:14.5px;font-weight:700;color:var(--heading);}
-.finding .f-body{font-size:13.5px;color:var(--muted);line-height:1.7;}
-.finding .f-body p{margin-bottom:10px;}
-.finding .f-body p:last-child{margin-bottom:0;}
+.finding .f-title { font-size: 14.5px; font-weight: 700; color: var(--heading); }
+.finding .f-body { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+.finding .f-body p { margin-bottom: 10px; }
+.finding .f-body p:last-child { margin-bottom: 0; }
 
-/* summary scoreboard */
-.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4);margin:var(--s5) 0 var(--s7);}
-@media(max-width:560px){.score-grid{grid-template-columns:1fr 1fr;}}
-.score-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:var(--s4);text-align:center;}
-.score-cell .sc-num{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;line-height:1;}
-.score-cell .sc-num.ok{color:var(--ok);}
-.score-cell .sc-num.warn{color:var(--warn);}
-.score-cell .sc-num.info{color:var(--info);}
-.score-cell .sc-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--faint);margin-top:var(--s2);}
+/* ── callout ── */
+.callout {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--terra); border-radius: 8px;
+  padding: var(--s4) var(--s5); margin: var(--s5) 0;
+}
+.callout p { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+.callout p:last-child { margin-bottom: 0; }
+.callout .c-head {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--terra-text); margin-bottom: var(--s2);
+}
 
-/* status chip */
-.chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 9px;border-radius:4px;margin-left:var(--s2);}
-.chip.ok{background:var(--ok-dim);color:var(--ok);}
-.chip.warn{background:var(--warn-dim);color:var(--warn);}
-.chip.info{background:var(--info-dim);color:var(--info);}
-
-/* callout box */
-.callout{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--terra);border-radius:8px;padding:var(--s4) var(--s5);margin:var(--s5) 0;}
-.callout p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px;}
-.callout p:last-child{margin-bottom:0;}
-.callout .c-head{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--terra-text);margin-bottom:var(--s2);}
-
-footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint);border-top:1px solid var(--border);padding-top:var(--s5);text-align:center;margin-top:var(--s8);}
-
-@media(max-width:560px){h1{font-size:27px;}.lede{font-size:17px;}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+footer { text-align: center; margin-top: var(--s8); }
 </style>
 </head>
 <body>
@@ -147,81 +131,80 @@ footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint)
 <header>
   <div>
     <h1>Pre-Build Audit</h1>
-    <div class="subtitle">Self-referential consistency, documentation &amp; architectural gaps</div>
+    <div class="subtitle">Assessment protocol failure &mdash; findings and learnings</div>
     <div class="version">VERSION 0.1 &middot; JUNE 2026<br>REGENHUB, LCA &middot; BOULDER, COLORADO</div>
   </div>
-  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
-    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
-    <span id="modeLabel">dark</span>
-  </button>
+  <button class="mode-btn" id="modeBtn">light</button>
 </header>
 
-<p class="lede">Completed before the W0 substrate build begins. This document surveys what exists, what claims what, and where the gaps are. Written for both technical contributors and non-technical co-op members.</p>
-
-<div class="callout">
-  <div class="c-head">Scope</div>
-  <p>Repository: <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>. Published site: <a href="https://techne-co-op.github.io/commons/">techne-co-op.github.io/commons</a>. Audit conducted June 2026 immediately after all 10 pre-build decisions (D1&ndash;D10) were recorded.</p>
-  <p>The audit asks three questions: (1) Does the system describe itself accurately? (2) What is missing that should be documented? (3) What structural pieces are absent that the build phase requires?</p>
+<div class="verdict">
+  <div class="v-label">Protocol result &middot; Failed</div>
+  <p>This audit was conducted immediately before W0 substrate work began, after all ten pre-build decisions were recorded. Its purpose was to verify that the repository was self-consistent and ready to build against. It was not. The assessment found three categories of failure — consistency failures, documentation failures, and specification failures — across fifteen specific items. A protocol that runs at the end of a phase and finds fifteen gaps has failed the phase it was designed to protect. The learnings below define what the next phase must do differently.</p>
 </div>
 
 <div class="score-grid">
   <div class="score-cell">
-    <div class="sc-num ok">3</div>
-    <div class="sc-label">Consistency fixes applied</div>
+    <div class="sc-num warn">3</div>
+    <div class="sc-label">Consistency failures</div>
   </div>
   <div class="score-cell">
     <div class="sc-num warn">7</div>
-    <div class="sc-label">Documentation gaps</div>
+    <div class="sc-label">Documentation failures</div>
   </div>
   <div class="score-cell">
-    <div class="sc-num warn">8</div>
-    <div class="sc-label">Architectural gaps</div>
+    <div class="sc-num warn">5</div>
+    <div class="sc-label">Specification failures</div>
   </div>
+</div>
+
+<div class="callout">
+  <div class="c-head">Scope</div>
+  <p>Repository: <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>. Published site: <a href="https://techne-co-op.github.io/commons/">techne-co-op.github.io/commons</a>. Audit conducted June 12, 2026.</p>
 </div>
 
 <!-- ──────────────────────────────────────────── -->
 <section id="consistency">
-  <div class="label">Section 1</div>
+  <div class="label">Failure category 1</div>
   <div class="rule"></div>
-  <h2>Self-referential consistency</h2>
+  <h2>Consistency failures</h2>
 
-  <p>These are places where the system&rsquo;s published descriptions did not match its actual state at the time of the audit. All three have been remediated in the same session.</p>
+  <p>The system described itself inaccurately. Published pages showed state that did not match the repository record. The design system documented a standard that the design system page itself did not follow.</p>
 
   <div class="finding-list">
 
-    <div class="finding ok">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">C-01</span>
-        <span class="f-tag resolved">resolved</span>
-        <span class="f-title">index.html decision register showed all D1&ndash;D10 as &ldquo;open&rdquo;</span>
+        <span class="f-id">CF-01</span>
+        <span class="f-tag fail">consistency</span>
+        <span class="f-title">index.html decision register hardcoded all D1&ndash;D10 as &ldquo;open&rdquo;</span>
       </div>
       <div class="f-body">
-        <p>The homepage&rsquo;s decision register hardcoded the word &ldquo;open&rdquo; for all ten pre-build decisions. After all ten decisions were formally recorded in <code>docs/decisions/</code> in June 2026, the page became stale. <em>Fix:</em> Updated all D1&ndash;D10 items to &ldquo;decided&rdquo; with the <code>.resolved</code> CSS class (green). The wave grid chip was updated from &ldquo;10 open&rdquo; to &ldquo;10 decided&rdquo;. The accompanying paragraph was rewritten to reflect the current state.</p>
-        <p><em>For non-technical members:</em> The front page of the commons site was still showing our ten planning decisions as unresolved. It now reflects that all ten have been answered.</p>
+        <p>After all ten decisions were recorded in <code>docs/decisions/</code>, the homepage still displayed them as unresolved. A visitor to the published site would conclude the build was blocked by ten open questions. It was not. <em>Remediated:</em> All D1&ndash;D10 items updated to &ldquo;decided&rdquo; with resolved styling; wave grid chip and intro paragraph updated in the same commit.</p>
+        <p><em>Root cause:</em> The decision register is static HTML with no data binding to <code>docs/decisions/</code> or <code>milestones/index.json</code>. State is maintained in two places and can drift.</p>
       </div>
     </div>
 
-    <div class="finding ok">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">C-02</span>
-        <span class="f-tag resolved">resolved</span>
-        <span class="f-title">STATUS.md decision entries show &ldquo;pending&rdquo; while index.json shows &ldquo;done&rdquo;</span>
+        <span class="f-id">CF-02</span>
+        <span class="f-tag fail">consistency</span>
+        <span class="f-title">STATUS.md shows decision milestones as &ldquo;pending&rdquo;; index.json shows &ldquo;done&rdquo;</span>
       </div>
       <div class="f-body">
-        <p><code>milestones/STATUS.md</code> is generated by <code>scripts/validate.py</code>, which requires PyYAML. PyYAML is not available in the current container environment (no pip access). As a result STATUS.md is out of sync with <code>milestones/index.json</code>, which correctly shows all ten decisions as <code>done</code>. <em>Status:</em> index.json is authoritative (it&rsquo;s what the loop-sync GitHub Action reads to update Supabase). STATUS.md is a human-readable summary only and carries no automation weight. A future session with Python available, or a Node.js port of validate.py, should regenerate it.</p>
-        <p><em>For non-technical members:</em> There&rsquo;s a summary table in the repository that hasn&rsquo;t been refreshed. It doesn&rsquo;t affect any live systems, but it should be updated when the tooling is available.</p>
+        <p><code>milestones/STATUS.md</code> is generated by <code>scripts/validate.py</code>, which requires PyYAML. PyYAML is unavailable in the current container environment. The file could not be regenerated and fell out of sync when milestone statuses were updated. <em>Status:</em> index.json is authoritative for all automated processes. STATUS.md is a convenience summary and carries no automation weight. It remains stale.</p>
+        <p><em>Root cause:</em> A generated artifact with a hard runtime dependency on a library that is not present in the execution environment.</p>
       </div>
     </div>
 
-    <div class="finding ok">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">C-03</span>
-        <span class="f-tag resolved">resolved</span>
-        <span class="f-title">design-system.html was self-inconsistent between its own button and its canonical code example</span>
+        <span class="f-id">CF-03</span>
+        <span class="f-tag fail">consistency</span>
+        <span class="f-title">design-system.html did not follow the standard it documented</span>
       </div>
       <div class="f-body">
-        <p>The design system page documents the canonical mode toggle as a text-label button (<code>id="modeBtn"</code>). Its own mode toggle was using the older SVG+label pattern (<code>id="modeToggle"</code>) with a different element ID. <em>Fix:</em> The page&rsquo;s own button was updated to match the standard it documents. Stale <code>.mode-toggle</code> CSS was removed.</p>
-        <p><em>For non-technical members:</em> The page that defines how our interface should look was not following its own rules. That has been corrected.</p>
+        <p>The design system page documented the canonical mode toggle as a text-label button with <code>id="modeBtn"</code> and class <code>.mode-btn</code>. The page&rsquo;s own button used <code>id="modeToggle"</code>, class <code>.mode-toggle</code>, and SVG icons — the older pattern. The page was teaching one thing and doing another. <em>Remediated:</em> Page&rsquo;s own button updated to the canonical pattern; stale CSS removed.</p>
+        <p><em>Root cause:</em> The design system was updated after some pages were written, without a retroactive consistency sweep.</p>
       </div>
     </div>
 
@@ -229,91 +212,91 @@ footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint)
 </section>
 
 <!-- ──────────────────────────────────────────── -->
-<section id="doc-gaps">
-  <div class="label">Section 2</div>
+<section id="documentation">
+  <div class="label">Failure category 2</div>
   <div class="rule"></div>
-  <h2>Documentation gaps</h2>
+  <h2>Documentation failures</h2>
 
-  <p>These are pieces of documentation that are referenced or implied by existing files but do not yet exist. They are not necessarily blocking, but each represents an assumption that a contributor or agent would have to resolve by inference.</p>
+  <p>Things were built, configured, or referenced without being documented. A contributor following the written record cannot reconstruct the system from it.</p>
 
   <div class="finding-list">
 
-    <div class="finding warn">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">D-01</span>
-        <span class="f-tag gap">gap</span>
+        <span class="f-id">DF-01</span>
+        <span class="f-tag fail">documentation</span>
         <span class="f-title">docs/SECRETS.md is referenced but does not exist</span>
       </div>
       <div class="f-body">
-        <p><code>docs/CONVENTIONS.md</code> references <code>docs/SECRETS.md</code> as the location for secrets handling documentation. The file does not exist in the repository. Any contributor or agent following the conventions file encounters a dead link. <em>Recommendation:</em> Create <code>docs/SECRETS.md</code> documenting the reference-not-value protocol: secrets live in <code>.secrets/</code>, are read at runtime via <code>cat</code>, and are never written into workspace files or commits.</p>
+        <p><code>docs/CONVENTIONS.md</code> references <code>docs/SECRETS.md</code> as the location for secrets handling documentation. The file was never created. An agent or contributor following the onboarding path encounters a dead reference at a critical security boundary.</p>
       </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">D-02</span>
-        <span class="f-tag gap">gap</span>
-        <span class="f-title">Supabase setup procedure is entirely undocumented</span>
+        <span class="f-id">DF-02</span>
+        <span class="f-tag fail">documentation</span>
+        <span class="f-title">Supabase project is entirely undocumented</span>
       </div>
       <div class="f-body">
-        <p>The system depends on a Supabase project (project ID: <code>hvbdpgkdcdskhpbdeeim</code>) with specific tables, views, RLS policies, and Edge Functions. There is no <code>docs/SUPABASE_SETUP.md</code> or equivalent. A new contributor has no path to recreate or audit the database schema without direct access to the Supabase dashboard. The <code>v_decision_leverage</code> view queried by <code>loop.html</code>, the <code>ledger-ingest</code> Edge Function, and the <code>agent_direct_messages</code> table are all undocumented. <em>Recommendation:</em> Create <code>docs/SUPABASE_SETUP.md</code> with table definitions, view DDL, and Edge Function entry points. Dump current schema DDL and commit it to <code>supabase/migrations/</code>.</p>
-        <p><em>For non-technical members:</em> We rely on a cloud database that has no written setup instructions. If we needed to rebuild or hand off to a new technical steward, we&rsquo;d be reconstructing it from memory.</p>
+        <p>The system depends on a live Supabase project (tables, views, Edge Functions, RLS policies). There is no <code>docs/SUPABASE_SETUP.md</code>, no schema DDL in the repository, and no Edge Function source code checked in. The database is a black box. A technical handoff or incident recovery would require reconstructing everything from the dashboard.</p>
+        <p><em>For non-technical members:</em> The cooperative&rsquo;s live database has no written setup instructions. If we needed to rebuild it or hand it to a new technical steward, we would be doing it from memory.</p>
       </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">D-03</span>
-        <span class="f-tag gap">gap</span>
-        <span class="f-title">C1&ndash;C5 contract identifiers are not mapped to actual files</span>
+        <span class="f-id">DF-03</span>
+        <span class="f-tag fail">documentation</span>
+        <span class="f-title">C1&ndash;C5 contract identifiers are not mapped to files</span>
       </div>
       <div class="f-body">
-        <p>The milestone system references contracts C1 through C11. C6&ndash;C11 are clearly mapped to HTML files in the commons site (e.g., <code>c6-schema-reference-card-v0.1.html</code>). C1&ndash;C5 are not present as files or documented anywhere in the repository. It is unclear whether they represent documents that have not yet been created, documents with different naming, or a numbering scheme that starts at C6 for this phase. <em>Recommendation:</em> Add a mapping section to <code>docs/CONVENTIONS.md</code> or a new <code>docs/CONTRACTS.md</code> listing C1&ndash;C5 with their intended document names or explicit &ldquo;reserved / future wave&rdquo; status.</p>
+        <p>The Builder&rsquo;s Collection map references contracts C1 through C11. C6&ndash;C11 are clearly mapped to HTML files in the commons site. C1&ndash;C5 have no corresponding files and no documentation stating whether they are forthcoming, reserved, or named differently. A contributor reading the map cannot determine whether C1&ndash;C5 represent a gap or a deliberate decision.</p>
       </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">D-04</span>
-        <span class="f-tag gap">gap</span>
-        <span class="f-title">VERIFICATION.md lists CI jobs that do not exist</span>
-      </div>
-      <div class="f-body">
-        <p><code>VERIFICATION.md</code> describes a verification matrix with nine CI job types (schema lint, link check, milestone graph validation, etc.). None of these jobs exist in <code>.github/workflows/</code>. The only active workflow is <code>loop-sync.yml</code>, which pushes <code>milestones/index.json</code> to Supabase on every push to main. <em>Recommendation:</em> Either implement the CI jobs in W0 (the schema lint is the highest-value first candidate), or update VERIFICATION.md to distinguish &ldquo;planned&rdquo; from &ldquo;implemented&rdquo; jobs so contributors aren&rsquo;t confused about what is actually running.</p>
-        <p><em>For non-technical members:</em> We have a document describing automated quality checks, but the checks themselves haven&rsquo;t been built yet. This is normal for an early-stage system, but the document implies they exist.</p>
-      </div>
-    </div>
-
-    <div class="finding warn">
-      <div class="f-head">
-        <span class="f-id">D-05</span>
-        <span class="f-tag gap">gap</span>
+        <span class="f-id">DF-04</span>
+        <span class="f-tag fail">documentation</span>
         <span class="f-title">v_decision_leverage Supabase view is undocumented</span>
       </div>
       <div class="f-body">
-        <p><code>loop.html</code> queries <code>v_decision_leverage</code> via the Supabase REST API to show open decisions ranked by leverage. The view&rsquo;s DDL, what columns it exposes, how it calculates leverage, and what RLS policy governs it are not documented anywhere in the repository. If the view is dropped or modified, the loop instrument breaks silently. <em>Recommendation:</em> Document the view definition in <code>docs/SUPABASE_SETUP.md</code> and add a note in the loop instrument source that names the view and its expected shape.</p>
+        <p><code>loop.html</code> queries the <code>v_decision_leverage</code> view via the Supabase REST API. The view&rsquo;s DDL, column shape, leverage calculation logic, and RLS policy are not documented anywhere in the repository. If the view is modified or dropped, the loop instrument breaks silently and there is no written definition to restore from.</p>
       </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">D-06</span>
-        <span class="f-tag gap">gap</span>
-        <span class="f-title">Wave-boundary briefs not authored (milestones/G/ missing)</span>
+        <span class="f-id">DF-05</span>
+        <span class="f-tag fail">documentation</span>
+        <span class="f-title">Wave gate milestones directory (milestones/G/) does not exist</span>
       </div>
       <div class="f-body">
-        <p>The milestone schema includes a <code>G/</code> subdirectory for gate milestones that govern wave-boundary transitions. This directory does not exist. The wave-boundary authoring guide (<code>c10-wave-boundary-authoring-guide-v0.1.html</code>) documents how to write these, but none have been written. W0 concludes with a gate milestone (W0.G) that verifies substrate readiness before W1 begins. Without the gate file, the gating mechanism has no record to check. <em>Recommendation:</em> Author <code>milestones/G/W0.G-substrate-gate.md</code> as part of W0 setup, following the authoring guide.</p>
+        <p>The milestone schema includes a <code>G/</code> directory for gate milestones that govern wave-boundary transitions. The directory does not exist. The wave-boundary authoring guide documents how to write gate files, but none have been written. W0 cannot formally complete without a gate milestone. The gating mechanism is defined but has no records to check.</p>
       </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">D-07</span>
-        <span class="f-tag gap">gap</span>
+        <span class="f-id">DF-06</span>
+        <span class="f-tag fail">documentation</span>
         <span class="f-title">C4 synthetic persona fixture pack is absent</span>
       </div>
       <div class="f-body">
-        <p>The milestone <code>C9-kpi-fixture-pack-v0.1.html</code> references C4 (the synthetic persona fixture pack) as a dependency for realistic KPI testing. C4 does not exist as a file. Without it, KPI fixture tests will use abstract numbers rather than realistic member behavior patterns. <em>Recommendation:</em> Create the C4 synthetic persona fixture pack in W0 or early W1, covering at least three distinct member archetypes (e.g., high-patronage individual, low-activity individual, organizational member).</p>
+        <p>The KPI fixture pack (C9) depends on C4 (synthetic persona fixture pack) for realistic member behavior data. C4 does not exist. KPI fixture tests will produce abstract numbers rather than behavior-grounded ones until it does.</p>
+      </div>
+    </div>
+
+    <div class="finding fail">
+      <div class="f-head">
+        <span class="f-id">DF-07</span>
+        <span class="f-tag fail">documentation</span>
+        <span class="f-title">Ledger history and audit trail behavior undocumented</span>
+      </div>
+      <div class="f-body">
+        <p>The <code>ledger-ingest</code> Edge Function updates the Supabase ledger on every push. Whether it appends (preserving history) or upserts (overwriting) is not documented. For a cooperative accounting system, whether historical states are preserved is a material question. The behavior is unknown from the repository record alone.</p>
+        <p><em>For non-technical members:</em> Every time we push a change, our milestone ledger is updated. Whether past states are kept or replaced is an important question for a cooperative that needs auditable records. We do not currently know the answer from our own documentation.</p>
       </div>
     </div>
 
@@ -321,103 +304,67 @@ footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint)
 </section>
 
 <!-- ──────────────────────────────────────────── -->
-<section id="arch-gaps">
-  <div class="label">Section 3</div>
+<section id="specification">
+  <div class="label">Failure category 3</div>
   <div class="rule"></div>
-  <h2>Architectural gaps</h2>
+  <h2>Specification failures</h2>
 
-  <p>These are structural pieces that the system will need to function as described but that have not yet been built or specified in sufficient detail. Most are W0 deliverables; they are named here so the W0 work plan can address them deliberately.</p>
+  <p>Specifications described things as existing that do not exist, or deferred things without specifying the interim state.</p>
 
   <div class="finding-list">
 
-    <div class="finding info">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">A-01</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">CI pipeline does not exist beyond loop-sync</span>
+        <span class="f-id">SF-01</span>
+        <span class="f-tag fail">specification</span>
+        <span class="f-title">VERIFICATION.md describes nine CI jobs that have not been implemented</span>
       </div>
       <div class="f-body">
-        <p>The only GitHub Actions workflow is <code>loop-sync.yml</code>. There is no schema lint, no broken-link check, no milestone graph validation, and no HTML validity check. These are all described in VERIFICATION.md as automated. The practical risk is that malformed milestone YAML, invalid status values, or broken internal links can be merged to main without any automated catch. <em>W0 deliverable:</em> At minimum, a schema lint job that runs <code>scripts/validate.py</code> (or a Node.js equivalent) on every PR and push to main.</p>
+        <p>VERIFICATION.md describes a full verification matrix: schema lint, link check, milestone graph validation, HTML validity check, and more. None of these jobs exist in <code>.github/workflows/</code>. The only active workflow is <code>loop-sync.yml</code>. A contributor reading VERIFICATION.md would conclude that automated quality checks are running. They are not. Malformed milestone YAML, invalid status values, and broken internal links can be merged to main without automated detection.</p>
       </div>
     </div>
 
-    <div class="finding info">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">A-02</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">D3 record does not specify the canonical repository URL</span>
+        <span class="f-id">SF-02</span>
+        <span class="f-tag fail">specification</span>
+        <span class="f-title">D3 decision record omits the canonical repository URL</span>
       </div>
       <div class="f-body">
-        <p>Decision D3 (repository visibility) records that the repository is public from first commit, but does not name the canonical URL. The repository is currently at <code>github.com/Techne-Co-op/commons</code>; this is consistent across the site but is implicit, not declared. <em>Recommendation:</em> Add one line to <code>docs/decisions/D3.md</code> specifying the canonical URL so it is on the record and not inferred from the GitHub remote.</p>
+        <p>Decision D3 records that the repository is public from first commit. It does not state the canonical URL. The repository is consistently referenced as <code>github.com/Techne-Co-op/commons</code> across the site, but this is inferred from the GitHub remote, not declared in the decision record.</p>
       </div>
     </div>
 
-    <div class="finding info">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">A-03</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">decision_refs field is described but unpopulated in most milestones</span>
+        <span class="f-id">SF-03</span>
+        <span class="f-tag fail">specification</span>
+        <span class="f-title">decision_refs field populated only in W0.1; graph is sparser than intended</span>
       </div>
       <div class="f-body">
-        <p>The milestone schema includes a <code>decision_refs</code> array field that adds decisions to a milestone&rsquo;s dependency graph. It is populated in W0.1 (which has <code>D3</code> as a parent via this field) but is empty in all other milestones. This means the dependency graph is sparser than intended. Decisions like D1 (front-end framework) should arguably appear as parents of W1 milestones that depend on Astro. <em>Recommendation:</em> As part of W0, do a pass through the milestone graph and populate <code>decision_refs</code> where a decision is a genuine precondition for a milestone&rsquo;s work.</p>
+        <p>The <code>decision_refs</code> field connects decisions to milestones in the dependency graph. It is populated in W0.1 (D3 as a parent) and empty everywhere else. Decisions like D1 (front-end framework, Astro) and D6 (access posture, Supabase auth) are genuine preconditions for multiple W1 milestones but do not appear as graph parents. The build dependency graph is structurally incomplete.</p>
       </div>
     </div>
 
-    <div class="finding info">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">A-04</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">No agent heartbeat or presence mechanism exists</span>
+        <span class="f-id">SF-04</span>
+        <span class="f-tag fail">specification</span>
+        <span class="f-title">D8 attestation deferral lacks an interim specification</span>
       </div>
       <div class="f-body">
-        <p>AGENTS.md describes a Workshop coordination protocol including presence heartbeats. The Workshop API is live, but there is no scheduled task or cron job in the commons repository that sends heartbeats. Nou&rsquo;s Workshop state lives in the agent&rsquo;s runtime session files and is not durably recorded in the repository. <em>Recommendation:</em> The heartbeat mechanism is out of scope for the commons repository itself (it belongs to the agent configuration), but the commons <code>AGENTS.md</code> should clarify that heartbeats are an agent-session responsibility, not a repository CI responsibility.</p>
-        <p><em>For non-technical members:</em> Our agents are supposed to check in regularly to a shared workspace. That check-in system is configured in the agents&rsquo; runtime environment, not in this repository. The documentation should say so clearly.</p>
+        <p>D8 deferred public blockchain attestation to beyond alpha, with a local Merkle tree at the database level noted as a possible interim substitute. The Merkle tree approach is named but not specified or implemented. Until W3 or later, attestation of patronage transactions relies entirely on database trust. The interim mechanism is neither defined nor acknowledged as absent.</p>
       </div>
     </div>
 
-    <div class="finding info">
+    <div class="finding fail">
       <div class="f-head">
-        <span class="f-id">A-05</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">No export or archive mechanism for milestones/index.json history</span>
+        <span class="f-id">SF-05</span>
+        <span class="f-tag fail">specification</span>
+        <span class="f-title">Loop probe mechanism described conceptually but not specified technically</span>
       </div>
       <div class="f-body">
-        <p>The Supabase ledger is updated on every push via loop-sync. The <code>ledger-ingest</code> Edge Function presumably upserts records. Whether the previous state is preserved (an append-only audit trail) or overwritten (last-write-wins) is not documented. For a cooperative accounting system, auditability of state changes is significant. <em>Recommendation:</em> Document the ingest function&rsquo;s upsert behavior. If it overwrites, add a <code>ledger_history</code> table or use Supabase&rsquo;s point-in-time recovery as the audit mechanism.</p>
-        <p><em>For non-technical members:</em> Our milestone ledger gets updated every time we push changes to the repository. Whether it keeps a history of past states, or just the current one, is an important question for a cooperative that needs to be able to audit its own records.</p>
-      </div>
-    </div>
-
-    <div class="finding info">
-      <div class="f-head">
-        <span class="f-id">A-06</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">Attestation mechanism (D8) deferred; no interim substitute specified</span>
-      </div>
-      <div class="f-body">
-        <p>D8 deferred public blockchain attestation to beyond alpha, with a local Merkle tree at the database level as an interim substitute. The Merkle tree approach is not specified or implemented. Until W3 or later, attestation of patronage transactions is entirely trust-based (recorded in the database, no cryptographic commitment). This is acceptable for alpha, but the decision record should be updated to name the interim mechanism explicitly (e.g., &ldquo;SHA-256 content hash stored in <code>attestation_hash</code> column of the transactions table&rdquo;). <em>Recommendation:</em> Before W3, define the interim Merkle approach in enough detail that it can be implemented in W2.3.</p>
-      </div>
-    </div>
-
-    <div class="finding info">
-      <div class="f-head">
-        <span class="f-id">A-07</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">loop.html probe mechanism unspecified</span>
-      </div>
-      <div class="f-body">
-        <p><code>loop.html</code> shows a cybernetic loop diagram with a &ldquo;probe&rdquo; element. The probe&rsquo;s data source, query shape, and update cadence are not specified anywhere in the repository or associated contract files. The loop instrument currently renders the leverage view from Supabase but the probe&rsquo;s meaning in the CIS architecture is only described at a high conceptual level. <em>Recommendation:</em> Add a technical specification for the loop probe to <code>c8-nou-gateway-spec-v0.1.html</code> or a new dedicated contract, defining what data the probe surfaces and how often it updates.</p>
-      </div>
-    </div>
-
-    <div class="finding info">
-      <div class="f-head">
-        <span class="f-id">A-08</span>
-        <span class="f-tag noted">noted</span>
-        <span class="f-title">Astro build pipeline is decided but not scaffolded</span>
-      </div>
-      <div class="f-body">
-        <p>D1 decided on Astro as the front-end framework. The <code>milestones/W1/</code> directory contains W1 milestones describing the Astro scaffolding work, but no Astro project exists in the repository. The current site is static HTML. The W0 substrate work includes setting up the build toolchain; this gap is expected and on-roadmap. It is noted here for completeness. <em>W0 deliverable:</em> <code>W0.4</code> covers Astro scaffolding and is the appropriate place for this work.</p>
-        <p><em>For non-technical members:</em> We&rsquo;ve decided which tool we&rsquo;ll use to build the member-facing site. The current pages are hand-written. The W0 phase will set up the proper build process.</p>
+        <p><code>loop.html</code> presents the probe as a component of the cybernetic loop. Its data source, query shape, update cadence, and role in the CIS architecture are described at a conceptual level only. There is no technical specification. The probe is a named but undefined system component.</p>
       </div>
     </div>
 
@@ -425,109 +372,208 @@ footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint)
 </section>
 
 <!-- ──────────────────────────────────────────── -->
-<section id="build-readiness">
-  <div class="label">Section 4</div>
+<section id="learnings">
+  <div class="label">Learnings</div>
   <div class="rule"></div>
-  <h2>Build readiness assessment</h2>
+  <h2>Eight learnings for the build phase</h2>
 
-  <p>W0 substrate can begin. The pre-build decision phase is complete. The gaps identified above are either W0 deliverables (and thus expected) or documentation work that can proceed in parallel without blocking build steps.</p>
-
-  <p>The highest-priority items before W1 can begin:</p>
+  <p>These are not retrospective observations. They are forward-looking protocols. Each learning names a behavior change the build phase must adopt to prevent the same category of failure from accumulating.</p>
 
   <div class="finding-list">
 
-    <div class="finding warn">
+    <div class="finding learn">
       <div class="f-head">
-        <span class="f-id">P-01</span>
-        <span class="f-tag gap">before W1</span>
-        <span class="f-title">Create docs/SECRETS.md (D-01)</span>
+        <span class="f-id">L-01</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Documentation is a deliverable, not a follow-up</span>
       </div>
-      <div class="f-body"><p>Referenced but absent. Any agent or contributor onboarding follows CONVENTIONS.md and hits a dead reference. Low effort, high orientation value.</p></div>
+      <div class="f-body">
+        <p>DF-01 through DF-07 all share one root cause: a thing was built and its documentation was deferred to later. Later never came. <em>Protocol:</em> A milestone is not complete until its documentation is complete. If a milestone creates a Supabase table, the migration DDL and RLS policy are committed in the same PR. If a milestone references a document, that document exists before the milestone closes.</p>
+      </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding learn">
       <div class="f-head">
-        <span class="f-id">P-02</span>
-        <span class="f-tag gap">before W1</span>
-        <span class="f-title">Document Supabase schema and Edge Functions (D-02, D-05)</span>
+        <span class="f-id">L-02</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Never describe automation as existing before it does</span>
       </div>
-      <div class="f-body"><p>Without this, the database is a black box. Any incident or handoff is significantly harder. W0.2 (Supabase project setup) is the natural home for this documentation.</p></div>
+      <div class="f-body">
+        <p>SF-01 is the clearest failure: VERIFICATION.md reads as though CI jobs are running. They are not. A specification that describes a future state as present is a false record. <em>Protocol:</em> All specification language must be either present-tense-accurate or explicitly marked as &ldquo;planned&rdquo; or &ldquo;W[n] deliverable.&rdquo; A table in a spec with no &ldquo;implemented / planned&rdquo; column is a liability.</p>
+      </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding learn">
       <div class="f-head">
-        <span class="f-id">P-03</span>
-        <span class="f-tag gap">before W1</span>
-        <span class="f-title">Implement schema lint CI job (A-01, D-04)</span>
+        <span class="f-id">L-03</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Every reference must resolve to a file or an explicit placeholder</span>
       </div>
-      <div class="f-body"><p>The validate.py script already exists but cannot run in CI without Python. Either port the validation to Node.js (no additional dependency) or add a Python setup step to the GitHub Action. This is the single highest-leverage CI investment: it catches malformed milestone YAML before it reaches main.</p></div>
+      <div class="f-body">
+        <p>DF-01, DF-03, and DF-05 are the same failure: a reference with no referent. <em>Protocol:</em> Before any document or milestone is closed, verify that every reference in it either points to an existing file or is annotated as &ldquo;reserved / [wave]&rdquo;. A broken reference at close time is a rejected close.</p>
+      </div>
     </div>
 
-    <div class="finding warn">
+    <div class="finding learn">
       <div class="f-head">
-        <span class="f-id">P-04</span>
-        <span class="f-tag gap">before W1</span>
-        <span class="f-title">Author W0.G gate milestone (D-06)</span>
+        <span class="f-id">L-04</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Static pages that mirror dynamic state require a binding or a flag</span>
       </div>
-      <div class="f-body"><p>The wave-gate mechanism has no records to check until the gate files exist. W0 cannot formally complete without a gate milestone to verify against.</p></div>
+      <div class="f-body">
+        <p>CF-01 is a drift problem: a static HTML decision register that cannot update itself when decisions are recorded. <em>Protocol:</em> Any static page that mirrors dynamic state (decision statuses, milestone counts) must either be data-bound (fetch from index.json at load time) or carry a visible &ldquo;as of [date]&rdquo; marker so readers know it may be stale. The index.html decision register should be replaced with a live fetch from Supabase in W1.</p>
+      </div>
+    </div>
+
+    <div class="finding learn">
+      <div class="f-head">
+        <span class="f-id">L-05</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Design system compliance must be verified before merge, not at audit</span>
+      </div>
+      <div class="f-body">
+        <p>CF-03 was found by a manual audit. It should have been caught at the time the page was written or last edited. <em>Protocol:</em> The CI pipeline should include an HTML lint pass that checks for disallowed patterns (e.g., <code>id="modeToggle"</code> appearing in any page that is not the design system itself, duplicate token declarations in <code>&lt;style&gt;</code> blocks that conflict with commons.css).</p>
+      </div>
+    </div>
+
+    <div class="finding learn">
+      <div class="f-head">
+        <span class="f-id">L-06</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Deferrals must specify the interim state explicitly</span>
+      </div>
+      <div class="f-body">
+        <p>SF-04 (D8 attestation) and SF-05 (loop probe) share a structure: a thing is deferred without defining what holds its place. A deferral that says &ldquo;we will do X later&rdquo; without saying &ldquo;until then, Y is the interim state&rdquo; creates a gap in the record. <em>Protocol:</em> Every deferral in a decision record must name the interim mechanism, even if the interim mechanism is &ldquo;none; not yet required.&rdquo;</p>
+      </div>
+    </div>
+
+    <div class="finding learn">
+      <div class="f-head">
+        <span class="f-id">L-07</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Dependency graph completeness is a build input, not a documentation nicety</span>
+      </div>
+      <div class="f-body">
+        <p>SF-03 shows a dependency graph that is structurally correct but semantically sparse. The automated gating checks only work if the graph accurately reflects what actually blocks what. An incomplete graph means the gate check will pass milestones that are not genuinely ready. <em>Protocol:</em> Before a wave begins, the <code>decision_refs</code> and <code>depends_on</code> fields for all milestones in that wave must be reviewed and confirmed against the actual work sequence. This is a wave-planning step, not a documentation step.</p>
+      </div>
+    </div>
+
+    <div class="finding learn">
+      <div class="f-head">
+        <span class="f-id">L-08</span>
+        <span class="f-tag learn">learning</span>
+        <span class="f-title">Generated artifacts must have a regeneration path that works in the execution environment</span>
+      </div>
+      <div class="f-body">
+        <p>CF-02 (STATUS.md staleness) was caused by a hard dependency on PyYAML in an environment where Python package installation is not available. <em>Protocol:</em> Before any generated artifact is added to the repository, verify that the generation script can run in CI (the GitHub Actions environment) and in the agent&rsquo;s execution environment. If it cannot, either port the script or remove the artifact and replace with a CI-generated output.</p>
+      </div>
     </div>
 
   </div>
 </section>
 
 <!-- ──────────────────────────────────────────── -->
-<section id="what-is-working">
-  <div class="label">Section 5</div>
+<section id="w0-actions">
+  <div class="label">W0 actions</div>
   <div class="rule"></div>
-  <h2>What is working well</h2>
+  <h2>Four actions before W1 can begin</h2>
 
-  <p>The audit is not only a list of gaps. The following structural elements are solid and should be preserved as the build proceeds.</p>
+  <p>These are not recommendations. They are prerequisites. W1 work begins after each is complete.</p>
+
+  <div class="finding-list">
+
+    <div class="finding fail">
+      <div class="f-head">
+        <span class="f-id">W0-01</span>
+        <span class="f-tag action">W0 action</span>
+        <span class="f-title">Create docs/SECRETS.md</span>
+      </div>
+      <div class="f-body"><p>Referenced but absent. Any agent or contributor onboarding follows CONVENTIONS.md and hits a dead reference at the security boundary. Addresses DF-01.</p></div>
+    </div>
+
+    <div class="finding fail">
+      <div class="f-head">
+        <span class="f-id">W0-02</span>
+        <span class="f-tag action">W0 action</span>
+        <span class="f-title">Document Supabase schema, views, and Edge Functions</span>
+      </div>
+      <div class="f-body"><p>Commit schema DDL to <code>supabase/migrations/</code> and create <code>docs/SUPABASE_SETUP.md</code> covering table definitions, <code>v_decision_leverage</code> DDL, <code>ledger-ingest</code> function logic, and upsert vs. append behavior. Addresses DF-02, DF-04, DF-07.</p></div>
+    </div>
+
+    <div class="finding fail">
+      <div class="f-head">
+        <span class="f-id">W0-03</span>
+        <span class="f-tag action">W0 action</span>
+        <span class="f-title">Implement schema lint CI job</span>
+      </div>
+      <div class="f-body"><p>Port milestone validation to Node.js (no external dependencies) and add a GitHub Actions job that runs on every PR and push to main. This is the single highest-leverage CI investment: it catches malformed YAML and invalid status values before they reach main. Addresses SF-01, CF-02 (long-term).</p></div>
+    </div>
+
+    <div class="finding fail">
+      <div class="f-head">
+        <span class="f-id">W0-04</span>
+        <span class="f-tag action">W0 action</span>
+        <span class="f-title">Author W0.G gate milestone</span>
+      </div>
+      <div class="f-body"><p>The gating mechanism has no records to check until the gate files exist. W0 cannot formally complete without a gate milestone to verify against. Follow the wave-boundary authoring guide (C10) to create <code>milestones/G/W0.G-substrate-gate.md</code>. Addresses DF-05.</p></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────── -->
+<section id="working">
+  <div class="label">What held</div>
+  <div class="rule"></div>
+  <h2>Five structural elements that survived the audit</h2>
+
+  <p>The failure framing does not mean the system is in poor shape. The following elements are solid and must be preserved as the build proceeds. The audit found these because they were consistent; that consistency is itself evidence of discipline.</p>
 
   <div class="finding-list">
 
     <div class="finding ok">
       <div class="f-head">
-        <span class="f-id">W-01</span>
-        <span class="f-tag resolved">solid</span>
+        <span class="f-id">OK-01</span>
+        <span class="f-tag ok">solid</span>
         <span class="f-title">Milestone schema and validation contract are coherent</span>
       </div>
-      <div class="f-body"><p>The YAML front matter schema, the allowed status values, the dependency graph fields, and the validate.py script are internally consistent. The schema.json is the single source of truth and the validator enforces it. This is a strong foundation for the automated CI work ahead.</p></div>
+      <div class="f-body"><p>The YAML front matter schema, allowed status values, dependency graph fields, and validate.py script are internally consistent. schema.json is the single source of truth and the validator enforces it. This is a strong foundation for the automated CI work ahead.</p></div>
     </div>
 
     <div class="finding ok">
       <div class="f-head">
-        <span class="f-id">W-02</span>
-        <span class="f-tag resolved">solid</span>
-        <span class="f-title">loop-sync pipeline is live and tested</span>
+        <span class="f-id">OK-02</span>
+        <span class="f-tag ok">solid</span>
+        <span class="f-title">loop-sync pipeline is live and verified</span>
       </div>
-      <div class="f-body"><p>Every push to main triggers loop-sync, which POSTs index.json to the Supabase ledger-ingest Edge Function and updates the v_decision_leverage view. This was verified across all ten decision commits. The cybernetic loop between the repository and the live loop instrument is functioning.</p></div>
+      <div class="f-body"><p>Every push to main triggers loop-sync, which POSTs index.json to the Supabase ledger-ingest Edge Function and updates the v_decision_leverage view. Verified across all ten decision commits. The cybernetic loop between the repository and the live instrument is functioning.</p></div>
     </div>
 
     <div class="finding ok">
       <div class="f-head">
-        <span class="f-id">W-03</span>
-        <span class="f-tag resolved">solid</span>
-        <span class="f-title">Design system is internally consistent across all pages</span>
+        <span class="f-id">OK-03</span>
+        <span class="f-tag ok">solid</span>
+        <span class="f-title">Design system is consistent across all fourteen pages (post-remediation)</span>
       </div>
-      <div class="f-body"><p>All 14 HTML pages now share commons.css, use the unified <code>commons-mode</code> localStorage key for dark/light preference, and follow one of three documented layout grammars (index, instrument, document). The design-system.html self-inconsistency was the only remaining gap and has been resolved.</p></div>
+      <div class="f-body"><p>All fourteen HTML pages now share commons.css, use the unified <code>commons-mode</code> localStorage key for dark/light preference, and follow one of three documented layout grammars (index, instrument, document). The one self-inconsistency identified by this audit has been remediated.</p></div>
     </div>
 
     <div class="finding ok">
       <div class="f-head">
-        <span class="f-id">W-04</span>
-        <span class="f-tag resolved">solid</span>
+        <span class="f-id">OK-04</span>
+        <span class="f-tag ok">solid</span>
         <span class="f-title">Decision record format is clear and human-auditable</span>
       </div>
-      <div class="f-body"><p>The docs/decisions/ files have a consistent structure: front matter with status and decided_by, a context section, a proposed default, and a record of decision. All ten pre-build decisions follow this format. Non-technical members can read any decision file and understand who decided what, when, and why.</p></div>
+      <div class="f-body"><p>The <code>docs/decisions/</code> files have a consistent structure: front matter with status and decided_by, context, proposed default, and record of decision. All ten pre-build decisions follow this format. A non-technical member can read any file and understand who decided what, when, and why.</p></div>
     </div>
 
     <div class="finding ok">
       <div class="f-head">
-        <span class="f-id">W-05</span>
-        <span class="f-tag resolved">solid</span>
-        <span class="f-title">Agent operating contract is specific and comprehensive</span>
+        <span class="f-id">OK-05</span>
+        <span class="f-tag ok">solid</span>
+        <span class="f-title">Agent operating contract is specific and enforced</span>
       </div>
-      <div class="f-body"><p>AGENTS.md covers session start sequence, file edit protocol, commit signing, status vocabulary, what agents may and may not do, and the Workshop coordination protocol. It is detailed enough that a new agent can operate without ambiguity about its role. The &ldquo;agents never set [decision] status&rdquo; boundary is explicit and consistently enforced.</p></div>
+      <div class="f-body"><p>AGENTS.md covers session start sequence, file edit protocol, commit signing, status vocabulary, agent boundaries, and Workshop coordination. It is detailed enough that an agent can operate without ambiguity. The &ldquo;agents never set decision status&rdquo; boundary is explicit and was consistently observed across all ten decision commits.</p></div>
     </div>
 
   </div>
@@ -539,54 +585,45 @@ footer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint)
   <div class="rule"></div>
   <h2>Glossary for non-technical members</h2>
 
-  <p><strong>Repository</strong> &mdash; The shared folder (on GitHub) where all project files live: milestone records, decision logs, site pages, scripts, and automation rules. Think of it as the cooperative&rsquo;s filing cabinet, but one where every change is recorded with a timestamp and author.</p>
+  <p><strong>Repository</strong> &mdash; The shared project folder (on GitHub) where all files live: milestone records, decision logs, site pages, scripts, and automation rules. Every change is recorded with a timestamp and author.</p>
 
-  <p><strong>Milestone</strong> &mdash; A specific, verifiable piece of work. Each milestone has a status (pending, in progress, done), a list of what it depends on, and a definition of what &ldquo;done&rdquo; means. The 70 milestones are organized into waves.</p>
+  <p><strong>Milestone</strong> &mdash; A specific, verifiable piece of work with a status (pending, in progress, done), a list of dependencies, and a definition of what &ldquo;done&rdquo; means.</p>
 
-  <p><strong>Wave</strong> &mdash; A phase of the build. W0 is the substrate (foundation). W1&ndash;W6 are successive layers. Each wave gates the next: W0 must be complete and verified before W1 begins.</p>
+  <p><strong>Wave</strong> &mdash; A phase of the build. W0 is the substrate (foundation). W1&ndash;W6 are successive layers. Each wave gates the next.</p>
 
-  <p><strong>Decision (D1&ndash;D10)</strong> &mdash; A question that needed an answer before building could begin. Who holds the lease? Which tools do we use? Are member data public or private? All ten have been answered and recorded by the organizers.</p>
+  <p><strong>CI (Continuous Integration)</strong> &mdash; Automated quality checks that run whenever anyone proposes a change. These prevent errors from entering the shared record without a human having to catch them manually.</p>
 
-  <p><strong>Supabase</strong> &mdash; The cloud database behind the live instruments (the HUD, the loop, the KPI fixtures). It stores the ledger data and serves it to the published site.</p>
+  <p><strong>Supabase</strong> &mdash; The cloud database behind the live instruments. It stores the ledger and serves it to the published site.</p>
 
-  <p><strong>loop-sync</strong> &mdash; An automated rule that runs every time a change is saved to the repository. It reads the milestone ledger and sends the updated state to the database, so the live instruments stay current.</p>
+  <p><strong>DDL (Data Definition Language)</strong> &mdash; The instructions that define the shape of a database: which tables exist, what columns they have, and who can read or write them. Committing DDL to the repository means the database can be rebuilt from the record.</p>
 
-  <p><strong>CI (Continuous Integration)</strong> &mdash; Automated quality checks that run whenever anyone proposes a change. These are partly built (loop-sync) and partly planned (schema lint, link checks). Having CI catch errors automatically means human reviewers spend their time on judgment calls, not mechanical checks.</p>
+  <p><strong>RLS (Row-Level Security)</strong> &mdash; The database permission layer. It controls which users can see which rows. This is how public KPIs are made visible while member data stays private.</p>
 
-  <p><strong>RLS (Row-Level Security)</strong> &mdash; The database&rsquo;s permission layer. It controls which users can see which rows. For the cooperative, this is how we make some data public (anonymized KPIs) while keeping member data private unless you&rsquo;re logged in.</p>
+  <p><strong>Gate milestone</strong> &mdash; A checkpoint milestone at the end of a wave. It verifies that all wave work is complete before the next wave can begin. Like a quality inspection before the next production run.</p>
 
 </section>
 
 <footer>
-  Pre-Build Audit v0.1 &middot; RegenHub, LCA &middot; Boulder, Colorado &middot; June 2026 &middot;
-  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>Techne-Co-op/commons</span> &middot;
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a> &middot;
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
 </footer>
 
 </div><!-- /.page -->
 <script>
 (function () {
   var root = document.documentElement;
-  var btn = document.getElementById('modeToggle');
-  var label = document.getElementById('modeLabel');
-  var icon = document.getElementById('modeIcon');
-  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
-  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
-  function apply(mode) {
-    root.setAttribute('data-mode', mode);
-    label.textContent = mode;
-    icon.innerHTML = mode === 'dark' ? moon : sun;
-    try { localStorage.setItem('commons-mode', mode); } catch(_) {}
-  }
+  var btn  = document.getElementById('modeBtn');
   var stored = null;
-  try { stored = localStorage.getItem('commons-mode'); } catch(_) {}
-  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
-  apply(stored || (prefersLight.matches ? 'light' : 'dark'));
-  prefersLight.addEventListener('change', function(e) {
-    if (!stored) apply(e.matches ? 'light' : 'dark');
-  });
-  btn.addEventListener('click', function() {
-    stored = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
-    apply(stored);
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
   });
 })();
 </script>
