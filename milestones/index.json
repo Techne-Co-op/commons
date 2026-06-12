@@ -1,8 +1,8 @@
 {
  "schema": "milestones/schema.json",
- "entries": 67,
+ "entries": 70,
  "status_counts": {
-  "pending": 67,
+  "pending": 70,
   "in_progress": 0,
   "blocked": 0,
   "review": 0,
@@ -111,7 +111,7 @@
    "title": "attestation scope and key custody",
    "wave": "D",
    "kind": "decision",
-   "owner": "working group (CIS \u00a717)",
+   "owner": "working group (CIS §17)",
    "status": "pending",
    "detail": "briefed",
    "depends_on": [],
@@ -450,6 +450,50 @@
     "W0.3"
    ],
    "verification": "ci:functions-deploy"
+  },
+  {
+   "id": "W0.19",
+   "title": "library restructure and document manifest",
+   "wave": "W0",
+   "kind": "step",
+   "owner": "agent",
+   "status": "pending",
+   "detail": "briefed",
+   "depends_on": [
+    "W0.2"
+   ],
+   "expanded_parents": [
+    "D3"
+   ],
+   "verification": "ci:milestone-validate + human:organizers"
+  },
+  {
+   "id": "W0.20",
+   "title": "site build pipeline — derived views",
+   "wave": "W0",
+   "kind": "step",
+   "owner": "agent",
+   "status": "pending",
+   "detail": "briefed",
+   "depends_on": [
+    "W0.19"
+   ],
+   "expanded_parents": [],
+   "verification": "ci:pages-deploy + human:organizers"
+  },
+  {
+   "id": "W0.21",
+   "title": "decision-coherence and site-exhaustiveness validation",
+   "wave": "W0",
+   "kind": "step",
+   "owner": "agent",
+   "status": "pending",
+   "detail": "briefed",
+   "depends_on": [
+    "W0.2"
+   ],
+   "expanded_parents": [],
+   "verification": "ci:milestone-validate"
   },
   {
    "id": "W1.1",

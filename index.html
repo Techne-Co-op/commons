@@ -291,7 +291,7 @@ footer a:hover { color: var(--terra-text); }
     <p style="margin-top: 8px;">Two facts make the CIS urgent. The cooperative was filed February 6, 2026 and has immediate obligations: member capital accounts, bylaw compliance, records that counsel can rely on. At the same time, RegenHub received an Ethereum Everywhere grant ($20,000, running May through December 2026) to operate the Boulder Ethereum Community Hub &mdash; and that grant requires honest reporting on real events. The CIS is how those reports become trustworthy rather than improvised.</p>
 
     <h3 style="margin-top: 28px;">What this repository is</h3>
-    <p style="margin-top: 8px;">This is the build workspace. Everything needed to construct the CIS private alpha lives here: the full specification, a step-by-step build plan with 67 ordered milestones, an operating contract for the agents doing the work, and decision records that unlock the build tree. The build is designed for humans and AI agents working together under an explicit contract &mdash; <a class="inline" href="AGENTS.md">AGENTS.md</a> &mdash; that defines what agents may do, what they may not do, and when to stop and ask rather than invent.</p>
+    <p style="margin-top: 8px;">This is the build workspace. Everything needed to construct the CIS private alpha lives here: the full specification, a step-by-step build plan with 70 ordered milestones, an operating contract for the agents doing the work, and decision records that unlock the build tree. The build is designed for humans and AI agents working together under an explicit contract &mdash; <a class="inline" href="AGENTS.md">AGENTS.md</a> &mdash; that defines what agents may do, what they may not do, and when to stop and ask rather than invent.</p>
   </section>
 
   <div class="rule"></div>
@@ -301,7 +301,7 @@ footer a:hover { color: var(--terra-text); }
     <div class="section-label">Document library</div>
 
     <h2>Specifications, planning, and build artifacts</h2>
-    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Five primary documents organized by purpose. Start with the CIS PRD if you are new to the system. Use the roadmap instrument to trace the build sequence.</p>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Eleven documents in three groups: governing specifications and instruments, the Builder&rsquo;s Collection Map, and the C6&ndash;C11 artifact series. Start with the CIS PRD if you are new to the system; use the roadmap instrument to trace the build sequence.</p>
 
     <div class="doc-group">
       <div class="doc-group-label">Governing specifications</div>
@@ -420,7 +420,7 @@ footer a:hover { color: var(--terra-text); }
   <section class="section" id="build">
     <div class="section-label">Build status</div>
 
-    <h2>67 milestones &middot; W0 substrate + 6 build waves</h2>
+    <h2>70 milestones &middot; W0 substrate + 6 build waves</h2>
 
     <p>The build is organized into waves &mdash; discrete phases where each wave&rsquo;s work is completed and verified before the next begins. All milestones are currently pending. The build tree unlocks when the open decision items below are recorded by the organizers.</p>
 
@@ -428,7 +428,7 @@ footer a:hover { color: var(--terra-text); }
       <div class="wave-card needs-action">
         <div class="wave-id">D1&ndash;D10</div>
         <div class="wave-name">Decisions</div>
-        <div class="wave-count">9 open &middot; 1 resolved</div>
+        <div class="wave-count">10 open</div>
       </div>
       <div class="wave-card">
         <div class="wave-id">R1&ndash;R2</div>
@@ -478,10 +478,10 @@ footer a:hover { color: var(--terra-text); }
     </div>
 
     <p style="font-size: 13px; color: var(--muted); margin-top: 10px; margin-bottom: 12px;">Milestones are stored as validated YAML in <code>milestones/</code>. The <a class="inline" href="cis-build-roadmap-instrument-v0.2.html">roadmap instrument</a> is the full dependency graph view.</p>
-    <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 67 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
+    <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 70 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
 
     <h3>Decision register</h3>
-    <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. D3 is the key unlock: it is already resolved by fact (this repository is public and live), but a formal record in <code>docs/decisions/D3.md</code> is needed to open W0.1 and unblock the full build tree.</p>
+    <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. Statuses here reflect the recorded state in <code>docs/decisions/</code>. D3 is the key unlock: the repository is public and live, but a formal record in <code>docs/decisions/D3.md</code> (changing status from <code>open</code> to <code>decided</code>) is needed to open W0.1 and unblock the full build tree.</p>
 
     <div class="decision-list">
       <div class="decision-item">
@@ -494,10 +494,10 @@ footer a:hover { color: var(--terra-text); }
         <span class="d-title">Application form host</span>
         <span class="d-status">open</span>
       </div>
-      <div class="decision-item resolved">
+      <div class="decision-item">
         <span class="d-id">D3</span>
         <span class="d-title">Repository visibility and naming</span>
-        <span class="d-status resolved">resolved &middot; public</span>
+        <span class="d-status">open</span>
         <span class="d-unblock">unlocks W0.1</span>
       </div>
       <div class="decision-item">
@@ -562,14 +562,15 @@ footer a:hover { color: var(--terra-text); }
     <div class="repo-tree"><span class="cmt"># Techne-Co-op/commons  ·  github.com/Techne-Co-op/commons</span>
 <span class="dir">.</span>
 ├── <span class="file">AGENTS.md</span>            <span class="cmt"># operating contract — read first, every session</span>
-├── <span class="file">GOVERNANCE.md</span>        <span class="cmt"># contribution rules and PR process</span>
+├── <span class="file">GOVERNANCE.md</span>        <span class="cmt"># the ledger's mechanics — every status change is a commit</span>
 ├── <span class="file">README.md</span>            <span class="cmt"># bootstrap sequence and orientation</span>
 │
-├── <span class="dir">milestones/</span>           <span class="cmt"># 67 schema-valid YAML milestone files</span>
+├── <span class="dir">milestones/</span>           <span class="cmt"># 70 milestone files — .md with YAML front matter</span>
 │   ├── <span class="file">schema.json</span>      <span class="cmt"># milestone field definitions</span>
-│   ├── <span class="file">index.json</span>       <span class="cmt"># machine-readable ledger index</span>
+│   ├── <span class="file">index.json</span>       <span class="cmt"># machine-readable ledger index (generated)</span>
 │   ├── <span class="file">STATUS.md</span>        <span class="cmt"># human-readable status table (generated)</span>
-│   └── <span class="file">W0.1.yaml … P1.1.yaml</span>
+│   └── <span class="dir">D/ R/ W0/ W1/ W2/ W3/ W4/ W5/ W6/ G/ P/</span>
+│       └── <span class="file">D1-front-end-framework.md … W0.1-repo-bootstrap.md …</span>
 │
 ├── <span class="dir">docs/</span>
 │   ├── <span class="file">CONVENTIONS.md</span>   <span class="cmt"># RLS, DDL, naming rules, vocabulary quarantine</span>
@@ -599,7 +600,8 @@ footer a:hover { color: var(--terra-text); }
     ├── <span class="file">c8-nou-gateway-spec-v0.1.html</span>
     ├── <span class="file">c9-kpi-fixture-pack-v0.1.html</span>
     ├── <span class="file">c10-wave-boundary-authoring-guide-v0.1.html</span>
-    └── <span class="file">c11-wave-gates-v0.1.html</span></div>
+    ├── <span class="file">c11-wave-gates-v0.1.html</span>
+    └── <span class="file">hud.html</span>                                         <span class="cmt"># implementation HUD — live view of index.json</span></div>
 
     <p style="margin-top: 18px; font-size: 14px; color: var(--muted);">The <code>milestones/</code> ledger is validated on every pull request by <code>scripts/validate.py</code>, which checks schema compliance, graph acyclicity, and gating consistency. A milestone may not be marked <em>done</em> unless its upstream dependencies are verified. The validator runs on the CI workflow before any merge.</p>
 
