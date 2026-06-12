@@ -234,7 +234,7 @@ footer {
     <div class="c-body">
       <div class="c-title">Substrate conventions and fixtures</div>
       <div class="c-title-sub">docs/CONVENTIONS.md · docs/SECRETS.md · docs/citations.md · synthetic persona and fixture pack</div>
-      <div class="c-desc">RLS template with citation comments, event-envelope DDL, vocabulary quarantine word list, secret names and custody, the D7 register. Consumed by W0.3 through W0.8 and every schema step. Conventions shipped; fixture pack is the next artifact after this turn.</div>
+      <div class="c-desc">RLS template with citation comments, event-envelope DDL, vocabulary quarantine word list, secret names and custody, the D7 register. Consumed by W0.3 through W0.8 and every schema step. Conventions shipped; the synthetic persona fixture pack (test data for RLS probes, paired with C7) remains the one C4 deliverable not yet produced.</div>
     </div>
     <span class="c-status shipped">shipped</span>
   </div>
@@ -316,15 +316,21 @@ footer {
 </div>
 
 <!-- 04 What ships, with proof -->
-<div class="section-eyebrow" id="proof">04 &middot; What ships in this turn, with proof</div>
-<h2>The repo seed: 112 files, validator tested.</h2>
+<div class="section-eyebrow" id="proof">04 &middot; What ships, with proof</div>
+<h2>The repo seed: 112 files, validator tested. Then C6 through C11.</h2>
 
 <div class="proof-card">
-  <div class="proof-label">Verification record</div>
+  <div class="proof-label">Repo seed verification record</div>
   <p>The repo seed (cis-repo-seed-v0.1.zip, 112 files) contains C1, C2, C3, C5, and the conventions half of C4. The validator was exercised here, not merely written:</p>
   <p>Green on the full seed — 67 entries, 142 expanded edges, graph acyclic, gating consistent, index.json and STATUS.md regenerated.</p>
   <p>A deliberate negative test flipping W1.2 to done failed with the exact gating message (<em>status done but unverified parents: W1.1</em>) and exited nonzero. Restoration returned green.</p>
   <p>The validator also caught and survived one of its own bugs during testing, which is recorded honestly: it initially re-ingested its generated STATUS.md, and now excludes generated files by name.</p>
+</div>
+
+<div class="proof-card">
+  <div class="proof-label">C6 through C11 — shipped in the same session</div>
+  <p>All six remaining artifacts shipped as authored HTML files to the public repository and are live on GitHub Pages. C6 (schema reference card) is the synthesis that reconciles the CIS PRD and Hub Ops PRD information models, arriving at 31 tables (19 core + 12 Hub extensions) and tagging every fact by source. C7 (probe matrix) fills the 15 &times; 31 access-expectation grid. C8 (Nou gateway spec) translates the three PRD constraints into wire shapes and probes for W1.7. C9 (KPI fixture pack) defines the pass/fail weeks that drive ci:db-verify at W2.5. C10 (wave-boundary authoring guide) closes the collection's own loop: it is the procedure by which stubs become briefs. C11 (wave gates) defines the end-of-wave test suites and generates gate YAML files for milestones/G/.</p>
+  <p>The one C4 deliverable not yet produced: the synthetic persona fixture pack (test data for RLS probes at W0.x, distinct from C9's KPI fixtures).</p>
 </div>
 
 <!-- 05 Honest limits -->

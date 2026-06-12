@@ -309,7 +309,7 @@ footer a:hover { color: var(--terra-text); }
         <a class="doc-item" href="cis-prd-v0.2.html">
           <div class="doc-body">
             <div class="doc-title">CIS &middot; Product Requirements Document</div>
-            <div class="doc-desc">The canonical specification for the entire system. Covers the CROPS cooperative discipline, REA ontology, 19 cooperative core tables plus 9 Hub Ops extension tables, 15 roles, 13 modules, and a 6-phase roadmap from substrate through full interface. The source of truth for every build decision.</div>
+            <div class="doc-desc">The canonical specification for the entire system. Covers the CROPS cooperative discipline, REA ontology, 19 cooperative core tables plus 12 Hub Ops extension tables (31 total), 15 roles, 13 modules, and a 6-phase roadmap from substrate through full interface. The source of truth for every build decision. Note: §06 lists 9 Hub tables; the Hub Ops PRD and C6 are authoritative for the full 12.</div>
           </div>
           <div class="doc-meta">v0.2 &middot; Jun 2026</div>
         </a>
@@ -348,7 +348,62 @@ footer a:hover { color: var(--terra-text); }
         <a class="doc-item" href="builders-collection-map-v0.1.html">
           <div class="doc-body">
             <div class="doc-title">The Builder&rsquo;s Collection &middot; Map</div>
-            <div class="doc-desc">The C0&ndash;C10 artifact series that equips agents and humans to execute the build: the operating contract (C1), executable milestone ledger (C2), verification definitions (C3), conventions and fixtures (C4), decision briefs (C5), and forthcoming schema references, probe matrices, and authoring guides (C6&ndash;C10). What has shipped and what comes next.</div>
+            <div class="doc-desc">The C0&ndash;C11 artifact series: operating contract (C1), milestone ledger (C2), verification definitions (C3), conventions (C4), decision briefs (C5), schema reference card (C6), probe matrix (C7), Nou gateway spec (C8), KPI fixture pack (C9), wave-boundary authoring guide (C10), wave gates (C11). All shipped.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="doc-group">
+      <div class="doc-group-label">Builder&rsquo;s collection &middot; C6&ndash;C11</div>
+      <div class="doc-list">
+
+        <a class="doc-item" href="c6-schema-reference-card-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">C6 &middot; Schema Reference Card</div>
+            <div class="doc-desc">31 tables with three-tier source annotation (prd / plan / proposed). The synthesis of CIS PRD §06 and Hub Ops PRD §04. Agent input for migrations at W0.7 and every schema step after.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="c7-probe-matrix-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">C7 &middot; Probe Matrix</div>
+            <div class="doc-desc">15 roles &times; 31 tables: access expectations for the ci:rls-audit test suite. Source-coded (committed / derived / proposed) with plain and technical lenses. Consumed from W0.6 onward.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="c8-nou-gateway-spec-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">C8 &middot; Nou Gateway Spec</div>
+            <div class="doc-desc">The three-constraint harness &mdash; scoped impersonation, read-before-write, citation requirement &mdash; as implementable wire shapes and probes. Consumed at W1.7.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="c9-kpi-fixture-pack-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">C9 &middot; KPI Fixture Pack</div>
+            <div class="doc-desc">Designed pass and fail weeks for all three Hub KPIs. The ci:db-verify assertions for Hub §07 are proven from these fixtures, not hand-verified. Consumed at W2.5.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="c10-wave-boundary-authoring-guide-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">C10 &middot; Wave-Boundary Authoring Guide</div>
+            <div class="doc-desc">How stub entries in W3&ndash;W6 become full milestone briefs at each wave boundary: required sections, edge replacement, validator expectations. Consumed at W3.0 and each subsequent boundary.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="c11-wave-gates-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">C11 &middot; Wave Gates</div>
+            <div class="doc-desc">End-of-wave test suites (G0 security floor through G1 alpha gate) with required steps, CI suites, and human attestation requirements. Gate YAML files land in milestones/G/. Parts proven by steps; the whole proven here.</div>
           </div>
           <div class="doc-meta">v0.1 &middot; Jun 2026</div>
         </a>
@@ -364,7 +419,7 @@ footer a:hover { color: var(--terra-text); }
   <section class="section" id="build">
     <div class="section-label">Build status</div>
 
-    <h2>67 milestones across 6 waves</h2>
+    <h2>67 milestones &middot; W0 substrate + 6 build waves</h2>
 
     <p>The build is organized into waves &mdash; discrete phases where each wave&rsquo;s work is completed and verified before the next begins. All milestones are currently pending. The build tree unlocks when the open decision items below are recorded by the organizers.</p>
 
@@ -531,12 +586,18 @@ footer a:hover { color: var(--terra-text); }
 │   └── <span class="file">PULL_REQUEST_TEMPLATE.md</span>
 │
 └── <span class="cmt"># HTML documents  ·  served via GitHub Pages</span>
-    ├── <span class="file">index.html</span>                                   <span class="cmt"># this page</span>
+    ├── <span class="file">index.html</span>                                       <span class="cmt"># this page</span>
     ├── <span class="file">cis-prd-v0.2.html</span>
     ├── <span class="file">hub-ops-prd-v0.1.html</span>
     ├── <span class="file">cis-build-roadmap-instrument-v0.2.html</span>
     ├── <span class="file">builders-collection-map-v0.1.html</span>
-    └── <span class="file">cis-hubops-private-alpha-implementation-plan-v0.1.html</span></div>
+    ├── <span class="file">cis-hubops-private-alpha-implementation-plan-v0.1.html</span>
+    ├── <span class="file">c6-schema-reference-card-v0.1.html</span>
+    ├── <span class="file">c7-probe-matrix-v0.1.html</span>
+    ├── <span class="file">c8-nou-gateway-spec-v0.1.html</span>
+    ├── <span class="file">c9-kpi-fixture-pack-v0.1.html</span>
+    ├── <span class="file">c10-wave-boundary-authoring-guide-v0.1.html</span>
+    └── <span class="file">c11-wave-gates-v0.1.html</span></div>
 
     <p style="margin-top: 18px; font-size: 14px; color: var(--muted);">The <code>milestones/</code> ledger is validated on every pull request by <code>scripts/validate.py</code>, which checks schema compliance, graph acyclicity, and gating consistency. A milestone may not be marked <em>done</em> unless its upstream dependencies are verified. The validator runs on the CI workflow before any merge.</p>
 
