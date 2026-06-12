@@ -4,7 +4,7 @@ title: "lease-entity question"
 wave: D
 kind: decision
 owner: "board"
-status: pending
+status: done
 detail: briefed
 depends_on: []
 decision_refs: []

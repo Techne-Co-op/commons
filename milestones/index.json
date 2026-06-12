@@ -2,11 +2,11 @@
   "schema": "milestones/schema.json",
   "entries": 71,
   "status_counts": {
-    "pending": 61,
+    "pending": 60,
     "in_progress": 1,
     "blocked": 0,
     "review": 0,
-    "done": 9,
+    "done": 10,
     "verified": 0
   },
   "nodes": [
@@ -28,7 +28,7 @@
       "wave": "D",
       "kind": "decision",
       "owner": "board",
-      "status": "pending",
+      "status": "done",
       "detail": "briefed",
       "depends_on": [],
       "expanded_parents": [],
