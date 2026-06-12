@@ -795,9 +795,6 @@
   <span class="topbar-divider"></span>
   <span class="topbar-title">CIS Implementation HUD</span>
   <span class="topbar-sub">70 milestones &middot; W0 substrate + 6 build waves</span>
-  <span class="chip c-terra" title="Hub Operations · EE Grant · Phase 01 active" onclick="setHub()" style="cursor:pointer" id="hubChip">HUB OPS &middot; Ph01</span>
-  <span class="chip" title="Decision–Blocker Signal Loop" onclick="setLoop()" style="cursor:pointer" id="loopChip">LOOP</span>
-  <span class="chip" title="Documentation Fulfilment · 67 deliverables" onclick="setDoc()" style="cursor:pointer" id="docChip">DOC</span>
   <div class="topbar-chips" id="topChips"></div>
   <button class="mode-btn" id="modeBtn">light</button>
 </div>
@@ -1461,12 +1458,6 @@ function renderHubCtx() {
 function setHub() {
   hubMode = !hubMode;
   if (hubMode) { waveFilter = null; loopMode = false; docMode = false; }
-  const hc = document.getElementById('hubChip');
-  if (hc) hc.style.outline = hubMode ? '2px solid var(--terra)' : '';
-  const lc = document.getElementById('loopChip');
-  if (lc) lc.style.outline = '';
-  const dc = document.getElementById('docChip');
-  if (dc) dc.style.outline = '';
   render();
 }
 
@@ -1477,14 +1468,8 @@ function setLoop() {
     hubMode = false;
     docMode = false;
     waveFilter = null;
-    const hc = document.getElementById('hubChip');
-    if (hc) hc.style.outline = '';
-    const dc = document.getElementById('docChip');
-    if (dc) dc.style.outline = '';
     if (!loopLoaded) loopLoad();
   }
-  const lc = document.getElementById('loopChip');
-  if (lc) lc.style.outline = loopMode ? '2px solid var(--info)' : '';
   render();
 }
 
@@ -1771,13 +1756,7 @@ function setDoc() {
     hubMode = false;
     loopMode = false;
     waveFilter = null;
-    const hc = document.getElementById('hubChip');
-    if (hc) hc.style.outline = '';
-    const lc = document.getElementById('loopChip');
-    if (lc) lc.style.outline = '';
   }
-  const dc = document.getElementById('docChip');
-  if (dc) dc.style.outline = docMode ? '2px solid var(--ok)' : '';
   render();
 }
 
@@ -2058,12 +2037,6 @@ function setWave(w) {
   loopMode = false;
   docMode = false;
   waveFilter = waveFilter === w ? null : w;
-  const hc = document.getElementById('hubChip');
-  if (hc) hc.style.outline = '';
-  const lc = document.getElementById('loopChip');
-  if (lc) lc.style.outline = '';
-  const dc = document.getElementById('docChip');
-  if (dc) dc.style.outline = '';
   render();
 }
 
