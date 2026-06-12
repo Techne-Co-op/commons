@@ -1,0 +1,329 @@
+/* ============================================================
+   commons · Design System — shared stylesheet
+   Design System v3 · adopted from co-op.us
+
+   Single canonical token source for all CIS pages.
+   Reference: design-system.html
+   Contributor guide: docs/DESIGN.md
+
+   Dark is the ground state. Light is the override.
+   Two typefaces only: serif for reading, mono for technical.
+   Terracotta is the only decorative color.
+   No alarm red: --crit aliases --warn (clay).
+   ============================================================ */
+
+/* ── Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ============================================================
+   Tokens — dark ground state
+   ============================================================ */
+:root {
+  color-scheme: dark;
+
+  /* ground */
+  --bg:             #0f0f0f;
+  --surface:        #1a1a1a;
+  --surface-raised: #232220;
+  --border:         #333333;
+  --border-strong:  #4a4a4a;
+
+  /* accent — decorative, singular */
+  --terra:      #c4956a;
+  --terra-text: #c4956a;
+  --terra-dim:  rgba(196, 149, 106, 0.12);
+  --terra-glow: rgba(196, 149, 106, 0.06);
+
+  /* text ramp */
+  --heading: #e8e0d8;
+  --text:    #d4d4d4;
+  --muted:   #999999;
+  --faint:   #666666;
+
+  /* state — instrument surfaces only */
+  --ok:       #94ae84;
+  --ok-dim:   rgba(148, 174, 132, 0.14);
+  --info:     #8da3b5;
+  --info-dim: rgba(141, 163, 181, 0.14);
+  --warn:     #c0705c;
+  --warn-dim: rgba(192, 112, 92, 0.14);
+
+  /* elevation (shadows only meaningful in light mode) */
+  --shadow-1: none;
+  --shadow-2: none;
+
+  /* motion */
+  --dur-mode:  400ms;
+  --dur-micro: 160ms;
+  --ease:      cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* spacing scale, base 4 */
+  --s1: 4px;   --s2: 8px;   --s3: 12px;  --s4: 16px;
+  --s5: 24px;  --s6: 32px;  --s7: 48px;  --s8: 64px;
+
+  /* font tokens — no third typeface */
+  --font-serif: 'Libre Baskerville', Georgia, serif;
+  --font-mono:  'IBM Plex Mono', ui-monospace, monospace;
+  --font-sans:  'IBM Plex Mono', ui-monospace, monospace;
+
+  /* ── backward-compat aliases ── */
+  /* pages that used --surface-2 / --surface2 resolve here */
+  --surface-2: var(--surface-raised);
+  --surface2:  var(--surface-raised);
+  /* no alarm red: critical → clay */
+  --crit:     var(--warn);
+  --crit-dim: var(--warn-dim);
+}
+
+/* ── Light override: system preference ── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-mode="dark"]) {
+    color-scheme: light;
+    --bg:             #faf8f5;
+    --surface:        #ffffff;
+    --surface-raised: #ffffff;
+    --border:         #e2ddd5;
+    --border-strong:  #c9c2b8;
+    --terra:          #c4956a;
+    --terra-text:     #96704a;
+    --terra-dim:      rgba(196, 149, 106, 0.14);
+    --terra-glow:     rgba(196, 149, 106, 0.08);
+    --heading:        #2a2520;
+    --text:           #3d3833;
+    --muted:          #6e675f;
+    --faint:          #a39b90;
+    --ok:             #5f7a52;
+    --ok-dim:         rgba(95, 122, 82, 0.12);
+    --info:           #5b7286;
+    --info-dim:       rgba(91, 114, 134, 0.12);
+    --warn:           #9e4f3d;
+    --warn-dim:       rgba(158, 79, 61, 0.12);
+    --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08);
+    --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+  }
+}
+
+/* ── Light override: explicit toggle ── */
+[data-mode="light"] {
+  color-scheme: light;
+  --bg:             #faf8f5;
+  --surface:        #ffffff;
+  --surface-raised: #ffffff;
+  --border:         #e2ddd5;
+  --border-strong:  #c9c2b8;
+  --terra:          #c4956a;
+  --terra-text:     #96704a;
+  --terra-dim:      rgba(196, 149, 106, 0.14);
+  --terra-glow:     rgba(196, 149, 106, 0.08);
+  --heading:        #2a2520;
+  --text:           #3d3833;
+  --muted:          #6e675f;
+  --faint:          #a39b90;
+  --ok:             #5f7a52;
+  --ok-dim:         rgba(95, 122, 82, 0.12);
+  --info:           #5b7286;
+  --info-dim:       rgba(91, 114, 134, 0.12);
+  --warn:           #9e4f3d;
+  --warn-dim:       rgba(158, 79, 61, 0.12);
+  --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08);
+  --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+}
+
+[data-mode="dark"] { color-scheme: dark; }
+
+/* ============================================================
+   Base reset
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  background: var(--bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.85;
+  transition: background-color var(--dur-mode) var(--ease),
+              color var(--dur-mode) var(--ease);
+}
+
+/* ============================================================
+   Code
+   ============================================================ */
+code, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  color: var(--terra-text);
+  background: var(--terra-dim);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: var(--s4) var(--s5);
+  overflow-x: auto;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 1em;
+  color: inherit;
+}
+
+/* ============================================================
+   Divider rule
+   ============================================================ */
+.rule {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(to right, var(--terra), transparent);
+}
+
+/* ============================================================
+   Flat chip variants (instrument grammar)
+   Pages may define their own .chip base class.
+   ============================================================ */
+.chip-ok    { background: var(--ok-dim);          color: var(--ok); }
+.chip-info  { background: var(--info-dim);         color: var(--info); }
+.chip-warn  { background: var(--warn-dim);         color: var(--warn); }
+.chip-crit  { background: var(--warn-dim);         color: var(--warn); }  /* no alarm red */
+.chip-muted { background: var(--surface-raised);   color: var(--muted); }
+.chip-terra { background: var(--terra-dim);        color: var(--terra-text); }
+
+/* ============================================================
+   Provenance chip
+   ============================================================ */
+.prov {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--terra);
+  border-radius: 6px;
+  padding: 5px 12px;
+  transition: border-color var(--dur-micro) var(--ease);
+}
+.prov:hover { border-color: var(--terra); }
+.prov .cite { color: var(--terra-text); }
+.prov .sep  { color: var(--faint); }
+
+/* ============================================================
+   Mode toggle button (base — pages add position if needed)
+   ============================================================ */
+.mode-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color var(--dur-micro) var(--ease),
+              color var(--dur-micro) var(--ease);
+}
+.mode-btn:hover       { border-color: var(--terra); color: var(--terra-text); }
+.mode-btn:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+
+/* ============================================================
+   Site navigation (document grammar)
+   ============================================================ */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  transition: background-color var(--dur-mode) var(--ease),
+              border-color var(--dur-mode) var(--ease);
+}
+
+.site-nav-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+}
+
+.nav-brand {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terra-text);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--faint);
+  text-decoration: none;
+  transition: color var(--dur-micro) var(--ease);
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] { color: var(--terra-text); }
+
+/* ============================================================
+   Footer (base — pages may add layout overrides)
+   ============================================================ */
+footer {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+  border-top: 1px solid var(--border);
+  padding-top: var(--s5);
+  transition: border-color var(--dur-mode) var(--ease);
+}
+
+footer a { color: var(--faint); text-decoration: none; }
+footer a:hover { color: var(--terra-text); }
+
+/* ============================================================
+   Accessibility
+   ============================================================ */
+:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0ms !important;
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Responsive (shared)
+   ============================================================ */
+@media (max-width: 560px) {
+  .nav-links { display: none; }
+}

@@ -7,6 +7,22 @@ Provenance: generated from the Private Alpha Implementation Plan v0.1 (draft), g
 in CIS PRD v0.2 and Hub Operations PRD v0.1. Status: draft for review; nothing here is
 ratified; all 70 ledger entries are honestly `pending` or `in_progress`.
 
+## Design system
+
+All pages served from this repository **must** use the commons design system.
+
+- `design-system.html` · the canonical reference — tokens, typography, components, layout
+  grammars, voice guidelines, and the instructions an agent needs to produce on-brand artifacts
+- `commons.css` · the shared stylesheet — link this from every HTML page
+- `docs/DESIGN.md` · contributor guide: token reference, layout grammar rules, component
+  patterns, and prohibited patterns
+
+The design system is Design System v3, adopted from co-op.us. Its core commitments: warm
+grayscale ground state with terracotta as the only decorative accent; two typefaces (Libre
+Baskerville serif for reading, IBM Plex Mono for technical text); no alarm red (`--crit`
+aliases `--warn` · clay); state tokens (`--ok`, `--info`, `--warn`) appear on instrument
+surfaces only. See `docs/DESIGN.md` for the full contributor protocol.
+
 ## What this contains
 
 - `AGENTS.md` \u00b7 the operating contract every executing agent reads first
@@ -18,6 +34,7 @@ ratified; all 70 ledger entries are honestly `pending` or `in_progress`.
 - `scripts/validate.py` \u00b7 working validator (tested against this seed)
 - `scripts/gen_seed.py` \u00b7 regenerates the seed from plan data; source of truth
 - `docs/decisions/` \u00b7 deliberation briefs D1\u2013D10, R1, R2, all `open`
+- `docs/DESIGN.md` \u00b7 design system contributor guide (see above)
 - `docs/VERIFICATION.md` \u00b7 contract cards for the named CI jobs
 - `docs/CONVENTIONS.md` \u00b7 SQL, RLS, event-envelope, and vocabulary rules
 - `docs/citations.md` \u00b7 draft-bylaws and grant citation register (D7)

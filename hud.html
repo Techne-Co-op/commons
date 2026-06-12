@@ -5,56 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CIS Implementation HUD · RegenHub Commons</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="commons.css">
   <style>
-    /* ── design tokens ── */
-    :root {
-      --bg: #0d0d0d;
-      --surface: #141414;
-      --surface2: #1a1a1a;
-      --terra: #c8693a;
-      --terra-text: #e07d50;
-      --terra-dim: rgba(200,105,58,.12);
-      --heading: #f0ece4;
-      --text: #d8d3ca;
-      --muted: #9b9488;
-      --faint: #5a5550;
-      --ok: #4a9960;
-      --ok-dim: rgba(74,153,96,.12);
-      --info: #4a7fb5;
-      --info-dim: rgba(74,127,181,.12);
-      --warn: #b5904a;
-      --warn-dim: rgba(181,144,74,.12);
-      --border: #2a2824;
-    }
-    [data-mode="light"] {
-      --bg: #f5f2ee;
-      --surface: #ebe7e0;
-      --surface2: #e2ddd5;
-      --terra: #9e4e22;
-      --terra-text: #8b4520;
-      --terra-dim: rgba(158,78,34,.10);
-      --heading: #1a1714;
-      --text: #2e2a24;
-      --muted: #6a6258;
-      --faint: #a09890;
-      --ok: #2e7048;
-      --ok-dim: rgba(46,112,72,.12);
-      --info: #2a5f94;
-      --info-dim: rgba(42,95,148,.12);
-      --warn: #8a6a28;
-      --warn-dim: rgba(138,106,40,.12);
-      --border: #d8d2c8;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* tokens → commons.css */
+    /* instrument grammar: mono body, compact 14px base */
     html { font-size: 14px; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'IBM Plex Mono', monospace;
-      min-height: 100vh;
-    }
+    body { font-family: var(--font-mono); min-height: 100vh; }
 
     /* ── top bar ── */
     .topbar {

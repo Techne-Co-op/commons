@@ -6,40 +6,15 @@
 <title>Decision–Blocker Signal Loop · Common Information System</title>
 <script src="loop.config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="commons.css">
 <style>
-  /* ── Design tokens ─────────────────────────────── */
-  :root {
-    --bg:        #0d1117; --surface:  #161b22; --surface2: #21262d;
-    --terra:     #c9784b; --terra-text:#e8956a; --terra-dim:#2a1a10;
-    --heading:   #e6edf3; --text:     #cdd9e5; --muted:    #768390;
-    --faint:     #30363d; --border:   #30363d;
-    --ok:        #3fb950; --ok-dim:   #0d1f14;
-    --info:      #58a6ff; --info-dim: #0d1f4e;
-    --warn:      #d29922; --warn-dim: #2a1f00;
-    --crit:      #f85149; --crit-dim: #2a0d0d;
-    --font-mono: "IBM Plex Mono",ui-monospace,monospace;
-    --font-sans: "Inter",system-ui,sans-serif;
-  }
-  [data-mode="light"] {
-    --bg:#f6f8fa; --surface:#fff; --surface2:#f0f2f4;
-    --heading:#1f2328; --text:#454c54; --muted:#636c76;
-    --faint:#d0d7de; --border:#d0d7de;
-    --terra:#a0522d; --terra-text:#8b3a1c; --terra-dim:#fdf0e8;
-    --ok:#1a7f37; --ok-dim:#dafbe1; --info:#0550ae; --info-dim:#ddf4ff;
-    --warn:#9a6700; --warn-dim:#fff8c5; --crit:#cf222e; --crit-dim:#ffebe9;
-  }
-
-  /* ── Reset / base ──────────────────────────────── */
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--bg);color:var(--text);
-    font-family:var(--font-sans);font-size:14px;line-height:1.6;
-    min-height:100vh;
-  }
-  a{color:var(--info);text-decoration:none}
-  a:hover{text-decoration:underline}
-  code,pre,samp{font-family:var(--font-mono);font-size:.85em}
+  /* tokens → commons.css (--crit aliases --warn; no alarm red) */
+  /* instrument grammar: mono body, compact 14px base */
+  body { font-family: var(--font-mono); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+  a { color: var(--info); text-decoration: none; }
+  a:hover { text-decoration: underline; }
 
   /* ── Topbar ────────────────────────────────────── */
   #topbar{
