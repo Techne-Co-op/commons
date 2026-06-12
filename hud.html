@@ -1211,6 +1211,7 @@ function renderChips(nodes) {
   if (active > 0) h += `<span class="chip c-active">${active} active</span>`;
   if (blockers > 0) h += `<span class="chip c-blocked">${blockers} decisions open</span>`;
   if (done === total && total > 0) h += `<span class="chip c-done">complete</span>`;
+  h += `<a href="pre-build-audit-v0.1.html" class="chip c-blocked" style="text-decoration:none;cursor:pointer" title="Pre-build assessment failed &middot; 4 W0 actions required before W1">pre-build audit &middot; 4 actions</a>`;
   chips.innerHTML = h;
 }
 
@@ -1345,7 +1346,18 @@ function renderCtx(nodes) {
     </tr>`;
   }
 
-  document.getElementById('ctxPanel').innerHTML = `
+  const w0ActionsH = waveFilter === 'W0' ? `
+    <div class="ctx-section">
+      <div class="ctx-head" style="color:var(--warn)">Pre-build actions &middot; W0</div>
+      <div class="ctx-note" style="color:var(--warn);margin-bottom:6px">4 required before W1 &middot; audit failed</div>
+      <div class="ctx-row"><span class="ctx-row-label">W0-01</span><span class="ctx-row-val v-warn">SECRETS.md</span></div>
+      <div class="ctx-row"><span class="ctx-row-label">W0-02</span><span class="ctx-row-val v-warn">Supabase docs</span></div>
+      <div class="ctx-row"><span class="ctx-row-label">W0-03</span><span class="ctx-row-val v-warn">Schema lint CI</span></div>
+      <div class="ctx-row"><span class="ctx-row-label">W0-04</span><span class="ctx-row-val v-warn">W0.G gate file</span></div>
+      <a href="pre-build-audit-v0.1.html" class="ctx-link">&rarr; full audit</a>
+    </div>` : '';
+
+  document.getElementById('ctxPanel').innerHTML = w0ActionsH + `
     <div class="ctx-section">
       <div class="ctx-head">Progress</div>
       ${rows}
