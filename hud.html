@@ -859,10 +859,10 @@ const modeBtn = document.getElementById('modeBtn');
 function setMode(m) {
   html.setAttribute('data-mode', m);
   modeBtn.textContent = m === 'dark' ? 'light' : 'dark';
-  try { localStorage.setItem('hud-mode', m); } catch(e) {}
+  try { localStorage.setItem('commons-mode', m); } catch(e) {}
 }
 modeBtn.addEventListener('click', () => setMode(html.dataset.mode === 'dark' ? 'light' : 'dark'));
-try { const s = localStorage.getItem('hud-mode'); if (s) setMode(s); } catch(e) {}
+try { const s = localStorage.getItem('commons-mode'); if (s) setMode(s); } catch(e) {}
 
 /* ── constants ── */
 const WAVE_ORDER = ['D','R','W0','W1','W2','W3','W4','W5','W6','G','P'];

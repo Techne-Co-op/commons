@@ -708,6 +708,58 @@ footer {
 </section>
 
 <section>
+  <div class="label">Page Scaffold</div>
+  <div class="rule"></div>
+  <p>Three layout grammars cover every surface in the commons. The grammar determines the navigation pattern, content width, and mode toggle placement. Choosing the wrong grammar for a surface type is the most common structural error.</p>
+
+  <table class="spec">
+    <thead><tr><th>Grammar</th><th>Used for</th><th>Navigation</th><th>Max width</th></tr></thead>
+    <tbody>
+      <tr><td>Index</td><td>Entry pages, overviews</td><td><code>.site-nav</code> sticky bar (commons.css), in-page anchor links</td><td>720px centered</td></tr>
+      <tr><td>Instrument</td><td>HUD, Loop, roadmap tools</td><td>Custom <code>.topbar</code> with back link and title; no <code>.site-nav</code></td><td>Full-bleed</td></tr>
+      <tr><td>Document</td><td>PRDs, design system, briefs</td><td>Inline header with title and mode toggle; no nav bar</td><td>760px centered</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Index grammar</strong> uses <code>.site-nav</code> from <code>commons.css</code>, a centered <code>.page</code> column at 720px, and a footer. The mode button sits fixed at <code>top: 11px; right: 20px</code> outside the page flow. Suitable for any page that needs in-page section navigation alongside cross-site links.</p>
+
+  <p><strong>Instrument grammar</strong> uses a custom sticky <code>.topbar</code> with a back-to-commons link as the first element, a title, and the mode button inline at the right edge. The content area is full-bleed — no centered column. Instruments are full-height interactive surfaces; a traditional footer does not apply. The topbar back link is the only wayfinding required.</p>
+
+  <p><strong>Document grammar</strong> uses a serif-dominant single column at 760px. An inline <code>&lt;header&gt;</code> element holds the document title and the mode toggle. Suitable for reading-oriented content — specifications, briefs, policy documents — where the reading gesture is vertical scroll.</p>
+
+  <p>Every page regardless of grammar must carry the mode toggle, the shared <code>commons-mode</code> localStorage key, and the required head block from Page Metadata. These three are grammar-invariant.</p>
+
+  <table class="spec">
+    <thead><tr><th>Mode toggle requirement</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>localStorage key</td><td><code>commons-mode</code> — shared across all pages so the user's choice persists when navigating</td></tr>
+      <tr><td>Button label</td><td>Shows the mode you will switch to: displays "light" when current mode is dark, "dark" when light. Never use emoji or icons.</td></tr>
+      <tr><td>Init order</td><td>Read <code>commons-mode</code> first; fall back to <code>prefers-color-scheme</code>; apply before first paint</td></tr>
+      <tr><td>html attribute</td><td><code>data-mode="dark"</code> on <code>&lt;html&gt;</code> — all token overrides key on this attribute</td></tr>
+    </tbody>
+  </table>
+
+  <p>The canonical mode toggle script — three lines, no dependencies:</p>
+  <pre><code>(function () {
+  var root = document.documentElement;
+  var btn  = document.getElementById('modeBtn');
+  var stored = null;
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+  });
+})();</code></pre>
+
+  <p>Footers follow the grammar. Index pages carry a three-element footer (repo name, GitHub link, cooperative attribution). Document pages carry a single-line attribution. Instrument pages omit the footer — the topbar back link is sufficient wayfinding in a full-bleed layout.</p>
+</section>
+
+<section>
   <div class="label">Page Metadata</div>
   <div class="rule"></div>
   <p>Every HTML page published from this repository carries a required head block. Metadata is not decoration — it is the contract between the page and the systems that parse it: browsers, crawlers, link-unfurlers, and the sitemap. The requirements below apply to every file served under <code>techne-co-op.github.io/commons/</code>.</p>
@@ -776,10 +828,16 @@ footer {
   }
  
   var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
-  apply(prefersLight.matches ? 'light' : 'dark');
-  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  var stored = null;
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  apply(stored || (prefersLight.matches ? 'light' : 'dark'));
+  prefersLight.addEventListener('change', function (e) {
+    try { if (!localStorage.getItem('commons-mode')) apply(e.matches ? 'light' : 'dark'); } catch(e2) {}
+  });
   btn.addEventListener('click', function () {
-    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    apply(next);
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
   });
 })();
 </script>

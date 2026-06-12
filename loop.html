@@ -49,10 +49,12 @@
   .chip-info{background:var(--info-dim);color:var(--info)}
   .chip-muted{background:var(--surface2);color:var(--muted)}
   .chip-terra{background:var(--terra-dim);color:var(--terra-text)}
-  #mode-btn{
+  #modeBtn{
     background:var(--surface2);border:1px solid var(--border);
-    color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;
+    color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;
   }
+  #modeBtn:hover{border-color:var(--terra);color:var(--terra-text);}
 
   /* ── Main layout: 4 panels ──────────────────────── */
   #main{
@@ -195,7 +197,7 @@
   <span id="chip-front" class="chip chip-muted"></span>
   <span id="chip-open-decisions" class="chip chip-muted"></span>
   <span id="chip-blockers" class="chip chip-muted"></span>
-  <button id="mode-btn" onclick="toggleMode()">☾</button>
+  <button id="modeBtn">light</button>
 </div>
 
 <div id="main">
@@ -565,18 +567,20 @@ function showOfflineBanner(msg) {
 
 // ── Theme ─────────────────────────────────────────────────
 function applyStoredMode() {
-  const m = localStorage.getItem("loop-mode") ?? "dark";
+  const m = localStorage.getItem("commons-mode") ?? "dark";
   document.documentElement.setAttribute("data-mode", m);
-  el("mode-btn").textContent = m === "dark" ? "☀" : "☾";
+  el("modeBtn").textContent = m === "dark" ? "light" : "dark";
 }
 
 function toggleMode() {
   const current = document.documentElement.getAttribute("data-mode") ?? "dark";
   const next = current === "dark" ? "light" : "dark";
   document.documentElement.setAttribute("data-mode", next);
-  localStorage.setItem("loop-mode", next);
-  el("mode-btn").textContent = next === "dark" ? "☀" : "☾";
+  localStorage.setItem("commons-mode", next);
+  el("modeBtn").textContent = next === "dark" ? "light" : "dark";
 }
+
+document.getElementById("modeBtn").addEventListener("click", toggleMode);
 </script>
 </body>
 </html>
