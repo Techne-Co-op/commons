@@ -165,6 +165,44 @@ code {
 .repo-tree .file { color: var(--text); }
 .repo-tree .cmt { color: var(--faint); }
 
+/* ── signal loop intro card ── */
+.loop-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 2px solid var(--terra); border-radius: 10px;
+  padding: 26px 28px 22px; margin-bottom: 48px;
+}
+.loop-card-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 10px;
+}
+.loop-card-title {
+  font-size: 18px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.2px; margin-bottom: 12px;
+}
+.loop-card p { font-size: 14.5px; line-height: 1.75; margin-bottom: 12px; color: var(--text); }
+.loop-panels {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px; margin: 18px 0;
+}
+.loop-panel {
+  background: var(--surface-raised); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 14px;
+}
+.loop-panel-name {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  color: var(--terra-text); font-weight: 500; margin-bottom: 5px;
+}
+.loop-panel-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.loop-card-link {
+  display: inline-block; margin-top: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  color: var(--terra-text); text-decoration: none;
+  border-bottom: 1px solid var(--terra-dim);
+  padding-bottom: 1px;
+}
+.loop-card-link:hover { border-bottom-color: var(--terra); }
+
 /* ── mode button position override ── */
 .mode-btn { position: fixed; top: 11px; right: 20px; z-index: 200; }
 
@@ -192,7 +230,6 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
       <li><a href="#build">Build</a></li>
       <li><a href="#repo">Repository</a></li>
       <li><a href="hud.html" style="color:var(--terra-text);">HUD</a></li>
-      <li><a href="loop.html" style="color:var(--terra-text);">Loop</a></li>
       <li><a href="design-system.html">Design</a></li>
     </ul>
   </div>
@@ -205,6 +242,29 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <h1>Common Information System</h1>
     <div class="tagline">The cooperative&rsquo;s shared knowledge layer &mdash; private alpha build workspace</div>
   </header>
+
+  <!-- ────────────── SIGNAL LOOP INTRO ────────────── -->
+  <div class="loop-card">
+    <div class="loop-card-eyebrow">Live instrument</div>
+    <div class="loop-card-title">Decision&ndash;Blocker Signal Loop</div>
+    <p>Building a cooperative information system involves many moving parts: milestones that depend on each other, decisions that only humans can make, and work that can quietly stall without anyone noticing. The signal loop is a live instrument that answers the three questions that matter most at the start of any working session.</p>
+    <div class="loop-panels">
+      <div class="loop-panel">
+        <div class="loop-panel-name">Front &mdash; workable now</div>
+        <div class="loop-panel-desc">Milestones whose dependencies are complete and that are ready to start. If this panel has entries, the next action is clear.</div>
+      </div>
+      <div class="loop-panel">
+        <div class="loop-panel-name">Decision queue</div>
+        <div class="loop-panel-desc">Open decisions ranked by how many milestones depend on them. The top item is the conversation with the most downstream unblocking value.</div>
+      </div>
+      <div class="loop-panel">
+        <div class="loop-panel-name">Blockers &amp; pulse</div>
+        <div class="loop-panel-desc">Explicit blockers flagged on active milestones, and a list of work that has been in progress the longest without resolution.</div>
+      </div>
+    </div>
+    <p style="margin-bottom:0; color:var(--muted);">The loop reads live from the database. It cannot write to the repository or record decisions &mdash; those actions belong to the organizers. It is an attention instrument, not an authority.</p>
+    <a class="loop-card-link" href="loop.html">Open the signal loop &rarr;</a>
+  </div>
 
   <div class="rule"></div>
 
@@ -431,8 +491,7 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     </div>
 
     <p style="font-size: 13px; color: var(--muted); margin-top: 10px; margin-bottom: 12px;">Milestones are stored as validated YAML in <code>milestones/</code>. The <a class="inline" href="cis-build-roadmap-instrument-v0.2.html">roadmap instrument</a> is the full dependency graph view.</p>
-    <p style="font-size: 13px; color: var(--faint); margin-bottom: 4px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 70 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
-    <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="loop.html" style="color:var(--terra-text);">Decision–Blocker Signal Loop</a> &mdash; four-panel cybernetic instrument (W0.22). Pulls live data from the loop Supabase instance: workable-now steps, open decisions ranked by transitive leverage, blocker queue, and pulse strip. Deliberate: the loop can draft a decision record but never write to this repository.</p>
+    <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 70 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
 
     <h3>Decision register</h3>
     <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. Statuses here reflect the recorded state in <code>docs/decisions/</code>. D3 is the key unlock: the repository is public and live, but a formal record in <code>docs/decisions/D3.md</code> (changing status from <code>open</code> to <code>decided</code>) is needed to open W0.1 and unblock the full build tree.</p>
