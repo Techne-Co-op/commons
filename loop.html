@@ -30,14 +30,16 @@
   a:hover { text-decoration: underline; }
 
   /* ── Topbar ────────────────────────────────────── */
-  #topbar{
+  .topbar{
     position:sticky;top:0;z-index:100;
     background:var(--surface);border-bottom:1px solid var(--border);
     display:flex;align-items:center;gap:12px;padding:10px 20px;
     flex-wrap:wrap;
   }
-  #topbar a.back{color:var(--muted);font-size:12px}
-  #topbar h1{font-size:14px;font-weight:600;color:var(--heading);flex:1}
+  .topbar-back{color:var(--muted);font-size:12px;text-decoration:none;}
+  .topbar-back:hover{color:var(--terra-text);}
+  .topbar-divider{width:1px;height:18px;background:var(--border);flex-shrink:0;}
+  .topbar-title{font-size:14px;font-weight:600;color:var(--heading);}
   .chip{
     display:inline-flex;align-items:center;gap:4px;
     padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500;
@@ -186,14 +188,29 @@
     #main{grid-template-columns:1fr;height:auto}
     .panel{border-right:none;border-bottom:1px solid var(--border)}
   }
+
+  .inst-footer {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--faint);
+    border-top: 1px solid var(--border);
+    padding: 7px 20px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .inst-footer a { color: var(--faint); text-decoration: none; }
+  .inst-footer a:hover { color: var(--terra-text); }
 </style>
 </head>
 <body>
 
-<div id="topbar">
-  <a href="index.html" class="back">← commons</a>
-  <h1>Decision–Blocker Signal Loop</h1>
-  <span id="chip-sync" class="chip chip-muted">syncing…</span>
+<div class="topbar">
+  <a href="index.html" class="topbar-back">&larr; commons</a>
+  <span class="topbar-divider"></span>
+  <span class="topbar-title">Decision&ndash;Blocker Signal Loop</span>
+  <div style="flex:1"></div>
+  <span id="chip-sync" class="chip chip-muted">syncing&hellip;</span>
   <span id="chip-front" class="chip chip-muted"></span>
   <span id="chip-open-decisions" class="chip chip-muted"></span>
   <span id="chip-blockers" class="chip chip-muted"></span>
@@ -238,6 +255,13 @@
   </div>
 
 </div>
+
+<footer class="inst-footer">
+  <a href="index.html">&larr; CIS &middot; Commons</a>
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
 
 <script>
 // ── State ────────────────────────────────────────────────

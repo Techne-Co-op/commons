@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
 <style>
 /* co-op.us design system · token layer (verbatim) */
 :root {
@@ -181,6 +182,15 @@ footer { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5p
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="design-system.html">Design</a></li>
+    </ul>
+  </div>
+</nav>
 <div class="page">
 
 <header>
@@ -415,7 +425,11 @@ footer { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5p
   <p><em>Next movement.</em> 03 Definition synthesis: the architecture document as one synthesis of plan &sect;2.2, &sect;2.3, and &sect;3.1 against the PRDs' system definition; the ADR set, one record per decision the organizers close on D1 through D10, with proposed-state drafts where the plan has already argued a default; the threat model the public-anon-key perimeter deserves, drawing on RR-01, RR-02, and RR-08; the build/buy/integrate canvas and technology stack record formalized from the stack delta; the definition of done lifted from plan &sect;3.3; and the four non-functional targets from section 02 cast with organizer-set values. OQ-03, OQ-07, OQ-10, and OQ-11 enter that movement as the first ADR drafts.</p>
 </section>
 
-<footer>CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026</footer>
+<footer>
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
 
 </div>
 <script>

@@ -798,6 +798,19 @@
     .dc-legend-swatch.st-queued       { border-left: 4px double var(--info); background: var(--info-dim); }
     .dc-legend-swatch.st-projected    { border-left: 1px solid var(--faint); background: var(--surface2); }
     .dc-legend-swatch.st-unanchored   { border-left: 3px solid var(--warn);  background: var(--warn-dim); }
+
+    .inst-footer {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--faint);
+      border-top: 1px solid var(--border);
+      padding: 7px 20px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .inst-footer a { color: var(--faint); text-decoration: none; }
+    .inst-footer a:hover { color: var(--terra-text); }
   </style>
 </head>
 <body>
@@ -851,6 +864,13 @@
     <tbody id="exBody"></tbody>
   </table>
 </section>
+
+<footer class="inst-footer">
+  <a href="index.html">&larr; CIS &middot; Commons</a>
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
 
 <script>
 /* ── mode toggle ── */

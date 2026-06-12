@@ -10,6 +10,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
 <style>
 :root {
   --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #202020;
@@ -225,6 +226,15 @@ footer {
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="design-system.html">Design</a></li>
+    </ul>
+  </div>
+</nav>
 <button class="mode-btn" id="modeBtn">light</button>
 <div class="page">
 
@@ -683,7 +693,11 @@ footer {
 
 <p class="note">None of these block Phase 01. They become blocking at the phase where their scope first becomes material. The PRD should be revisited whenever one is resolved, both to reflect the decision and to carry forward its implications for later phases.</p>
 
-<footer>Co-op.us &middot; RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</footer>
+<footer>
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
 
 </div>
 <script>

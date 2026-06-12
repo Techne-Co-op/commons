@@ -120,6 +120,9 @@ padding:var(--s3);overflow:auto;max-height:300px;}
  .tiles{grid-template-columns:repeat(2,1fr);}
  .top h1{font-size:16px;}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+.inst-footer{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;color:var(--faint);border-top:1px solid var(--border);padding:7px 20px;display:flex;gap:16px;flex-wrap:wrap;}
+.inst-footer a{color:var(--faint);text-decoration:none;}
+.inst-footer a:hover{color:var(--terra-text);}
 </style>
 </head>
 <body data-view="cal">
@@ -359,5 +362,11 @@ pl.addEventListener("change",e=>apply(e.matches?"light":"dark"));
 btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark"));})();
 rAll();showDefault();
 </script>
+<footer class="inst-footer">
+  <a href="index.html">&larr; CIS &middot; Commons</a>
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
 </body>
 </html>

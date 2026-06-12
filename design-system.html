@@ -20,6 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
 <style>
 /* ============================================================
    co-op.us design system · token layer
@@ -483,8 +484,17 @@ footer {
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="design-system.html">Design</a></li>
+    </ul>
+  </div>
+</nav>
 <div class="page">
- 
+
 <header>
   <div>
     <h1>commons</h1>
@@ -756,7 +766,7 @@ footer {
   });
 })();</code></pre>
 
-  <p>Footers follow the grammar. Index pages carry a three-element footer (repo name, GitHub link, cooperative attribution). Document pages carry a single-line attribution. Instrument pages omit the footer — the topbar back link is sufficient wayfinding in a full-bleed layout.</p>
+  <p>Footers follow the grammar. Index and document pages carry a three-element footer: repo name, GitHub link, cooperative attribution. Instrument pages carry a compact <code>inst-footer</code> strip — a single flex row in 10px monospace, border-top only, containing a back link, repo name, GitHub link, and attribution. Every page has a footer; the strip weight varies by grammar.</p>
 </section>
 
 <section>
@@ -806,7 +816,9 @@ footer {
 </section>
 
 <footer>
-  co-op.us &middot; RegenHub, LCA &middot; Boulder, Colorado &middot; 2026
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
 </footer>
  
 </div>

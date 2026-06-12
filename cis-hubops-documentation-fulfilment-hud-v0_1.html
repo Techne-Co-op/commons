@@ -151,9 +151,29 @@ body {
   .main { grid-template-columns: 1fr; }
   .lens { max-height: 60vh; }
 }
+
+.inst-topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; padding: 8px 20px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px;
+}
+.inst-topbar-back { color: var(--faint); text-decoration: none; letter-spacing: .1em; }
+.inst-topbar-back:hover { color: var(--terra-text); }
+.inst-topbar-divider { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; }
+.inst-topbar-title { font-family: 'Libre Baskerville', Georgia, serif; font-size: 14px; color: var(--heading); }
+
+.inst-footer { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: var(--faint); border-top: 1px solid var(--border); padding: 7px 20px; display: flex; gap: 16px; flex-wrap: wrap; }
+.inst-footer a { color: var(--faint); text-decoration: none; }
+.inst-footer a:hover { color: var(--terra-text); }
 </style>
 </head>
 <body>
+<div class="inst-topbar">
+  <a href="index.html" class="inst-topbar-back">&larr; commons</a>
+  <span class="inst-topbar-divider"></span>
+  <span class="inst-topbar-title">Documentation Fulfilment HUD</span>
+</div>
 <div class="app">
 
   <!-- masthead -->
@@ -197,6 +217,13 @@ body {
   </footer>
 
 </div>
+
+<footer class="inst-footer">
+  <a href="index.html">&larr; CIS &middot; Commons</a>
+  <span>Techne-Co-op/commons</span>
+  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+</footer>
 
 <script>
 /* ============================================================
