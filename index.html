@@ -314,7 +314,7 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <div class="section-label">Document library</div>
 
     <h2>Specifications, planning, and build artifacts</h2>
-    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Eleven documents in three groups: governing specifications and instruments, the Builder&rsquo;s Collection Map, and the C6&ndash;C11 artifact series. Start with the CIS PRD if you are new to the system; use the roadmap instrument to trace the build sequence.</p>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Twelve documents in three groups: governing specifications and instruments, the Builder&rsquo;s Collection Map, and the C6&ndash;C11 artifact series. Start with the CIS PRD if you are new to the system; use the roadmap instrument to trace the build sequence.</p>
 
     <div class="doc-group">
       <div class="doc-group-label">Governing specifications</div>
@@ -363,6 +363,14 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
           <div class="doc-body">
             <div class="doc-title">The Builder&rsquo;s Collection &middot; Map</div>
             <div class="doc-desc">The C0&ndash;C11 artifact series: operating contract (C1), milestone ledger (C2), verification definitions (C3), conventions (C4), decision briefs (C5), schema reference card (C6), probe matrix (C7), Nou gateway spec (C8), KPI fixture pack (C9), wave-boundary authoring guide (C10), wave gates (C11). All shipped.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+        <a class="doc-item" href="pre-build-audit-v0.1.html">
+          <div class="doc-body">
+            <div class="doc-title">Pre-Build Audit</div>
+            <div class="doc-desc">Conducted June 2026 before W0 substrate work begins. Three consistency remediations applied, seven documentation gaps identified, eight architectural gaps noted, and four priority items called out as prerequisites for W1. Written for both technical contributors and non-technical co-op members. Includes a plain-language glossary.</div>
           </div>
           <div class="doc-meta">v0.1 &middot; Jun 2026</div>
         </a>
@@ -435,13 +443,13 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
 
     <h2>70 milestones &middot; W0 substrate + 6 build waves</h2>
 
-    <p>The build is organized into waves &mdash; discrete phases where each wave&rsquo;s work is completed and verified before the next begins. All milestones are currently pending. The build tree unlocks when the open decision items below are recorded by the organizers.</p>
+    <p>The build is organized into waves &mdash; discrete phases where each wave&rsquo;s work is completed and verified before the next begins. All 10 pre-build decisions (D1&ndash;D10) have been recorded as of June 2026. W0 substrate work is the next active phase.</p>
 
     <div class="wave-grid">
-      <div class="wave-card needs-action">
+      <div class="wave-card">
         <div class="wave-id">D1&ndash;D10</div>
         <div class="wave-name">Decisions</div>
-        <div class="wave-count">10 open</div>
+        <div class="wave-count">10 decided</div>
       </div>
       <div class="wave-card">
         <div class="wave-id">R1&ndash;R2</div>
@@ -494,59 +502,59 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 70 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
 
     <h3>Decision register</h3>
-    <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. Statuses here reflect the recorded state in <code>docs/decisions/</code>. D3 is the key unlock: the repository is public and live, but a formal record in <code>docs/decisions/D3.md</code> (changing status from <code>open</code> to <code>decided</code>) is needed to open W0.1 and unblock the full build tree.</p>
+    <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. Statuses here reflect the recorded state in <code>docs/decisions/</code>. All 10 pre-build decisions were recorded in June 2026. R1&ndash;R2 (bylaws and Hub Membership Agreement ratification) remain open and are not build blockers.</p>
 
     <div class="decision-list">
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D1</span>
         <span class="d-title">Front-end framework</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D2</span>
         <span class="d-title">Application form host</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D3</span>
         <span class="d-title">Repository visibility and naming</span>
-        <span class="d-status">open</span>
-        <span class="d-unblock">unlocks W0.1</span>
+        <span class="d-status resolved">decided</span>
+        <span class="d-unblock">unlocked W0.1</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D4</span>
         <span class="d-title">Transactional email provider</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D5</span>
         <span class="d-title">Make.com adoption trigger</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D6</span>
         <span class="d-title">Alpha access posture</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D7</span>
         <span class="d-title">Section addressing scheme</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D8</span>
         <span class="d-title">Attestation scope and key custody</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D9</span>
         <span class="d-title">EE liaison interface form</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
-      <div class="decision-item">
+      <div class="decision-item resolved">
         <span class="d-id">D10</span>
         <span class="d-title">Lease-entity question</span>
-        <span class="d-status">open</span>
+        <span class="d-status resolved">decided</span>
       </div>
       <div class="decision-item">
         <span class="d-id">R1</span>
