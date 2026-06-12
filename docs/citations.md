@@ -24,3 +24,16 @@ change at R1. Status of every row: draft address, not frozen.
 
 Additions follow the same pattern; a citation used in code that is absent here fails
 review. Maintenance of this register is part of W0.6's convention and D7's record.
+
+## contract: prefix (W0.22 — signal loop)
+
+The signal loop's authority derives from the operating contract (AGENTS.md and
+GOVERNANCE.md), not the draft bylaws. Loop schema citations use the `contract:` prefix.
+
+| address | anchors |
+|---|---|
+| contract:agents§preamble | loop process identities and role definitions |
+| contract:agents§5 | decisions and ratifications are human-only |
+| contract:agents§7 | blocked beats improvised — blocker reporting discipline |
+| contract:governance§lifecycle | status lifecycle and gating |
+| contract:governance§validation | snapshot ingest and ledger mirror |

@@ -241,6 +241,7 @@ footer a:hover { color: var(--terra-text); }
       <li><a href="#build">Build</a></li>
       <li><a href="#repo">Repository</a></li>
       <li><a href="hud.html" style="color:var(--terra-text);">HUD</a></li>
+      <li><a href="loop.html" style="color:var(--terra-text);">Loop</a></li>
     </ul>
   </div>
 </nav>
@@ -478,7 +479,8 @@ footer a:hover { color: var(--terra-text); }
     </div>
 
     <p style="font-size: 13px; color: var(--muted); margin-top: 10px; margin-bottom: 12px;">Milestones are stored as validated YAML in <code>milestones/</code>. The <a class="inline" href="cis-build-roadmap-instrument-v0.2.html">roadmap instrument</a> is the full dependency graph view.</p>
-    <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 70 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
+    <p style="font-size: 13px; color: var(--faint); margin-bottom: 4px;"><a class="inline" href="hud.html" style="color:var(--terra-text);">Implementation HUD</a> &mdash; live widescreen interface for agents and organizers to track build progress across all 70 milestones. Fetches live data from <code>milestones/index.json</code>; suitable for both technical and non-technical audiences.</p>
+    <p style="font-size: 13px; color: var(--faint); margin-bottom: 32px;"><a class="inline" href="loop.html" style="color:var(--terra-text);">Decision–Blocker Signal Loop</a> &mdash; four-panel cybernetic instrument (W0.22). Pulls live data from the loop Supabase instance: workable-now steps, open decisions ranked by transitive leverage, blocker queue, and pulse strip. Deliberate: the loop can draft a decision record but never write to this repository.</p>
 
     <h3>Decision register</h3>
     <p style="font-size: 14px; color: var(--muted); margin-top: 8px; margin-bottom: 4px;">Decisions are resolved by the organizers, not by agents. Statuses here reflect the recorded state in <code>docs/decisions/</code>. D3 is the key unlock: the repository is public and live, but a formal record in <code>docs/decisions/D3.md</code> (changing status from <code>open</code> to <code>decided</code>) is needed to open W0.1 and unblock the full build tree.</p>
@@ -601,7 +603,12 @@ footer a:hover { color: var(--terra-text); }
     ├── <span class="file">c9-kpi-fixture-pack-v0.1.html</span>
     ├── <span class="file">c10-wave-boundary-authoring-guide-v0.1.html</span>
     ├── <span class="file">c11-wave-gates-v0.1.html</span>
-    └── <span class="file">hud.html</span>                                         <span class="cmt"># implementation HUD — live view of index.json</span></div>
+    ├── <span class="file">hud.html</span>                                         <span class="cmt"># implementation HUD — live view of index.json</span>
+    ├── <span class="file">loop.html</span>                                        <span class="cmt"># decision–blocker signal loop (W0.22)</span>
+    ├── <span class="file">loop.config.js</span>                                   <span class="cmt"># loop public config (supabase url + anon key)</span>
+    └── <span class="file">supabase/</span>                                        <span class="cmt"># loop migrations + edge functions</span>
+        ├── <span class="file">migrations/</span>                                  <span class="cmt"># timestamped SQL per CONVENTIONS.md</span>
+        └── <span class="file">functions/ledger-ingest/</span>                     <span class="cmt"># + decision-record-draft/</span></div>
 
     <p style="margin-top: 18px; font-size: 14px; color: var(--muted);">The <code>milestones/</code> ledger is validated on every pull request by <code>scripts/validate.py</code>, which checks schema compliance, graph acyclicity, and gating consistency. A milestone may not be marked <em>done</em> unless its upstream dependencies are verified. The validator runs on the CI workflow before any merge.</p>
 

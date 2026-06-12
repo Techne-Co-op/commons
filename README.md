@@ -5,13 +5,14 @@ Hub Operations surface on GitHub Pages + Supabase, by LLM agents under human dir
 
 Provenance: generated from the Private Alpha Implementation Plan v0.1 (draft), grounded
 in CIS PRD v0.2 and Hub Operations PRD v0.1. Status: draft for review; nothing here is
-ratified; all 67 ledger entries are honestly `pending`.
+ratified; all 70 ledger entries are honestly `pending` or `in_progress`.
 
 ## What this contains
 
 - `AGENTS.md` \u00b7 the operating contract every executing agent reads first
 - `GOVERNANCE.md` \u00b7 the ledger's mechanics: schema, lifecycle, validation
-- `milestones/` \u00b7 67 seeded entries (steps, decisions, ratifications, gate, practice),
+- `milestones/` \u00b7 70 entries (steps, decisions, ratifications, gate, practice;
+  67 seeded + W0.19–W0.22 added June 2026),
   plus generated `index.json` and `STATUS.md`
 - `milestones/schema.json` \u00b7 machine-readable front-matter schema
 - `scripts/validate.py` \u00b7 working validator (tested against this seed)

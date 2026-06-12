@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Decision–Blocker Signal Loop · Common Information System</title>
+<script src="loop.config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  /* ── Design tokens ─────────────────────────────── */
+  :root {
+    --bg:        #0d1117; --surface:  #161b22; --surface2: #21262d;
+    --terra:     #c9784b; --terra-text:#e8956a; --terra-dim:#2a1a10;
+    --heading:   #e6edf3; --text:     #cdd9e5; --muted:    #768390;
+    --faint:     #30363d; --border:   #30363d;
+    --ok:        #3fb950; --ok-dim:   #0d1f14;
+    --info:      #58a6ff; --info-dim: #0d1f4e;
+    --warn:      #d29922; --warn-dim: #2a1f00;
+    --crit:      #f85149; --crit-dim: #2a0d0d;
+    --font-mono: "IBM Plex Mono",ui-monospace,monospace;
+    --font-sans: "Inter",system-ui,sans-serif;
+  }
+  [data-mode="light"] {
+    --bg:#f6f8fa; --surface:#fff; --surface2:#f0f2f4;
+    --heading:#1f2328; --text:#454c54; --muted:#636c76;
+    --faint:#d0d7de; --border:#d0d7de;
+    --terra:#a0522d; --terra-text:#8b3a1c; --terra-dim:#fdf0e8;
+    --ok:#1a7f37; --ok-dim:#dafbe1; --info:#0550ae; --info-dim:#ddf4ff;
+    --warn:#9a6700; --warn-dim:#fff8c5; --crit:#cf222e; --crit-dim:#ffebe9;
+  }
+
+  /* ── Reset / base ──────────────────────────────── */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:var(--font-sans);font-size:14px;line-height:1.6;
+    min-height:100vh;
+  }
+  a{color:var(--info);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,pre,samp{font-family:var(--font-mono);font-size:.85em}
+
+  /* ── Topbar ────────────────────────────────────── */
+  #topbar{
+    position:sticky;top:0;z-index:100;
+    background:var(--surface);border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:12px;padding:10px 20px;
+    flex-wrap:wrap;
+  }
+  #topbar a.back{color:var(--muted);font-size:12px}
+  #topbar h1{font-size:14px;font-weight:600;color:var(--heading);flex:1}
+  .chip{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500;
+    font-family:var(--font-mono);cursor:default;
+  }
+  .chip-ok{background:var(--ok-dim);color:var(--ok)}
+  .chip-warn{background:var(--warn-dim);color:var(--warn)}
+  .chip-crit{background:var(--crit-dim);color:var(--crit)}
+  .chip-info{background:var(--info-dim);color:var(--info)}
+  .chip-muted{background:var(--surface2);color:var(--muted)}
+  .chip-terra{background:var(--terra-dim);color:var(--terra-text)}
+  #mode-btn{
+    background:var(--surface2);border:1px solid var(--border);
+    color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;
+  }
+
+  /* ── Main layout: 4 panels ──────────────────────── */
+  #main{
+    display:grid;
+    grid-template-columns:260px 1fr 1fr 260px;
+    grid-template-rows:auto;
+    gap:0;
+    height:calc(100vh - 45px);
+  }
+  .panel{
+    overflow-y:auto;border-right:1px solid var(--border);
+    padding:16px;
+    display:flex;flex-direction:column;gap:12px;
+  }
+  .panel:last-child{border-right:none}
+  .panel-title{
+    font-size:11px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);
+    padding-bottom:8px;border-bottom:1px solid var(--border);
+  }
+
+  /* ── Cards ──────────────────────────────────────── */
+  .card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:6px;padding:12px 14px;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .card-title{font-size:13px;font-weight:600;color:var(--heading)}
+  .card-id{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+  .card-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  /* decision card extras */
+  .decision-card{
+    border-left:3px solid var(--terra);
+    cursor:pointer;transition:background .15s;
+  }
+  .decision-card:hover{background:var(--surface2)}
+  .decision-card.expanded .card-detail{display:block}
+  .card-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+  .leverage-bar{
+    display:flex;align-items:center;gap:6px;
+    font-size:11px;color:var(--muted);
+  }
+  .leverage-track{
+    flex:1;height:4px;background:var(--faint);border-radius:2px;overflow:hidden;
+  }
+  .leverage-fill{height:100%;background:var(--terra);border-radius:2px;transition:width .3s}
+
+  /* front card */
+  .front-card{border-left:3px solid var(--ok)}
+  .front-card .card-title{color:var(--ok)}
+
+  /* blocker card */
+  .blocker-card{border-left:3px solid var(--crit)}
+  .blocker-card.warn-band{border-left-color:var(--warn)}
+
+  /* pulse strip */
+  #pulse{
+    background:var(--surface2);border-top:1px solid var(--border);
+    padding:6px 20px;display:flex;gap:16px;align-items:center;
+    font-size:11px;color:var(--muted);font-family:var(--font-mono);
+    position:sticky;bottom:0;
+  }
+
+  /* leaning summary */
+  .leanings-row{
+    display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;
+  }
+  .lean-chip{
+    font-size:10px;padding:1px 6px;border-radius:10px;
+    background:var(--surface2);color:var(--muted);
+  }
+  .lean-adopt{background:var(--ok-dim);color:var(--ok)}
+  .lean-prefer{background:var(--info-dim);color:var(--info)}
+  .lean-defer{background:var(--warn-dim);color:var(--warn)}
+  .lean-more{background:var(--surface2);color:var(--muted)}
+
+  /* ── Status counts bar ──────────────────────────── */
+  .counts-row{display:flex;gap:4px;flex-wrap:wrap}
+  .count-item{
+    font-size:11px;font-family:var(--font-mono);
+    padding:2px 6px;border-radius:4px;
+    background:var(--surface2);color:var(--muted);
+  }
+  .count-done{background:var(--ok-dim);color:var(--ok)}
+  .count-inprog{background:var(--info-dim);color:var(--info)}
+  .count-blocked{background:var(--crit-dim);color:var(--crit)}
+
+  /* ── Error / offline banner ─────────────────────── */
+  .banner{
+    margin:12px 0;padding:10px 14px;border-radius:6px;
+    font-size:12px;line-height:1.6;
+  }
+  .banner-warn{background:var(--warn-dim);color:var(--warn);border-left:3px solid var(--warn)}
+  .banner-ok{background:var(--ok-dim);color:var(--ok);border-left:3px solid var(--ok)}
+
+  /* ── Notes form ─────────────────────────────────── */
+  .note-form{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .note-form textarea{
+    background:var(--bg);border:1px solid var(--border);border-radius:4px;
+    color:var(--text);padding:6px 8px;font-family:var(--font-sans);font-size:12px;
+    resize:vertical;min-height:60px;width:100%;
+  }
+  .note-form select{
+    background:var(--bg);border:1px solid var(--border);border-radius:4px;
+    color:var(--text);padding:4px 6px;font-size:12px;
+  }
+  .btn{
+    padding:5px 12px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:500;
+    border:1px solid var(--border);background:var(--surface2);color:var(--text);
+    transition:background .15s;
+  }
+  .btn:hover{background:var(--faint)}
+  .btn-primary{background:var(--terra-dim);color:var(--terra-text);border-color:var(--terra)}
+  .btn-primary:hover{background:var(--terra);color:#fff}
+
+  /* ── Thread state badge ─────────────────────────── */
+  .state-badge{
+    font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;
+    font-family:var(--font-mono);
+  }
+  .state-deliberating{background:var(--info-dim);color:var(--info)}
+  .state-ready_to_record{background:var(--warn-dim);color:var(--warn)}
+  .state-recorded{background:var(--ok-dim);color:var(--ok)}
+  .state-no_thread{background:var(--surface2);color:var(--muted)}
+
+  /* responsive */
+  @media(max-width:900px){
+    #main{grid-template-columns:1fr;height:auto}
+    .panel{border-right:none;border-bottom:1px solid var(--border)}
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <a href="index.html" class="back">← commons</a>
+  <h1>Decision–Blocker Signal Loop</h1>
+  <span id="chip-sync" class="chip chip-muted">syncing…</span>
+  <span id="chip-front" class="chip chip-muted"></span>
+  <span id="chip-open-decisions" class="chip chip-muted"></span>
+  <span id="chip-blockers" class="chip chip-muted"></span>
+  <button id="mode-btn" onclick="toggleMode()">☾</button>
+</div>
+
+<div id="main">
+
+  <!-- Panel 1: Front — workable now -->
+  <div class="panel" id="panel-front">
+    <div class="panel-title">Front — workable now</div>
+    <div id="front-banner"></div>
+    <div id="front-list"><div class="card"><div class="card-meta">loading…</div></div></div>
+  </div>
+
+  <!-- Panel 2: Decision queue -->
+  <div class="panel" id="panel-decisions">
+    <div class="panel-title">Decision queue · ranked by leverage</div>
+    <div class="banner banner-warn" style="font-size:11px;margin:0 0 4px">
+      Leanings are non-binding signals. Decisions and ratifications are human-only (contract:agents§5).
+    </div>
+    <div id="decisions-list"><div class="card"><div class="card-meta">loading…</div></div></div>
+  </div>
+
+  <!-- Panel 3: Blockers -->
+  <div class="panel" id="panel-blockers">
+    <div class="panel-title">Blockers</div>
+    <div id="blockers-list"><div class="card"><div class="card-meta">loading…</div></div></div>
+  </div>
+
+  <!-- Panel 4: Pulse -->
+  <div class="panel" id="panel-pulse">
+    <div class="panel-title">Pulse</div>
+    <div id="pulse-content">
+      <div class="card"><div class="card-meta">loading…</div></div>
+    </div>
+    <div id="aging-content"></div>
+    <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border)">
+      <a href="hud.html" style="font-size:12px;color:var(--muted)">→ full ledger HUD</a><br>
+      <a href="index.html" style="font-size:12px;color:var(--muted);margin-top:4px;display:inline-block">→ repository</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────
+let sb = null;
+let state = {
+  connected: false,
+  pulse: null,
+  front: [],
+  decisions: [],
+  blockers: [],
+  aging: [],
+  ledgerFallback: null,
+};
+
+// ── Init ─────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", async () => {
+  applyStoredMode();
+
+  const cfg = window.LOOP_CONFIG ?? {};
+  if (!cfg.supabaseUrl || !cfg.supabaseAnon) {
+    showOfflineBanner("loop.config.js missing or incomplete. Falling back to index.json.");
+    await loadFallback(cfg.ledgerFallback ?? "milestones/index.json");
+    return;
+  }
+
+  try {
+    sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnon);
+    await loadAll();
+  } catch (e) {
+    showOfflineBanner(`Supabase unreachable (${e.message}). Falling back to index.json.`);
+    await loadFallback(cfg.ledgerFallback ?? "milestones/index.json");
+  }
+});
+
+// ── Load all data ─────────────────────────────────────────
+async function loadAll() {
+  const [pulseRes, frontRes, decRes, blockRes, agingRes] = await Promise.all([
+    sb.from("v_pulse").select("*").limit(1).maybeSingle(),
+    sb.from("v_front").select("*").order("wave").order("id"),
+    sb.from("v_decision_leverage").select("*"),
+    sb.from("blockers").select("*,raised_by(display_name)").eq("state", "open").eq("visibility", "public").order("created_at"),
+    sb.from("v_aging").select("*").order("age", { ascending: false }).limit(20),
+  ]);
+
+  if (pulseRes.error) throw new Error(pulseRes.error.message);
+  state.connected = true;
+
+  state.pulse = pulseRes.data;
+  state.front = frontRes.data ?? [];
+  state.decisions = decRes.data ?? [];
+  state.blockers = blockRes.data ?? [];
+  state.aging = agingRes.data ?? [];
+
+  renderAll();
+}
+
+// ── Render ────────────────────────────────────────────────
+function renderAll() {
+  renderTopChips();
+  renderPulse();
+  renderFront();
+  renderDecisions();
+  renderBlockers();
+  renderAging();
+}
+
+function renderTopChips() {
+  const p = state.pulse;
+  const sc = p?.status_counts ?? {};
+  const sha = p?.sync_sha ?? "no sync";
+  const age = p ? formatAge(p.age) : "—";
+
+  el("chip-sync").className = "chip " + (state.connected ? "chip-ok" : "chip-warn");
+  el("chip-sync").textContent = state.connected
+    ? `synced ${age} · ${sha.slice(0,7)}`
+    : "offline";
+
+  el("chip-front").className = "chip " + (state.front.length > 0 ? "chip-ok" : "chip-muted");
+  el("chip-front").textContent = `${state.front.length} workable`;
+
+  const openD = state.decisions.length;
+  el("chip-open-decisions").className = "chip " + (openD > 0 ? "chip-terra" : "chip-muted");
+  el("chip-open-decisions").textContent = `${openD} open decisions`;
+
+  const openB = state.blockers.filter(b => b.state === "open").length;
+  el("chip-blockers").className = "chip " + (openB > 0 ? "chip-crit" : "chip-ok");
+  el("chip-blockers").textContent = `${openB} blockers`;
+}
+
+function renderPulse() {
+  const p = state.pulse;
+  const sc = p?.status_counts ?? {};
+  const content = el("pulse-content");
+  if (!p) { content.innerHTML = '<div class="card"><div class="card-meta">No snapshots yet</div></div>'; return; }
+
+  content.innerHTML = `
+    <div class="card">
+      <div class="card-title">Latest sync</div>
+      <div class="card-meta">
+        <code>${(p.sync_sha ?? "").slice(0,7)}</code>
+        <span>${new Date(p.synced_at).toLocaleString()}</span>
+      </div>
+      <div class="card-meta">${p.entry_count} entries</div>
+      <div class="counts-row" style="margin-top:4px">
+        ${Object.entries(sc).filter(([,v])=>v>0).map(([k,v])=>
+          `<span class="count-item ${k==='done'||k==='verified'?'count-done':k==='in_progress'?'count-inprog':k==='blocked'?'count-blocked':''}">${k} ${v}</span>`
+        ).join("")}
+      </div>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="card-title">What the loop cannot do</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.7">
+        It cannot flip a decision, write to the repository, or mark anything
+        <code>recorded</code> without a URL pointing into the canonical record.
+        Authority stays where AGENTS.md rule 5 puts it.
+      </div>
+    </div>
+  `;
+}
+
+function renderFront() {
+  const list = el("front-list");
+  if (!state.front.length) {
+    el("front-banner").innerHTML = state.connected
+      ? '<div class="banner banner-warn">No steps are workable yet. All paths wait on unverified parents or open decisions.</div>'
+      : '<div class="banner banner-warn">Loaded from index.json fallback — decision gating not computed.</div>';
+    list.innerHTML = "";
+    return;
+  }
+  el("front-banner").innerHTML = "";
+  list.innerHTML = state.front.map(e => `
+    <div class="card front-card">
+      <div class="card-id">${e.id} · ${e.wave}</div>
+      <div class="card-title">${e.title}</div>
+      <div class="card-meta">
+        <span>${e.kind}</span>
+        <span>owner: ${e.owner ?? "—"}</span>
+        <span class="chip chip-ok" style="padding:1px 5px;font-size:10px">${e.status}</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">verify: ${e.verification ?? "—"}</div>
+    </div>
+  `).join("");
+}
+
+function renderDecisions() {
+  const list = el("decisions-list");
+  const maxGated = Math.max(1, ...state.decisions.map(d => d.total_gated ?? 0));
+
+  if (!state.decisions.length) {
+    list.innerHTML = '<div class="card"><div class="card-meta">No open decisions.</div></div>';
+    return;
+  }
+
+  list.innerHTML = state.decisions.map(d => {
+    const gated = d.total_gated ?? 0;
+    const pct = Math.round((gated / maxGated) * 100);
+    const leans = d.leanings_summary ?? {};
+    const stateClass = `state-${(d.thread_state ?? "no_thread").replace(/\s/g,"_")}`;
+
+    return `
+    <div class="card decision-card" onclick="toggleExpand(this)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <div class="card-id">${d.id}</div>
+          <div class="card-title">${d.title}</div>
+        </div>
+        <span class="state-badge ${stateClass}">${(d.thread_state ?? "no_thread").replace(/_/g," ")}</span>
+      </div>
+      <div class="leverage-bar">
+        <span>${gated} gated</span>
+        <div class="leverage-track"><div class="leverage-fill" style="width:${pct}%"></div></div>
+      </div>
+      ${Object.keys(leans).length ? `
+        <div class="leanings-row">
+          ${leans.adopt_default ? `<span class="lean-chip lean-adopt">adopt ${leans.adopt_default}</span>` : ""}
+          ${leans.prefer_alternative ? `<span class="lean-chip lean-prefer">prefer alt ${leans.prefer_alternative}</span>` : ""}
+          ${leans.defer ? `<span class="lean-chip lean-defer">defer ${leans.defer}</span>` : ""}
+          ${leans.need_more_information ? `<span class="lean-chip lean-more">need info ${leans.need_more_information}</span>` : ""}
+        </div>` : ""}
+      ${d.recorded_pr_url ? `<div style="font-size:11px;margin-top:4px"><a href="${d.recorded_pr_url}" target="_blank">→ recorded PR</a></div>` : ""}
+      <div class="card-detail">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+          Wave: ${d.wave} · Status: ${d.decision_status}
+        </div>
+        <a href="docs/decisions/${d.id}.md" style="font-size:11px" target="_blank">→ brief in docs/decisions/</a>
+        <div style="margin-top:8px;font-size:11px;color:var(--terra-text)">
+          To record this decision: use <code>decision-record-draft</code> function
+          (authenticated organizer), carry the resulting patch into a PR.
+          The loop updates on next push.
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderBlockers() {
+  const list = el("blockers-list");
+  if (!state.blockers.length) {
+    list.innerHTML = '<div class="card"><div class="card-meta" style="color:var(--ok)">No open blockers.</div></div>';
+    return;
+  }
+  list.innerHTML = state.blockers.map(b => {
+    const age = formatAge(b.age ?? "");
+    const isCrit = b.age_band === "critical";
+    return `
+    <div class="card blocker-card ${isCrit ? "" : "warn-band"}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+        <span class="chip chip-muted" style="font-size:10px">${b.kind}</span>
+        <span class="chip ${isCrit ? "chip-crit" : "chip-warn"}" style="font-size:10px">${age}</span>
+      </div>
+      <div class="card-title">${b.summary}</div>
+      ${b.entry_id ? `<div class="card-meta">entry: <code>${b.entry_id}</code></div>` : ""}
+      ${b.detail ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(b.detail)}</div>` : ""}
+      <div class="card-meta">raised by: ${b.raised_by?.display_name ?? "—"}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderAging() {
+  const ag = el("aging-content");
+  const critical = state.aging.filter(x => x.age_band === "critical");
+  if (!critical.length) { ag.innerHTML = ""; return; }
+  ag.innerHTML = `
+    <div class="card" style="border-left:3px solid var(--crit)">
+      <div class="panel-title" style="color:var(--crit)">Age alerts</div>
+      ${critical.map(x => `
+        <div style="margin-top:6px;font-size:11px">
+          <span class="chip chip-crit" style="font-size:10px">${x.kind}</span>
+          <span style="color:var(--heading);margin-left:4px">${x.ref_id}</span>
+          <span style="color:var(--muted)"> · ${x.title.slice(0,40)}${x.title.length>40?"…":""}</span>
+          <span style="color:var(--crit);margin-left:4px">${formatAge(x.age)}</span>
+        </div>`).join("")}
+    </div>`;
+}
+
+// ── Fallback (offline / no Supabase) ─────────────────────
+async function loadFallback(path) {
+  try {
+    const resp = await fetch(path);
+    if (!resp.ok) throw new Error(`${resp.status}`);
+    const index = await resp.json();
+    state.ledgerFallback = index;
+    renderFallback(index);
+  } catch (e) {
+    document.getElementById("panel-front").innerHTML =
+      `<div class="banner banner-warn">Could not load ${path}: ${e.message}</div>`;
+  }
+}
+
+function renderFallback(index) {
+  const nodes = index.nodes ?? [];
+  const sc = index.status_counts ?? {};
+  const sha = index.nodes?.[0]?.sync_sha ?? "—";
+
+  el("chip-sync").className = "chip chip-warn";
+  el("chip-sync").textContent = "offline · index.json";
+
+  const pending = nodes.filter(n => n.status === "pending").length;
+  const openD = nodes.filter(n => (n.kind==="decision"||n.kind==="ratification") && n.status!=="done"&&n.status!=="verified").length;
+
+  el("chip-front").className = "chip chip-muted";
+  el("chip-front").textContent = "gating not computed";
+  el("chip-open-decisions").className = "chip chip-terra";
+  el("chip-open-decisions").textContent = `${openD} open decisions`;
+  el("chip-blockers").className = "chip chip-muted";
+  el("chip-blockers").textContent = "blockers unavailable";
+
+  // Show open decisions from fallback
+  const decs = nodes.filter(n => (n.kind==="decision"||n.kind==="ratification") && n.status!=="done"&&n.status!=="verified");
+  el("decisions-list").innerHTML = decs.map(d => `
+    <div class="card decision-card">
+      <div class="card-id">${d.id}</div>
+      <div class="card-title">${d.title}</div>
+      <div class="card-meta"><span class="chip chip-muted">${d.status}</span></div>
+    </div>`).join("") || '<div class="card"><div class="card-meta">None</div></div>';
+
+  el("front-list").innerHTML = '<div class="card"><div class="card-meta" style="color:var(--muted)">Decision gating not available in offline mode.</div></div>';
+  el("blockers-list").innerHTML = '<div class="card"><div class="card-meta" style="color:var(--muted)">Blocker data requires Supabase connection.</div></div>';
+
+  el("pulse-content").innerHTML = `
+    <div class="card">
+      <div class="card-title">Fallback · milestones/index.json</div>
+      <div class="counts-row" style="margin-top:4px">
+        ${Object.entries(sc).filter(([,v])=>v>0).map(([k,v])=>
+          `<span class="count-item">${k} ${v}</span>`
+        ).join("")}
+      </div>
+    </div>`;
+}
+
+// ── Utilities ─────────────────────────────────────────────
+function el(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function formatAge(interval) {
+  if (!interval) return "—";
+  // Supabase returns interval as string like "2 days 03:21:00" or seconds float
+  if (typeof interval === "number") {
+    const d = Math.floor(interval / 86400000);
+    const h = Math.floor((interval % 86400000) / 3600000);
+    return d > 0 ? `${d}d ${h}h` : `${h}h`;
+  }
+  // Parse string interval
+  const str = String(interval);
+  const days = str.match(/(\d+)\s+day/);
+  const hours = str.match(/(\d+):(\d+):/);
+  if (days) return `${days[1]}d ${hours ? hours[1]+"h" : ""}`.trim();
+  if (hours && parseInt(hours[1]) > 0) return `${hours[1]}h ${hours[2]}m`;
+  if (hours) return `${hours[2]}m`;
+  return str.slice(0, 12);
+}
+
+function toggleExpand(card) {
+  const isExpanded = card.classList.contains("expanded");
+  document.querySelectorAll(".decision-card.expanded").forEach(c => c.classList.remove("expanded"));
+  if (!isExpanded) card.classList.add("expanded");
+}
+
+function showOfflineBanner(msg) {
+  const b = document.createElement("div");
+  b.className = "banner banner-warn";
+  b.style.cssText = "position:fixed;top:50px;left:50%;transform:translateX(-50%);z-index:200;max-width:600px;width:90%";
+  b.textContent = msg;
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 8000);
+}
+
+// ── Theme ─────────────────────────────────────────────────
+function applyStoredMode() {
+  const m = localStorage.getItem("loop-mode") ?? "dark";
+  document.documentElement.setAttribute("data-mode", m);
+  el("mode-btn").textContent = m === "dark" ? "☀" : "☾";
+}
+
+function toggleMode() {
+  const current = document.documentElement.getAttribute("data-mode") ?? "dark";
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-mode", next);
+  localStorage.setItem("loop-mode", next);
+  el("mode-btn").textContent = next === "dark" ? "☀" : "☾";
+}
+</script>
+</body>
+</html>

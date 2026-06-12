@@ -1,0 +1,46 @@
+name: loop-sync
+# Sense step of the Decision–Blocker Signal Loop.
+# On every push to main: POST milestones/index.json to ledger-ingest.
+# The ingest function rebuilds ledger_entries, opens threads for new D/R entries,
+# and returns a snapshot record. Failure is non-blocking (continue-on-error).
+on:
+  push:
+    branches: [main]
+    paths:
+      - milestones/index.json
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ingest ledger index
+        continue-on-error: true
+        env:
+          LOOP_INGEST_URL: "https://dgcoffcanzwsuwgpocbt.supabase.co/functions/v1/ledger-ingest"
+          LEDGER_INGEST_TOKEN: ${{ secrets.LEDGER_INGEST_TOKEN }}
+        run: |
+          SHA="${{ github.sha }}"
+          GENERATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          INDEX=$(cat milestones/index.json)
+          PAYLOAD=$(python3 -c "
+          import json, sys
+          index = json.loads(sys.argv[1])
+          body = {\"sha\": sys.argv[2], \"generated_at\": sys.argv[3], \"index\": index}
+          print(json.dumps(body))
+          " "$INDEX" "$SHA" "$GENERATED_AT")
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 30 \
+            "${LOOP_INGEST_URL}" \
+            -H "x-ingest-token: ${LEDGER_INGEST_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -1)
+
+          echo "HTTP $HTTP_CODE"
+          echo "$BODY" | python3 -m json.tool || echo "$BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::loop-sync returned $HTTP_CODE — loop continues from previous snapshot"
+          fi
