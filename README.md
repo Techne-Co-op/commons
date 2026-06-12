@@ -1,51 +1,108 @@
-# cis-repo-seed v0.1
+# commons · RegenHub, LCA
 
-The executable scaffold for building the RegenHub, LCA Common Information System and
-Hub Operations surface on GitHub Pages + Supabase, by LLM agents under human direction.
+The Common Information System for [RegenHub, LCA](https://regenhub.coop) — a Colorado Limited Cooperative Association in Boulder. Served at **[techne-co-op.github.io/commons](https://techne-co-op.github.io/commons/)**.
 
-Provenance: generated from the Private Alpha Implementation Plan v0.1 (draft), grounded
-in CIS PRD v0.2 and Hub Operations PRD v0.1. Status: draft for review; nothing here is
-ratified; all 70 ledger entries are honestly `pending` or `in_progress`.
+Build state, Hub Operations tracking, and the decision–blocker signal loop — all under human direction, agent-assisted execution, Supabase backend.
+
+---
+
+## Live instruments
+
+| Surface | Path | Purpose |
+|---|---|---|
+| Repository index | `index.html` | Entry point · links to all instruments |
+| CIS Implementation HUD | `hud.html` | 71 milestones · wave rail · HUB and LOOP modes |
+| Decision–Blocker Signal Loop | `loop.html` | Open decisions ranked by leverage · blockers · pulse |
+| Design system reference | `design-system.html` | Tokens, typography, components, layout grammars |
+
+The HUD has three view modes: wave-filtered milestone view, **HUB** (Hub Operations guide layer — EE grant phases, KPIs, modules, grant lifecycle), and **LOOP** (signal loop embedded — front workable, decision queue, blockers, pulse).
+
+---
 
 ## Design system
 
-All pages served from this repository **must** use the commons design system.
+All pages use **Design System v3**, adopted from co-op.us.
 
-- `design-system.html` · the canonical reference — tokens, typography, components, layout
-  grammars, voice guidelines, and the instructions an agent needs to produce on-brand artifacts
-- `commons.css` · the shared stylesheet — link this from every HTML page
-- `docs/DESIGN.md` · contributor guide: token reference, layout grammar rules, component
-  patterns, and prohibited patterns
+- `commons.css` — shared stylesheet; link this from every HTML page
+- `design-system.html` — canonical reference: tokens, typography, components, layout grammars, voice guidelines, agent authoring instructions
+- `docs/DESIGN.md` — contributor protocol: token reference, layout grammar rules, component patterns, prohibited patterns
 
-The design system is Design System v3, adopted from co-op.us. Its core commitments: warm
-grayscale ground state with terracotta as the only decorative accent; two typefaces (Libre
-Baskerville serif for reading, IBM Plex Mono for technical text); no alarm red (`--crit`
-aliases `--warn` · clay); state tokens (`--ok`, `--info`, `--warn`) appear on instrument
-surfaces only. See `docs/DESIGN.md` for the full contributor protocol.
+Core commitments: warm grayscale ground, terracotta as the only decorative accent, two typefaces (Libre Baskerville serif for reading, IBM Plex Mono for technical), no alarm red (`--crit` aliases `--warn` · clay), state tokens (`--ok`, `--info`, `--warn`) on instrument surfaces only.
 
-## What this contains
+---
 
-- `AGENTS.md` \u00b7 the operating contract every executing agent reads first
-- `GOVERNANCE.md` \u00b7 the ledger's mechanics: schema, lifecycle, validation
-- `milestones/` \u00b7 70 entries (steps, decisions, ratifications, gate, practice;
-  67 seeded + W0.19–W0.22 added June 2026),
-  plus generated `index.json` and `STATUS.md`
-- `milestones/schema.json` \u00b7 machine-readable front-matter schema
-- `scripts/validate.py` \u00b7 working validator (tested against this seed)
-- `scripts/gen_seed.py` \u00b7 regenerates the seed from plan data; source of truth
-- `docs/decisions/` \u00b7 deliberation briefs D1\u2013D10, R1, R2, all `open`
-- `docs/DESIGN.md` \u00b7 design system contributor guide (see above)
-- `docs/VERIFICATION.md` \u00b7 contract cards for the named CI jobs
-- `docs/CONVENTIONS.md` \u00b7 SQL, RLS, event-envelope, and vocabulary rules
-- `docs/citations.md` \u00b7 draft-bylaws and grant citation register (D7)
-- `docs/SECRETS.md` \u00b7 secret names and custody (names only, never values)
-- `.github/` \u00b7 milestone-validate workflow and PR template
+## Repository layout
 
-## Bootstrap (human steps, in order)
+```
+commons/
+├── index.html                          entry point
+├── hud.html                            CIS implementation HUD
+├── loop.html                           decision–blocker signal loop
+├── loop.config.js                      Supabase anon key (public by design; RLS is the guard)
+├── commons.css                         design system stylesheet
+├── design-system.html                  design system reference
+├── cis-prd-v0.2.html                   CIS PRD v0.2
+├── hub-ops-prd-v0.1.html               Hub Operations PRD v0.1
+├── cis-build-roadmap-instrument-v0.2.html
+├── cis-hubops-private-alpha-implementation-plan-v0.1.html
+├── builders-collection-map-v0.1.html
+├── c6–c11-*.html                       companion instruments (schema card, probe matrix, etc.)
+├── AGENTS.md                           operating contract every executing agent reads first
+├── GOVERNANCE.md                       ledger mechanics: schema, lifecycle, validation
+│
+├── milestones/                         71 ledger entries (steps, decisions, ratifications, gates, practice)
+│   ├── index.json                      generated — do not edit by hand
+│   ├── STATUS.md                       generated — do not edit by hand
+│   ├── schema.json                     front-matter schema
+│   └── D/, R/, W0/…W6/, G/, P/         entry files by wave
+│
+├── docs/
+│   ├── decisions/                      deliberation briefs D1–D10, R1–R2
+│   ├── DESIGN.md                       design system contributor guide
+│   ├── CONVENTIONS.md                  SQL, RLS, event-envelope, vocabulary rules
+│   ├── VERIFICATION.md                 contract cards for named CI jobs
+│   ├── SECRETS.md                      secret names and custody (names only, never values)
+│   └── citations.md                    draft-bylaws and grant citation register
+│
+├── scripts/
+│   ├── validate.py                     milestone validator; regenerates index.json and STATUS.md
+│   ├── gen_seed.py                     regenerates seed from plan data
+│   └── requirements.txt
+│
+├── supabase/
+│   ├── migrations/                     append-only SQL migrations
+│   └── functions/                      Edge Functions (decision-record-draft, ledger-ingest)
+│
+└── .github/
+    ├── workflows/
+    │   ├── milestone-validate.yml      required check on every push and PR
+    │   └── loop-sync.yml               syncs ledger to Supabase on push to main
+    └── PULL_REQUEST_TEMPLATE.md
+```
 
-1. Decide D3 (record it in `docs/decisions/D3.md`), create the org/repo, push this seed.
-2. Apply branch protection; require `milestone-validate`.
-3. Proceed per `AGENTS.md`: the first agent-executable step is W0.1's agent half,
-   then W0.2 wires this scaffold into CI.
+---
 
-Validate locally: `pip install -r scripts/requirements.txt && python scripts/validate.py`
+## Milestone ledger
+
+71 entries across waves D, R, W0–W6, G, P. Status lifecycle: `pending → in_progress → review → done → verified`. Only `verified` unlocks dependents. The validator enforces schema, dependency ordering, and acyclicity on every push.
+
+Current state: see `milestones/STATUS.md` or the [HUD](https://techne-co-op.github.io/commons/hud.html).
+
+---
+
+## Working here
+
+Agents read `AGENTS.md` first, then `GOVERNANCE.md`, then `milestones/STATUS.md`, then the single milestone file being executed. The operating contract is binding; when it conflicts with any other instruction the contract wins and the conflict is reported in the PR.
+
+Decisions (D, R entries) are human-only. Agents may draft deliberation briefs; they do not record or flip decisions.
+
+Validate locally:
+
+```sh
+pip install -r scripts/requirements.txt
+python scripts/validate.py
+```
+
+---
+
+*RegenHub, LCA · Boulder, Colorado · filed Feb 6, 2026 · public benefit: cultivating scenius*

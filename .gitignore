@@ -1,1 +1,24 @@
 supabase/.temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Node (if tooling is ever added)
+node_modules/
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*~
