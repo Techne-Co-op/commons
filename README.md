@@ -11,11 +11,15 @@ Build state, Hub Operations tracking, and the decision–blocker signal loop —
 | Surface | Path | Purpose |
 |---|---|---|
 | Repository index | `index.html` | Entry point · links to all instruments |
-| CIS Implementation HUD | `hud.html` | 71 milestones · wave rail · HUB and LOOP modes |
+| CIS Implementation HUD | `hud.html` | 71 milestones · wave rail · HUB, LOOP, and DOC modes |
 | Decision–Blocker Signal Loop | `loop.html` | Open decisions ranked by leverage · blockers · pulse |
 | Design system reference | `design-system.html` | Tokens, typography, components, layout grammars |
+| Documentation Fulfilment HUD | `cis-hubops-documentation-fulfilment-hud-v0_1.html` | 67-deliverable fulfilment tracker · phase and roadmap lenses |
+| Documentation Fulfilment Framework | `documentation-fulfilment-agent-framework-v0_1.html` | Software Service Delivery framework spec v0.1 |
+| Progressive Definition 01 — Inception Baseline | `cis-hubops-progressive-definition-01-inception-v0_2.html` | Problem brief · stakeholder map · success criteria · charter · open questions |
+| Progressive Definition 02 — Discovery Consolidation | `cis-hubops-progressive-definition-02-discovery-v0_1.html` | Requirements index · feasibility matrix · risk register · evidence standard |
 
-The HUD has three view modes: wave-filtered milestone view, **HUB** (Hub Operations guide layer — EE grant phases, KPIs, modules, grant lifecycle), and **LOOP** (signal loop embedded — front workable, decision queue, blockers, pulse).
+The HUD has four view modes: wave-filtered milestone view, **HUB** (Hub Operations guide layer — EE grant phases, KPIs, modules, grant lifecycle), **LOOP** (signal loop embedded — front workable, decision queue, blockers, pulse), and **DOC** (documentation fulfilment — 67 deliverables across 8 phases, phase and roadmap lenses, gap detection).
 
 ---
 
@@ -45,6 +49,10 @@ commons/
 ├── hub-ops-prd-v0.1.html               Hub Operations PRD v0.1
 ├── cis-build-roadmap-instrument-v0.2.html
 ├── cis-hubops-private-alpha-implementation-plan-v0.1.html
+├── cis-hubops-documentation-fulfilment-hud-v0_1.html   fulfilment tracker standalone instrument
+├── documentation-fulfilment-agent-framework-v0_1.html  Software Service Delivery framework spec
+├── cis-hubops-progressive-definition-01-inception-v0_2.html   inception baseline document
+├── cis-hubops-progressive-definition-02-discovery-v0_1.html   discovery consolidation document
 ├── builders-collection-map-v0.1.html
 ├── c6–c11-*.html                       companion instruments (schema card, probe matrix, etc.)
 ├── AGENTS.md                           operating contract every executing agent reads first

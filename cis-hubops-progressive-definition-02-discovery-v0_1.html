@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>CIS &middot; Hub Operations &middot; Progressive Definition &middot; 02 Discovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* co-op.us design system · token layer (verbatim) */
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface-raised: #232220;
+  --border: #333333; --border-strong: #4a4a4a;
+  --terra: #c4956a; --terra-text: #c4956a;
+  --terra-dim: rgba(196, 149, 106, 0.12); --terra-glow: rgba(196, 149, 106, 0.06);
+  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
+  --ok: #94ae84; --ok-dim: rgba(148, 174, 132, 0.14);
+  --info: #8da3b5; --info-dim: rgba(141, 163, 181, 0.14);
+  --warn: #c0705c; --warn-dim: rgba(192, 112, 92, 0.14);
+  --shadow-1: none; --shadow-2: none;
+  --dur-mode: 400ms; --dur-micro: 160ms; --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-mode="dark"]) {
+    color-scheme: light;
+    --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+    --border: #e2ddd5; --border-strong: #c9c2b8;
+    --terra: #c4956a; --terra-text: #96704a;
+    --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+    --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+    --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+    --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+    --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+    --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08); --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+  }
+}
+[data-mode="light"] {
+  color-scheme: light;
+  --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+  --border: #e2ddd5; --border-strong: #c9c2b8;
+  --terra: #c4956a; --terra-text: #96704a;
+  --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+  --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+  --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+  --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+  --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+  --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08); --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+}
+[data-mode="dark"] { color-scheme: dark; }
+
+/* base · document grammar */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 16px; line-height: 1.85;
+  transition: background-color var(--dur-mode) var(--ease), color var(--dur-mode) var(--ease);
+}
+.page { max-width: 760px; margin: 0 auto; padding: var(--s8) var(--s5); }
+
+header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--s7); gap: var(--s4); }
+h1 { font-size: 36px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; line-height: 1.25; }
+.subtitle { font-style: italic; font-size: 18px; color: var(--text); margin-top: var(--s2); }
+.version { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--muted); margin-top: var(--s3); line-height: 1.9; }
+.mode-toggle {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 7px 16px; cursor: pointer; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0;
+  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.mode-toggle:hover { border-color: var(--terra); color: var(--terra-text); }
+.mode-toggle:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+.mode-toggle svg { width: 15px; height: 15px; stroke: currentColor; }
+
+.lede { font-size: 19px; line-height: 1.7; color: var(--text); margin-bottom: var(--s6); max-width: 60ch; }
+
+/* section grammar */
+section { margin-bottom: var(--s8); }
+.label {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+}
+.rule { width: 48px; height: 1px; background: linear-gradient(to right, var(--terra), transparent); margin: var(--s3) 0 var(--s6); }
+p { margin-bottom: 20px; }
+p:last-child { margin-bottom: 0; }
+em { font-style: italic; }
+a { color: var(--terra-text); text-decoration: none; transition: color var(--dur-micro) var(--ease); }
+a:hover { text-decoration: underline; }
+code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.85em;
+  color: var(--terra-text); background: var(--terra-dim); padding: 2px 6px; border-radius: 4px;
+}
+
+/* contents */
+.toc { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; line-height: 2.2; color: var(--muted); margin-bottom: var(--s8); }
+.toc a { color: var(--muted); }
+.toc a:hover { color: var(--terra-text); text-decoration: none; }
+.toc .n { color: var(--terra-text); margin-right: var(--s3); }
+
+/* provenance chip */
+.prov {
+  display: inline-flex; align-items: baseline; gap: var(--s2);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--terra);
+  border-radius: 6px; padding: 5px 12px;
+  transition: border-color var(--dur-micro) var(--ease);
+}
+.prov:hover { border-color: var(--terra); }
+.prov .cite { color: var(--terra-text); }
+.prov .sep { color: var(--faint); }
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin: var(--s4) 0 0; align-items: center; }
+
+/* subsection heads */
+h3 { font-size: 18px; color: var(--heading); font-weight: 700; margin: var(--s6) 0 var(--s4); line-height: 1.4; }
+h3 .n {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;
+  letter-spacing: 0.16em; color: var(--terra-text); margin-right: var(--s3); font-weight: 400;
+}
+.caption { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--faint); margin: calc(-1 * var(--s3)) 0 var(--s5); }
+
+/* spec tables */
+.table-scroll { overflow-x: auto; margin: var(--s5) 0; }
+.spec { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; }
+.spec th {
+  font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 400;
+  color: var(--faint); text-align: left; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border-strong);
+}
+.spec td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.7; }
+.spec td:first-child { color: var(--terra-text); }
+.spec.firstcol-nowrap td:first-child { white-space: nowrap; }
+
+/* document meta line inside a deliverable */
+.docmeta { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.9; color: var(--muted); margin-bottom: var(--s5); }
+.docmeta .k { color: var(--faint); }
+
+/* source tags */
+.src {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px;
+  color: var(--faint); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; margin-left: 6px; white-space: nowrap;
+  vertical-align: baseline;
+}
+.src.inf { color: var(--info); border-color: var(--info-dim); background: var(--info-dim); }
+
+/* verdict badges */
+.st { display: inline-block; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 8px; border-radius: 4px; border: 1px solid var(--border); white-space: nowrap; }
+.st.ok   { color: var(--ok); background: var(--ok-dim); border-color: rgba(148,174,132,0.3); }
+.st.cond { color: var(--info); background: var(--info-dim); border-color: rgba(141,163,181,0.3); }
+.st.tens { color: var(--warn); background: var(--warn-dim); border-color: rgba(192,112,92,0.3); }
+.blank { color: var(--faint); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* hard lists */
+ul.hardlist { list-style: none; margin: var(--s4) 0 var(--s5); }
+ul.hardlist li { padding: var(--s2) 0 var(--s2) var(--s5); position: relative; line-height: 1.8; border-bottom: 1px solid var(--border); }
+ul.hardlist li:last-child { border-bottom: none; }
+ul.hardlist li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 14px; height: 1px; background: var(--terra); }
+
+/* proposal panels */
+.qitem { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--terra); border-radius: 10px; padding: var(--s4) var(--s5); margin-bottom: var(--s4); box-shadow: var(--shadow-1); transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-mode) var(--ease); }
+.qitem:hover { border-color: var(--terra); border-left-color: var(--terra); }
+.qitem .qid { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terra-text); margin-bottom: var(--s1); }
+.qitem .qtitle { font-size: 16px; font-weight: 700; color: var(--heading); margin-bottom: var(--s2); }
+.qitem .qmeta { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.9; color: var(--text); }
+.qitem .qmeta .k { color: var(--faint); }
+.qitem .qbody { font-size: 14.5px; line-height: 1.8; margin: var(--s2) 0 var(--s2); }
+
+footer { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); border-top: 1px solid var(--border); padding-top: var(--s5); margin-top: var(--s8); }
+
+@media (max-width: 560px) {
+  h1 { font-size: 28px; }
+  .page { padding: var(--s6) var(--s4); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <h1>Common Information System &middot; Hub Operations</h1>
+    <div class="subtitle">Progressive Definition &middot; 02 Discovery Consolidation</div>
+    <div class="version">VERSION 0.1 &middot; DRAFT FOR REVIEW &middot; JUNE 2026<br>REGENHUB, LCA &middot; PREPARED BY NOU &middot; instrument output; every decision named below is reserved to organizers</div>
+    <div class="chip-row">
+      <span class="prov"><span class="cite">CIS PRD v0.2 &middot; Hub Operations PRD v0.1</span><span class="sep">&middot;</span>read in full</span>
+      <span class="prov"><span class="cite">Implementation Plan v0.1 &middot; Build Roadmap v0.2</span><span class="sep">&middot;</span>read in full</span>
+      <span class="prov"><span class="cite">Inception Baseline v0.2</span><span class="sep">&middot;</span>companion</span>
+      <span class="prov"><span class="cite">Progressive Software Delivery</span><span class="sep">&middot;</span>Phase 02 guide</span>
+    </div>
+  </div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</header>
+
+<p class="lede">Discovery replaces assumptions with evidence before construction makes being wrong costly. Here, most requirements arrive already specified by two authoritative PRDs and a grant agreement, so this movement consolidates rather than originates: it indexes where the validated requirements live, renders feasibility verdicts with their evidence, lifts the risk seed into a register with owners and review points, and frames the two evidence decisions for organizers to close. Nothing below closes a decision.</p>
+
+<nav class="toc">
+  <a href="#s01"><span class="n">01</span>Frame: consolidation, not origination</a><br>
+  <a href="#s02"><span class="n">02</span>Requirements specification index &middot; D-02.1</a><br>
+  <a href="#s03"><span class="n">03</span>Feasibility matrix &middot; D-02.2</a><br>
+  <a href="#s04"><span class="n">04</span>Risk register &middot; D-02.3</a><br>
+  <a href="#s05"><span class="n">05</span>Evidence standard, proposed &middot; D-02.4</a><br>
+  <a href="#s06"><span class="n">06</span>User research decision, framed &middot; D-02.5</a><br>
+  <a href="#s07"><span class="n">07</span>Open questions carried into Definition &middot; D-02.6</a><br>
+  <a href="#s08"><span class="n">08</span>Method, standings, next movement</a>
+</nav>
+
+<!-- ============================ 01 FRAME ============================ -->
+<section id="s01">
+  <div class="label">01 &middot; Frame: Consolidation, Not Origination</div>
+  <div class="rule"></div>
+
+  <p>The plan states it plainly: the PRDs are the authoritative specification. <span class="src">plan &sect;01</span> Recasting them wholesale into the framework's requirements form would produce a second copy of the truth that drifts the moment either PRD is revised. So D-02.1 is satisfied here by reference plus a thin index that names where each requirement class lives and where its acceptance criteria sit. That is a deliberate choice, and it is overridable: if a standalone FR and NFR document is wanted later, the index below is its table of contents.</p>
+
+  <p>What this movement leaves out, so the omission is visible: no new research is originated; the economic and legal verdicts in section 03 rest on the documents alone, with neither the accountant nor counsel consulted, and both verdicts should be re-rendered when they are; and two source layers remain relayed rather than read, the grant agreement (via the Hub PRD) and the draft bylaws (via both PRDs and the plan).</p>
+</section>
+
+<!-- ============================ 02 REQUIREMENTS INDEX ============================ -->
+<section id="s02">
+  <div class="label">02 &middot; Requirements Specification Index &middot; D-02.1</div>
+  <div class="rule"></div>
+  <p class="caption">satisfied by reference &middot; the PRDs and grant remain authoritative; this index maps the framework's form onto them</p>
+
+  <div class="table-scroll">
+  <table class="spec">
+    <thead><tr><th>Requirement class</th><th>Where specified</th><th>Acceptance criteria locus</th><th>Delta to the framework form</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Functional, cooperative</td>
+        <td>CIS &sect;08 (13 modules), &sect;12 (9 workflows), &sect;05 to &sect;07 (system, model, roles)</td>
+        <td>Roadmap success states, one per step, seeded in full for the early waves</td>
+        <td>None material; criteria are testable per step rather than per FR number</td>
+      </tr>
+      <tr>
+        <td>Functional, hub</td>
+        <td>Hub &sect;02 (mandate: counted seats, named cadences, report contents), &sect;06 (8 modules), &sect;07 (KPI computations)</td>
+        <td>Grant &sect;4 thresholds, contractual; W2 success states</td>
+        <td>None; the thresholds are acceptance criteria by contract</td>
+      </tr>
+      <tr>
+        <td>Non-functional</td>
+        <td>CIS &sect;14 (8 qualities: auditability, legibility, reliability, accessibility, privacy, security, portability, longevity)</td>
+        <td>Mixed: WCAG AA explicit; walkaway test dated to CIS Phase 05; rls-audit, conservation, and probe suites as test methods (plan &sect;3.5)</td>
+        <td>Several qualities carry posture without numeric targets; the cast list follows below</td>
+      </tr>
+      <tr>
+        <td>Prioritization</td>
+        <td>G1 set is the must-have boundary for alpha (plan &sect;07); CIS &sect;16 phase order thereafter</td>
+        <td>Gate computation is mechanical from the ledger</td>
+        <td>None; forced ranking exists as gate membership</td>
+      </tr>
+      <tr>
+        <td>Out of scope</td>
+        <td>Plan &sect;01 exclusions; both PRDs' &ldquo;what this is not&rdquo; boundaries</td>
+        <td>n/a</td>
+        <td>None</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>One departure stands between specification and implementation, and it is recorded rather than smoothed: CIS &sect;13 assigns orchestration to Make.com (&ldquo;orchestrates, does not decide&rdquo;), while the constrained implementation routes those duties to pg_cron, Edge Functions, and Actions under D5. The requirement that survives either mechanism is CIS &sect;14 reliability: no single vendor failure invalidates state. A departure in mechanism, not a contradiction in requirement. <span class="src">CIS &sect;13, &sect;14 &middot; plan &sect;2.2 &middot; D5</span></p>
+
+  <h3><span class="n">D-02.1 &middot; A</span>Targets to cast</h3>
+  <p>Four non-functional qualities need targets and test methods that the sources do not yet supply, and casting them is Definition-adjacent work with values the organizers should set: <em>reliability</em> (graceful degradation is stated, but no recovery window is defined short of the Phase 05 walkaway test, whose own window is undefined); <em>availability</em> (no target stated anywhere); <em>legibility</em> (the member test is named, &ldquo;a curious new member, not a co-op MBA,&rdquo; but its measure and judge are not); and <em>longevity</em> (year-twenty readability is stated without a format policy or a migration-history test). <span class="src">CIS &sect;14, principle 02 &middot; CIS &sect;04 CR Phase 05</span></p>
+</section>
+
+<!-- ============================ 03 FEASIBILITY ============================ -->
+<section id="s03">
+  <div class="label">03 &middot; Feasibility Matrix &middot; D-02.2</div>
+  <div class="rule"></div>
+  <p class="caption">scaffold &middot; Phase 02 Discovery Guide &middot; one verdict and one sentence of evidence per dimension</p>
+
+  <div class="table-scroll">
+  <table class="spec">
+    <thead><tr><th>Dimension</th><th>Verdict</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Technical</td>
+        <td><span class="st ok">viable</span></td>
+        <td>Row-level security as the entire authorization perimeter is the PRD's own principle 06 taken literally, and the two server rails (Edge Functions for secrets, pg_cron with Actions cron as the independent second rail) cover everything static hosting cannot. <span class="src">CIS principle 06 &middot; plan &sect;2.3</span></td>
+      </tr>
+      <tr>
+        <td>Operational</td>
+        <td><span class="st tens">viable, with a named tension</span></td>
+        <td>Both PRDs commit to a system operational at every intermediate state, and the plan puts the hub surface first after the shared core; the tension is that the grant's calendar is dated while the build's, by constraint, deliberately is not. <span class="src">CIS &sect;08 &middot; Hub &sect;06, &sect;10 &middot; plan &sect;01</span></td>
+      </tr>
+      <tr>
+        <td>Economic</td>
+        <td><span class="st cond">viable through the grant period, open beyond</span></td>
+        <td>$20,000 in two tranches funds the arc; the sustainability funding model is explicitly unresolved, and the system's job is to make &ldquo;what continues without the grant&rdquo; visible from data by mid-November, not to answer it. <span class="src">Hub &sect;02, &sect;08, &sect;11</span></td>
+      </tr>
+      <tr>
+        <td>Legal</td>
+        <td><span class="st cond">conditional</span></td>
+        <td>The bylaws are draft (R1), the Hub Membership Agreement awaits Pote Law Firm review with an interim acceptable-use policy in force, and the Subchapter K election keeps off-chain books authoritative; the conditions are tracked, not blocking, under the D7 citation discipline. <span class="src">Hub &sect;11 &middot; CIS &sect;13 &middot; plan &sect;05</span></td>
+      </tr>
+      <tr>
+        <td>Values</td>
+        <td><span class="st ok">strong</span></td>
+        <td>The CROPS floor commitments are operational requirements that hold even at Phase 01, under the PRD's own rule that a phase missing its stage target has shipped a regression; the augmentation principle matches the plan's human-owned decision discipline end to end. <span class="src">CIS &sect;03, &sect;04, principle 01 &middot; plan &sect;05</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The legal and economic rows are the thinnest, by design of this movement rather than of the project: they are document verdicts. They should be re-rendered after counsel and accountant input, and the re-rendering recorded as a revision to this matrix rather than a silent overwrite.</p>
+</section>
+
+<!-- ============================ 04 RISK REGISTER ============================ -->
+<section id="s04">
+  <div class="label">04 &middot; Risk Register &middot; D-02.3</div>
+  <div class="rule"></div>
+  <p class="caption">scaffold &middot; Phase 02 Discovery Guide &middot; every risk a named treatment; acceptance is legitimate and marked &middot; owners are seats pending Q-01; &ldquo;accountable lead&rdquo; resolves when the charter is signed</p>
+
+  <p>Rows RR-01 through RR-08 lift the plan's risk seed into the framework's form, adding owners and review points; RR-09 and RR-10 are new, visible only now that the grant's own text is in hand. <span class="src">plan &sect;2.5 &middot; Hub &sect;02, &sect;08</span></p>
+
+  <div class="table-scroll">
+  <table class="spec firstcol-nowrap">
+    <thead><tr><th>ID</th><th>Risk</th><th>Owner (seat)</th><th>Treatment</th><th>Review point</th></tr></thead>
+    <tbody>
+      <tr><td>RR-01</td><td>Incomplete RLS behind a public anon key</td><td>Accountable lead</td><td>Mitigate: default-deny template, rls-audit CI gate, anonymous probe suite on every migration (W0.6)</td><td>Every merged migration; hard gate at G1</td></tr>
+      <tr><td>RR-02</td><td>Single hosted environment; schema mistakes hit production</td><td>Accountable lead</td><td>Mitigate: shadow-database CI verification (W0.4), tested restore (W0.14), migrations only via PR. Accept the single-environment posture for alpha, named</td><td>At W0.14 verified, then each wave gate</td></tr>
+      <tr><td>RR-03</td><td>Bylaws unratified while the system encodes them</td><td>Organizers, with counsel</td><td>Mitigate: D7 draft-citation register; R1 gates activation of formula automation, not its build</td><td>At R1; monthly until</td></tr>
+      <tr><td>RR-04</td><td>Grant KPI surface lags the dated grant arc</td><td>Hub operator</td><td>Mitigate: W2 is the first module wave after the shared core; KPIs computed, never entered</td><td>Mid-August 2026 compliance review</td></tr>
+      <tr><td>RR-05</td><td>First monthly report precedes the reporting rail</td><td>Hub operator</td><td>Accept, with fallback: the June report may be drafted against the stable template outside the system; the obligation is the report, not the rail</td><td>End of June 2026</td></tr>
+      <tr><td>RR-06</td><td>Email deliverability for legally timed notices</td><td>Organizers (D4)</td><td>Mitigate: one provider with API send and delivery webhooks recorded as notice events; multi-channel deferred, schema-ready</td><td>At W0.11 verified</td></tr>
+      <tr><td>RR-07</td><td>Vocabulary contamination across tax regimes (Subchapter T terms on a Subchapter K entity's surfaces)</td><td>Accountable lead</td><td>Mitigate: grammar-lint CI rule on RegenHub surfaces (W0.16)</td><td>Every merge</td></tr>
+      <tr><td>RR-08</td><td>Agent overreach</td><td>Organizers</td><td>Mitigate: owner field on every step; D and R items human-only; Nou gateway inherits the invoker's permissions structurally (W1.7)</td><td>At W1.7 verified; each wave gate</td></tr>
+      <tr><td>RR-09</td><td>Grant termination tied to KPI achievement and brand integrity</td><td>Hub operator</td><td>Mitigate: computed KPI dashboard with audit trail; EE-provided materials versioned (W2.8). Brand integrity is human practice, named here rather than automated</td><td>Monthly, with the impact report</td></tr>
+      <tr><td>RR-10</td><td>Sustainability cliff at grant closure, with an obligation to continue at a minimum level</td><td>Organizers</td><td>Mitigate: tag grant-funded versus member-funded activity at the transaction level so the question is answerable from data; the funding model itself is a decision, not a software output</td><td>Mid-November 2026</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================ 05 EVIDENCE STANDARD ============================ -->
+<section id="s05">
+  <div class="label">05 &middot; Evidence Standard, Proposed &middot; D-02.4</div>
+  <div class="rule"></div>
+  <p class="caption">resolves Q-06 if adopted &middot; owner: organizers, with Nou drafting</p>
+
+  <p>The framework expects load-bearing assumptions to be tested before construction makes wrongness costly, and it expects the record to show, per prototype: the assumption tested, the result, and the decision that followed. The plan's W0 steps already carry that shape. Each is a milestone file with a context (the assumption), a testable success state (the test), a named verification (the result), and a status flip in the same PR (the decision). The proposal: <em>declare the verified W0 step set to be the prototype-evaluation record for this project.</em> No separate prototype theater; the substrate proves itself on the way to existing.</p>
+
+  <p>Three assumptions are the load-bearing ones the standard must cover before the first module wave begins:</p>
+
+  <ul class="hardlist">
+    <li>The RLS-only perimeter holds: anonymous and cross-role probes cannot read or write beyond policy, with the anon key public by design. Evidence at W0.6, probe suite green. <span class="src">plan &sect;2.3 &middot; W0.6</span></li>
+    <li>The migration pipeline catches schema mistakes before they reach the single production environment: shadow verification fails the PR, and restore is a tested capability. Evidence at W0.4 and W0.14. <span class="src">plan &sect;2.4, &sect;2.5</span></li>
+    <li>The static shell, direct Supabase access under RLS, and the Edge Function rail can together carry the member portal: auth, scoped reads, and one privileged write path demonstrated end to end. Evidence at W0.5, W0.9, W0.12. <span class="src">plan &sect;2.3 &middot; W0.12</span></li>
+  </ul>
+
+  <p>If the organizers adopt this, D-02.4 is satisfied prospectively by the ledger itself, and the adoption should be recorded as a one-line decision note in the repository so the standard is citable. If they do not, the gap is real and a separate prototype plan is owed before W1.</p>
+</section>
+
+<!-- ============================ 06 USER RESEARCH ============================ -->
+<section id="s06">
+  <div class="label">06 &middot; User Research Decision, Framed &middot; D-02.5</div>
+  <div class="rule"></div>
+  <p class="caption">resolves Q-05 if adopted &middot; owner: organizers</p>
+
+  <p>The framework's own test: research is essential when the team's beliefs could be wrong in ways that would change what gets built, and theater when the team would proceed identically regardless of findings. Its position is that a small amount of well-designed research with five people beats a broad program with fifty. <span class="src">Phase 02 guide, decision 05</span> Here the members are known and invited, and the duties come from bylaws and a grant rather than from preference discovery, so broad research would likely be theater. Two beliefs could still be wrong in build-changing ways: that the interfaces pass the member test (&ldquo;a curious new member, not a co-op MBA&rdquo;), and that the public application form is legible to the strangers it is for, locals, visitors, and digital nomads. <span class="src">CIS principle 02, &sect;14 &middot; Hub &sect;02</span></p>
+
+  <p>The proposal: waive broad discovery research, with these reasons recorded; name the G1 operational walkthrough with a real invited member as the research instrument for the first belief, since the gate already requires exactly that; and add a brief usability pass with one or two applicants from outside the organizer circle to W2.2's verification for the second. Either way, the decision and its reasons belong in the record rather than in the default.</p>
+</section>
+
+<!-- ============================ 07 OPEN QUESTIONS ============================ -->
+<section id="s07">
+  <div class="label">07 &middot; Open Questions Carried into Definition &middot; D-02.6</div>
+  <div class="rule"></div>
+  <p class="caption">CIS &sect;17 and Hub &sect;11, read directly, joined to the plan's D and R ledger &middot; none blocks the substrate wave; each blocks where it first becomes material</p>
+
+  <div class="table-scroll">
+  <table class="spec firstcol-nowrap">
+    <thead><tr><th>ID</th><th>Question</th><th>First material at</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td>OQ-01</td><td>Patronage formula: equal default versus the forty-thirty-twenty-ten working design (bylaws &sect;5.3)</td><td>W3.3 activation, gated on R1</td><td>Organizers and board</td></tr>
+      <tr><td>OQ-02</td><td>Investor member framework: term sheet, series designation, documents (&sect;1.3, &sect;1.13.2)</td><td>Capital account treatment, W3</td><td>Organizers</td></tr>
+      <tr><td>OQ-03</td><td>Nou's write-capability scope beyond drafting with approval (CIS principle 01)</td><td>CIS Phase 04 posture; ADR candidate</td><td>Organizers</td></tr>
+      <tr><td>OQ-04</td><td>On-chain attestation scope and key custody (D8)</td><td>W4.7 and W6 options</td><td>Working group per CIS &sect;17</td></tr>
+      <tr><td>OQ-05</td><td>Verifiable Cities adjacency: pilot context, partner, or referrer</td><td>Privacy primitives, late 2026</td><td>Organizers</td></tr>
+      <tr><td>OQ-06</td><td>Interoperability with sibling cooperatives: where the schema federates, where it stays local (principle 10)</td><td>CIS Phase 04</td><td>Organizers</td></tr>
+      <tr><td>OQ-07</td><td>Nou interaction retention: window, access, redaction; ADR candidate</td><td>Forced by CIS Phase 03</td><td>Organizers</td></tr>
+      <tr><td>OQ-08</td><td>Non-redeemable share option (&sect;1.9.3); simplifies redemption logic if adopted</td><td>W5 briefs</td><td>Organizers</td></tr>
+      <tr><td>OQ-09</td><td>Third-floor lease entity: West or the LCA (D10)</td><td>W3.6 facility detail</td><td>Organizers, with counsel</td></tr>
+      <tr><td>OQ-10</td><td>Front-end framework (D1); ADR-001 candidate</td><td>W0.12</td><td>Organizers</td></tr>
+      <tr><td>OQ-11</td><td>Application form host (D2), with the plan's third native option on the table</td><td>W2.2; W1.6 inherits the pattern</td><td>Organizers</td></tr>
+      <tr><td>OQ-12</td><td>EE Liaison interface form: dashboard view versus digest (D9), with the CROPS implications Hub &sect;11 names</td><td>W2.9 and the compliance surface</td><td>Organizers, with the EE team</td></tr>
+      <tr><td>OQ-13</td><td>Hub Membership Agreement ratification (R2); interim acceptable-use policy governs until</td><td>W2 activation</td><td>Counsel (Pote Law Firm), with organizers</td></tr>
+      <tr><td>OQ-14</td><td>Pattern feedforward governance: who adopts a Hub-proven CROPS pattern into the CIS, and when</td><td>Concrete by CIS Phase 02</td><td>Organizers</td></tr>
+      <tr><td>OQ-15</td><td>What, if anything, migrates in from the partly built CIS the PRD describes, given the plan implements fresh from a first migration</td><td>W1 module landings</td><td>Organizers</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================ 08 METHOD ============================ -->
+<section id="s08">
+  <div class="label">08 &middot; Method, Standings, Next Movement</div>
+  <div class="rule"></div>
+
+  <p><em>Sources.</em> Both PRDs read in full for the first time in this definition track; the verification of the Inception Baseline's relayed citations was performed alongside and is recorded in that document's v0.2. The grant agreement and the draft bylaws remain relayed sources, reachable only through the PRDs and the plan; any grant &sect; or bylaws &sect; reference above carries that limitation. Counsel and accountant input has not been taken; the two verdicts that depend on it say so where they stand.</p>
+
+  <p><em>What changed in the ledger.</em> After this movement, the Phase 02 standings read: D-02.1 satisfied by reference, indexed in section 02; D-02.2 and D-02.3 produced here; D-02.4 and D-02.5 proposed, adoption pending with organizers; D-02.6 produced here, fifteen questions carried. The Inception Baseline's coverage table remains the time-zero snapshot; this paragraph is the delta.</p>
+
+  <p><em>Next movement.</em> 03 Definition synthesis: the architecture document as one synthesis of plan &sect;2.2, &sect;2.3, and &sect;3.1 against the PRDs' system definition; the ADR set, one record per decision the organizers close on D1 through D10, with proposed-state drafts where the plan has already argued a default; the threat model the public-anon-key perimeter deserves, drawing on RR-01, RR-02, and RR-08; the build/buy/integrate canvas and technology stack record formalized from the stack delta; the definition of done lifted from plan &sect;3.3; and the four non-functional targets from section 02 cast with organizer-set values. OQ-03, OQ-07, OQ-10, and OQ-11 enter that movement as the first ADR drafts.</p>
+</section>
+
+<footer>CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026</footer>
+
+</div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeToggle');
+  var label = document.getElementById('modeLabel');
+  var icon = document.getElementById('modeIcon');
+
+  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+
+  function apply(mode) {
+    root.setAttribute('data-mode', mode);
+    label.textContent = mode;
+    icon.innerHTML = mode === 'dark' ? moon : sun;
+  }
+
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  apply(prefersLight.matches ? 'light' : 'dark');
+  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
