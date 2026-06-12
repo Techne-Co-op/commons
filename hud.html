@@ -647,6 +647,144 @@
     .lp-banner-warn { background: var(--warn-dim); color: var(--warn); border-left: 2px solid var(--warn); }
     .lp-banner-ok   { background: var(--ok-dim);   color: var(--ok);   border-left: 2px solid var(--ok); }
     .lp-front-note  { font-size: 10px; color: var(--faint); margin-top: 3px; }
+
+    /* ── doc module ── */
+    .dc-masthead { margin-bottom: 16px; }
+    .dc-masthead-title { font-family: 'Libre Baskerville', serif; font-size: 16px; color: var(--heading); margin-bottom: 3px; }
+    .dc-masthead-sub { font-size: 10px; color: var(--faint); line-height: 1.6; }
+
+    .dc-summary-band { display: flex; gap: 6px; flex-wrap: wrap; }
+    .dc-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 7px 11px;
+      min-width: 58px;
+    }
+    .dc-stat-n {
+      font-size: 18px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .dc-stat-label { font-size: 8px; letter-spacing: .06em; color: var(--faint); text-align: center; white-space: nowrap; }
+    .dc-stat-n.s-produced   { color: var(--ok); }
+    .dc-stat-n.s-by_ref     { color: var(--ok); }
+    .dc-stat-n.s-proposed   { color: var(--terra-text); }
+    .dc-stat-n.s-partial    { color: var(--info); }
+    .dc-stat-n.s-queued     { color: var(--info); }
+    .dc-stat-n.s-projected  { color: var(--muted); }
+    .dc-stat-n.s-unanchored { color: var(--warn); }
+
+    .dc-filter-strip { display: flex; gap: 5px; flex-wrap: wrap; }
+    .dc-filter-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .07em;
+      padding: 3px 9px;
+      border-radius: 2px;
+      cursor: pointer;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: border-color .12s, color .12s, background .12s;
+    }
+    .dc-filter-btn:hover { border-color: var(--terra); color: var(--terra-text); }
+    .dc-filter-btn.on { background: var(--terra-dim); border-color: var(--terra); color: var(--terra-text); }
+
+    .dc-lens-strip { display: flex; gap: 5px; }
+    .dc-lens-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .07em;
+      padding: 3px 9px;
+      border-radius: 2px;
+      cursor: pointer;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: border-color .12s, color .12s, background .12s;
+    }
+    .dc-lens-btn.on { background: var(--info-dim); border-color: var(--info); color: var(--info); }
+
+    .dc-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: border-color .12s;
+    }
+    .dc-card:hover { border-color: var(--muted); }
+    .dc-card.selected { outline: 2px solid var(--heading); }
+    .dc-card.st-produced     { border-left: 3px solid var(--ok); }
+    .dc-card.st-by_reference { border-left: 4px double var(--ok); }
+    .dc-card.st-proposed     { border-left: 3px solid var(--terra); background: var(--terra-dim); }
+    .dc-card.st-partial      { border-left: 3px solid var(--info); }
+    .dc-card.st-queued       { border-left: 4px double var(--info); }
+    .dc-card.st-projected    { border-left: 1px solid var(--faint); opacity: .72; }
+    .dc-card.st-projected:hover { opacity: 1; }
+    .dc-card.st-unanchored   { border-left: 3px solid var(--warn); background: var(--warn-dim); }
+
+    .dc-card-id { font-size: 9.5px; font-weight: 500; color: var(--muted); letter-spacing: .06em; min-width: 52px; padding-top: 2px; flex-shrink: 0; }
+    .dc-card-body { flex: 1; min-width: 0; }
+    .dc-card-title { font-size: 11.5px; color: var(--text); line-height: 1.4; }
+    .dc-card-ref { font-size: 9.5px; color: var(--faint); margin-top: 2px; }
+
+    .dc-standing-badge {
+      font-size: 8.5px;
+      letter-spacing: .05em;
+      padding: 2px 6px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      align-self: center;
+      white-space: nowrap;
+    }
+    .dsb-produced     { color: var(--ok);         background: var(--ok-dim);    border: 1px solid var(--ok); }
+    .dsb-by_reference { color: var(--ok);         background: var(--ok-dim);    border: 1px dashed var(--ok); }
+    .dsb-proposed     { color: var(--terra-text); background: var(--terra-dim); border: 1px solid var(--terra); }
+    .dsb-partial      { color: var(--info);       background: var(--info-dim);  border: 1px solid var(--info); }
+    .dsb-queued       { color: var(--info);       background: var(--info-dim);  border: 1px dashed var(--info); }
+    .dsb-projected    { color: var(--faint);      background: var(--surface2);  border: 1px solid var(--border); }
+    .dsb-unanchored   { color: var(--warn);       background: var(--warn-dim);  border: 1px solid var(--warn); }
+
+    .dc-anchor-tag {
+      display: inline-block;
+      font-size: 8.5px;
+      padding: 1px 5px;
+      border-radius: 2px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--faint);
+      margin-left: 5px;
+    }
+    .dc-anchor-tag.warn { color: var(--warn); border-color: var(--warn); background: var(--warn-dim); }
+
+    .dc-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 9.5px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .dc-legend-row:last-child { border-bottom: none; }
+    .dc-legend-swatch { width: 16px; height: 10px; border-radius: 1px; flex-shrink: 0; }
+    .dc-legend-swatch.st-produced     { border-left: 3px solid var(--ok);    background: var(--ok-dim); }
+    .dc-legend-swatch.st-by_reference { border-left: 4px double var(--ok);   background: var(--ok-dim); }
+    .dc-legend-swatch.st-proposed     { border-left: 3px solid var(--terra); background: var(--terra-dim); }
+    .dc-legend-swatch.st-partial      { border-left: 3px solid var(--info);  background: var(--info-dim); }
+    .dc-legend-swatch.st-queued       { border-left: 4px double var(--info); background: var(--info-dim); }
+    .dc-legend-swatch.st-projected    { border-left: 1px solid var(--faint); background: var(--surface2); }
+    .dc-legend-swatch.st-unanchored   { border-left: 3px solid var(--warn);  background: var(--warn-dim); }
   </style>
 </head>
 <body>
@@ -659,6 +797,7 @@
   <span class="topbar-sub">70 milestones &middot; W0 substrate + 6 build waves</span>
   <span class="chip c-terra" title="Hub Operations · EE Grant · Phase 01 active" onclick="setHub()" style="cursor:pointer" id="hubChip">HUB OPS &middot; Ph01</span>
   <span class="chip" title="Decision–Blocker Signal Loop" onclick="setLoop()" style="cursor:pointer" id="loopChip">LOOP</span>
+  <span class="chip" title="Documentation Fulfilment · 67 deliverables" onclick="setDoc()" style="cursor:pointer" id="docChip">DOC</span>
   <div class="topbar-chips" id="topChips"></div>
   <button class="mode-btn" id="modeBtn">light</button>
 </div>
@@ -779,6 +918,102 @@ const CROPS_POSTURE = [
   { id:'S',  name:'Security',              stage:'02', note:'Multi-sig · RLS · audit trail'  }
 ];
 
+/* ── documentation fulfilment data ── */
+const DOC_PHASES = [
+  { id:'01', name:'Inception'   },
+  { id:'02', name:'Discovery'   },
+  { id:'03', name:'Design'      },
+  { id:'04', name:'Development' },
+  { id:'05', name:'Quality'     },
+  { id:'06', name:'Launch'      },
+  { id:'07', name:'Maintenance' },
+  { id:'08', name:'Continuity'  }
+];
+const DOC_ANCHORS = ['pre','m03','W0','W1','W2','G1','W3','W4','W5','W6','ongoing'];
+const DOC_STANDINGS = ['produced','by_reference','proposed','partial','queued','projected','unanchored'];
+const DOC_STANDING_LABELS = {
+  produced:'produced', by_reference:'by ref', proposed:'proposed',
+  partial:'partial', queued:'queued', projected:'projected', unanchored:'unanchored'
+};
+
+const DOC_DELIVERABLES = [
+  // Phase 01 — Inception
+  { id:'D-01.1', phase:'01', title:'Vision & problem statement',       standing:'produced',     anchor:'pre',     ref:'CIS PRD §1' },
+  { id:'D-01.2', phase:'01', title:'Stakeholder register',             standing:'partial',      anchor:'pre',     ref:'scattered across PRD / plan' },
+  { id:'D-01.3', phase:'01', title:'Risk & constraint register',       standing:'partial',      anchor:'pre',     ref:'CROPS §17 / PRD scattered' },
+  { id:'D-01.4', phase:'01', title:'Project charter',                  standing:'proposed',     anchor:'pre',     ref:'awaiting organizer signature' },
+  { id:'D-01.5', phase:'01', title:'Operating agreement',              standing:'proposed',     anchor:'pre',     ref:'pending R1 ratification' },
+  { id:'D-01.6', phase:'01', title:'Success KPIs',                     standing:'produced',     anchor:'pre',     ref:'CIS PRD §success_state' },
+  { id:'D-01.7', phase:'01', title:'Team structure & RACI',            standing:'partial',      anchor:'pre',     ref:'scattered in PRD / plan' },
+  { id:'D-01.8', phase:'01', title:'Kickoff record',                   standing:'projected',    anchor:'W0',      ref:'' },
+  // Phase 02 — Discovery
+  { id:'D-02.1', phase:'02', title:'Requirements document',            standing:'by_reference', anchor:'pre',     ref:'CIS PRD v0.2 indexed' },
+  { id:'D-02.2', phase:'02', title:'User research synthesis',          standing:'projected',    anchor:'W0',      ref:'' },
+  { id:'D-02.3', phase:'02', title:'Data model & schema',              standing:'produced',     anchor:'pre',     ref:'milestones/schema.json + CONVENTIONS.md' },
+  { id:'D-02.4', phase:'02', title:'Integration map',                  standing:'queued',       anchor:'m03',     ref:'' },
+  { id:'D-02.5', phase:'02', title:'Compliance requirements',          standing:'by_reference', anchor:'pre',     ref:'CIS PRD §16' },
+  { id:'D-02.6', phase:'02', title:'CROPS threat model',               standing:'by_reference', anchor:'pre',     ref:'hub-ops-prd §17 CROPS posture' },
+  { id:'D-02.7', phase:'02', title:'Definition of done',               standing:'produced',     anchor:'pre',     ref:'GOVERNANCE.md + success_state' },
+  { id:'D-02.8', phase:'02', title:'Grant compliance plan',            standing:'proposed',     anchor:'pre',     ref:'pending grant index' },
+  // Phase 03 — Design
+  { id:'D-03.1', phase:'03', title:'Architecture decision records',    standing:'queued',       anchor:'m03',     ref:'' },
+  { id:'D-03.2', phase:'03', title:'Database schema + migrations',     standing:'produced',     anchor:'pre',     ref:'supabase/migrations/' },
+  { id:'D-03.3', phase:'03', title:'Security design',                  standing:'partial',      anchor:'pre',     ref:'RLS + SECRETS.md scattered' },
+  { id:'D-03.4', phase:'03', title:'API contract',                     standing:'projected',    anchor:'W0',      ref:'' },
+  { id:'D-03.5', phase:'03', title:'UI/UX specification',              standing:'projected',    anchor:'W2',      ref:'' },
+  { id:'D-03.6', phase:'03', title:'Infrastructure design',            standing:'queued',       anchor:'m03',     ref:'' },
+  { id:'D-03.7', phase:'03', title:'Privacy design',                   standing:'produced',     anchor:'pre',     ref:'hub-ops-prd §17 CROPS' },
+  { id:'D-03.8', phase:'03', title:'Design system',                    standing:'produced',     anchor:'pre',     ref:'design-system.html + commons.css' },
+  // Phase 04 — Development
+  { id:'D-04.1', phase:'04', title:'Contribution guide & agent contract', standing:'produced',  anchor:'pre',     ref:'AGENTS.md + GOVERNANCE.md' },
+  { id:'D-04.2', phase:'04', title:'CI/CD pipeline',                   standing:'produced',     anchor:'pre',     ref:'README + .github/workflows/' },
+  { id:'D-04.3', phase:'04', title:'Software bill of materials (SBOM)',standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
+  { id:'D-04.4', phase:'04', title:'Feature flags & rollout plan',     standing:'projected',    anchor:'W0',      ref:'' },
+  { id:'D-04.5', phase:'04', title:'API documentation',                standing:'projected',    anchor:'W1',      ref:'' },
+  { id:'D-04.6', phase:'04', title:'Database documentation',           standing:'projected',    anchor:'W2',      ref:'' },
+  { id:'D-04.7', phase:'04', title:'Component library docs',           standing:'projected',    anchor:'W1',      ref:'' },
+  { id:'D-04.8', phase:'04', title:'Environment setup guide',          standing:'projected',    anchor:'W0',      ref:'' },
+  // Phase 05 — Quality
+  { id:'D-05.1', phase:'05', title:'Test plan',                        standing:'projected',    anchor:'W1',      ref:'' },
+  { id:'D-05.2', phase:'05', title:'Test coverage report',             standing:'projected',    anchor:'W2',      ref:'' },
+  { id:'D-05.3', phase:'05', title:'Performance benchmark',            standing:'projected',    anchor:'G1',      ref:'' },
+  { id:'D-05.4', phase:'05', title:'Security audit report',            standing:'projected',    anchor:'G1',      ref:'' },
+  { id:'D-05.5', phase:'05', title:'Accessibility audit',              standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
+  { id:'D-05.6', phase:'05', title:'Defect register',                  standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
+  { id:'D-05.7', phase:'05', title:'Regression test suite',            standing:'projected',    anchor:'G1',      ref:'' },
+  { id:'D-05.8', phase:'05', title:'Load & stress test report',        standing:'projected',    anchor:'W6',      ref:'' },
+  // Phase 06 — Launch
+  { id:'D-06.1', phase:'06', title:'Release notes',                    standing:'projected',    anchor:'W3',      ref:'' },
+  { id:'D-06.2', phase:'06', title:'Deployment runbook',               standing:'projected',    anchor:'W3',      ref:'' },
+  { id:'D-06.3', phase:'06', title:'Rollback procedure',               standing:'projected',    anchor:'W2',      ref:'' },
+  { id:'D-06.4', phase:'06', title:'Launch checklist',                 standing:'projected',    anchor:'W3',      ref:'' },
+  { id:'D-06.5', phase:'06', title:'User onboarding guide',            standing:'projected',    anchor:'G1',      ref:'' },
+  { id:'D-06.6', phase:'06', title:'Support escalation path',          standing:'projected',    anchor:'W3',      ref:'' },
+  { id:'D-06.7', phase:'06', title:'Monitoring & alerting setup',      standing:'projected',    anchor:'W6',      ref:'' },
+  { id:'D-06.8', phase:'06', title:'On-call rotation',                 standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
+  { id:'D-06.9', phase:'06', title:'Post-launch review',               standing:'projected',    anchor:'W5',      ref:'' },
+  // Phase 07 — Maintenance
+  { id:'D-07.1', phase:'07', title:'Incident response playbook',       standing:'projected',    anchor:'W4',      ref:'' },
+  { id:'D-07.2', phase:'07', title:'Operational runbook',              standing:'projected',    anchor:'W3',      ref:'' },
+  { id:'D-07.3', phase:'07', title:'Feedback & ticket trends',         standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
+  { id:'D-07.4', phase:'07', title:'Dependency update log',            standing:'projected',    anchor:'W6',      ref:'' },
+  { id:'D-07.5', phase:'07', title:'Capacity plan',                    standing:'projected',    anchor:'W6',      ref:'' },
+  { id:'D-07.6', phase:'07', title:'SLA & uptime report',              standing:'projected',    anchor:'W5',      ref:'' },
+  { id:'D-07.7', phase:'07', title:'Changelog',                        standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-07.8', phase:'07', title:'Patching policy',                  standing:'projected',    anchor:null,      ref:'no roadmap step — gap' },
+  { id:'D-07.9', phase:'07', title:'Maintenance windows log',          standing:'projected',    anchor:'ongoing', ref:'' },
+  // Phase 08 — Continuity
+  { id:'D-08.1', phase:'08', title:'Disaster recovery plan',           standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-08.2', phase:'08', title:'Data backup & restore procedure',  standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-08.3', phase:'08', title:'Business continuity plan',         standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-08.4', phase:'08', title:'Offboarding & handover guide',     standing:'projected',    anchor:'W6',      ref:'' },
+  { id:'D-08.5', phase:'08', title:'Knowledge transfer log',           standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-08.6', phase:'08', title:'Archive & retention policy',       standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-08.7', phase:'08', title:'Sunsetting plan',                  standing:'projected',    anchor:'W6',      ref:'' },
+  { id:'D-08.8', phase:'08', title:'Successor stewardship guide',      standing:'projected',    anchor:'ongoing', ref:'' },
+  { id:'D-08.9', phase:'08', title:'Impact evaluation report',         standing:'projected',    anchor:'W4',      ref:'' }
+];
+
 /* ── state ── */
 let DATA = null;
 let waveFilter = null;   // null = all
@@ -796,6 +1031,10 @@ let loopState = {
   blockers: [],
   aging: []
 };
+let docMode = false;
+let docLens = 'phase';   // 'phase' | 'anchor'
+let docFilter = 'ALL';   // 'ALL' | standing key | 'unanchored'
+let docSelected = null;  // selected deliverable id
 
 /* ── computations ── */
 function enrich(nodes) {
@@ -859,6 +1098,20 @@ function renderRail(nodes) {
     <span class="wave-btn-id">LOOP</span>
     <span class="wave-btn-name">Signal loop</span>
     <span class="wave-pips">${loopPips}</span>
+  </button>`;
+
+  /* doc entry */
+  const docFulfilled = DOC_DELIVERABLES.filter(d => d.standing === 'produced' || d.standing === 'by_reference').length;
+  const docGaps = DOC_DELIVERABLES.filter(d => d.anchor === null).length;
+  const docPips = [
+    docFulfilled > 0 ? 'done' : '',
+    DOC_DELIVERABLES.filter(d => d.standing === 'partial' || d.standing === 'proposed').length > 0 ? 'active' : '',
+    docGaps > 0 ? 'active' : ''
+  ].map(c => `<span class="wave-pip ${c}"></span>`).join('');
+  h += `<button class="wave-btn${docMode ? ' on' : ''}" onclick="setDoc()" aria-pressed="${docMode}">
+    <span class="wave-btn-id">DOC</span>
+    <span class="wave-btn-name">Doc fulfilment</span>
+    <span class="wave-pips">${docPips}</span>
   </button>`;
 
   const groups = [
@@ -1186,11 +1439,13 @@ function renderHubCtx() {
 
 function setHub() {
   hubMode = !hubMode;
-  if (hubMode) { waveFilter = null; loopMode = false; }
+  if (hubMode) { waveFilter = null; loopMode = false; docMode = false; }
   const hc = document.getElementById('hubChip');
   if (hc) hc.style.outline = hubMode ? '2px solid var(--terra)' : '';
   const lc = document.getElementById('loopChip');
   if (lc) lc.style.outline = '';
+  const dc = document.getElementById('docChip');
+  if (dc) dc.style.outline = '';
   render();
 }
 
@@ -1199,9 +1454,12 @@ function setLoop() {
   loopMode = !loopMode;
   if (loopMode) {
     hubMode = false;
+    docMode = false;
     waveFilter = null;
     const hc = document.getElementById('hubChip');
     if (hc) hc.style.outline = '';
+    const dc = document.getElementById('docChip');
+    if (dc) dc.style.outline = '';
     if (!loopLoaded) loopLoad();
   }
   const lc = document.getElementById('loopChip');
@@ -1485,6 +1743,221 @@ function renderLoopCtx() {
   `;
 }
 
+/* ── doc module ── */
+function setDoc() {
+  docMode = !docMode;
+  if (docMode) {
+    hubMode = false;
+    loopMode = false;
+    waveFilter = null;
+    const hc = document.getElementById('hubChip');
+    if (hc) hc.style.outline = '';
+    const lc = document.getElementById('loopChip');
+    if (lc) lc.style.outline = '';
+  }
+  const dc = document.getElementById('docChip');
+  if (dc) dc.style.outline = docMode ? '2px solid var(--ok)' : '';
+  render();
+}
+
+function setDocLens(l) {
+  docLens = l;
+  if (docMode) renderDocMain();
+}
+
+function setDocFilter(f) {
+  docFilter = f;
+  if (docMode) renderDocMain();
+}
+
+function docSelect(id) {
+  docSelected = docSelected === id ? null : id;
+  if (docMode) { renderDocMain(); renderDocCtx(); }
+}
+
+function docCard(d) {
+  const isUnanchored = d.anchor === null;
+  const stCls = isUnanchored ? 'st-unanchored' : `st-${d.standing}`;
+  const badgeCls = `dsb-${d.standing}`;
+  const badgeLbl = DOC_STANDING_LABELS[d.standing] || d.standing;
+  const anchorTag = isUnanchored
+    ? `<span class="dc-anchor-tag warn">unanchored</span>`
+    : d.anchor ? `<span class="dc-anchor-tag">${d.anchor}</span>` : '';
+  const refH = (d.ref || anchorTag)
+    ? `<div class="dc-card-ref">${d.ref || ''}${anchorTag}</div>`
+    : '';
+  const sel = docSelected === d.id ? ' selected' : '';
+  return `<div class="dc-card ${stCls}${sel}" onclick="docSelect('${d.id}')" role="button" tabindex="0">
+    <span class="dc-card-id">${d.id}</span>
+    <div class="dc-card-body">
+      <div class="dc-card-title">${d.title}</div>
+      ${refH}
+    </div>
+    <span class="dc-standing-badge ${badgeCls}">${badgeLbl}</span>
+  </div>`;
+}
+
+function renderDocMain() {
+  const all = DOC_DELIVERABLES;
+
+  /* apply filter */
+  let filtered = all;
+  if (docFilter !== 'ALL') {
+    if (docFilter === 'unanchored') filtered = all.filter(d => d.anchor === null);
+    else filtered = all.filter(d => d.standing === docFilter);
+  }
+
+  /* summary stats */
+  const stats = {
+    produced:     all.filter(d => d.standing === 'produced').length,
+    by_reference: all.filter(d => d.standing === 'by_reference').length,
+    proposed:     all.filter(d => d.standing === 'proposed').length,
+    partial:      all.filter(d => d.standing === 'partial').length,
+    queued:       all.filter(d => d.standing === 'queued').length,
+    projected:    all.filter(d => d.standing === 'projected' && d.anchor !== null).length,
+    unanchored:   all.filter(d => d.anchor === null).length
+  };
+  const fulfilled = stats.produced + stats.by_reference;
+  const pct = Math.round(fulfilled / all.length * 100);
+
+  let h = '';
+
+  /* masthead */
+  h += `<div class="dc-masthead">
+    <div class="dc-masthead-title">Documentation Fulfilment</div>
+    <div class="dc-masthead-sub">${all.length} deliverables &middot; 8 phases &middot; seeded June 2026 &middot; CIS corpus</div>
+  </div>`;
+
+  /* summary band */
+  h += `<div class="overview-bar" style="margin-bottom:16px">
+    <div class="overview-row">
+      <span class="overview-label">Fulfilment</span>
+      <span>${fulfilled} of ${all.length} fulfilled &middot; ${pct}%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="dc-summary-band" style="margin-top:10px">
+      <div class="dc-stat"><span class="dc-stat-n s-produced">${stats.produced}</span><span class="dc-stat-label">produced</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-by_ref">${stats.by_reference}</span><span class="dc-stat-label">by ref</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-proposed">${stats.proposed}</span><span class="dc-stat-label">proposed</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-partial">${stats.partial}</span><span class="dc-stat-label">partial</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-queued">${stats.queued}</span><span class="dc-stat-label">queued</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-projected">${stats.projected}</span><span class="dc-stat-label">projected</span></div>
+      <div class="dc-stat"><span class="dc-stat-n s-unanchored">${stats.unanchored}</span><span class="dc-stat-label">unanchored</span></div>
+    </div>
+  </div>`;
+
+  /* controls */
+  const filterBtns = ['ALL','produced','by_reference','proposed','partial','queued','projected','unanchored'].map(f =>
+    `<button class="dc-filter-btn${docFilter===f?' on':''}" onclick="setDocFilter('${f}')">${f==='by_reference'?'by&nbsp;ref':f}</button>`
+  ).join('');
+
+  h += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+    <div class="dc-lens-strip">
+      <button class="dc-lens-btn${docLens==='phase'?' on':''}" onclick="setDocLens('phase')">by phase</button>
+      <button class="dc-lens-btn${docLens==='anchor'?' on':''}" onclick="setDocLens('anchor')">by anchor</button>
+    </div>
+    <div class="dc-filter-strip">${filterBtns}</div>
+  </div>`;
+
+  /* render deliverables by lens */
+  if (docLens === 'phase') {
+    DOC_PHASES.forEach((ph, i) => {
+      const items = filtered.filter(d => d.phase === ph.id);
+      const total = all.filter(d => d.phase === ph.id).length;
+      if (items.length === 0 && docFilter !== 'ALL') return;
+      h += `<div class="sh" style="margin-top:${i===0?'0':'18px'}">
+        <span>Ph${ph.id} &middot; ${ph.name}</span>
+        <span class="sh-count">${items.length}${docFilter!=='ALL'?' / '+total:''}</span>
+      </div>`;
+      if (items.length === 0) {
+        h += `<p class="empty-note">No deliverables match filter.</p>`;
+      } else {
+        items.forEach(d => { h += docCard(d); });
+      }
+    });
+  } else {
+    /* anchor lens */
+    DOC_ANCHORS.forEach((anc, i) => {
+      const items = filtered.filter(d => d.anchor === anc);
+      if (items.length === 0) return;
+      h += `<div class="sh" style="margin-top:${i===0?'0':'18px'}">
+        <span>${anc}</span>
+        <span class="sh-count">${items.length}</span>
+      </div>`;
+      items.forEach(d => { h += docCard(d); });
+    });
+    /* unanchored group */
+    const gaps = filtered.filter(d => d.anchor === null);
+    if (gaps.length > 0) {
+      h += `<div class="sh" style="margin-top:18px;border-color:var(--warn)">
+        <span style="color:var(--warn)">unanchored &middot; gaps</span>
+        <span class="sh-count" style="border-color:var(--warn);color:var(--warn)">${gaps.length}</span>
+      </div>`;
+      gaps.forEach(d => { h += docCard(d); });
+    }
+  }
+
+  document.getElementById('mainPanel').innerHTML = h;
+}
+
+function renderDocCtx() {
+  const phaseName = ph => (DOC_PHASES.find(p => p.id === ph) || {}).name || '';
+
+  let inspectorH = '';
+  if (docSelected) {
+    const d = DOC_DELIVERABLES.find(x => x.id === docSelected);
+    if (d) {
+      const isUnanchored = d.anchor === null;
+      const stCls = isUnanchored ? 'st-unanchored' : `st-${d.standing}`;
+      inspectorH = `<div class="ctx-section">
+        <div class="ctx-head">Inspector</div>
+        <div class="dc-card ${stCls}" style="cursor:default;margin-bottom:10px">
+          <span class="dc-card-id">${d.id}</span>
+          <div class="dc-card-body">
+            <div class="dc-card-title">${d.title}</div>
+            ${d.ref ? `<div class="dc-card-ref">${d.ref}</div>` : ''}
+          </div>
+        </div>
+        <div class="ctx-row"><span class="ctx-row-label">Phase</span><span class="ctx-row-val">Ph${d.phase} &middot; ${phaseName(d.phase)}</span></div>
+        <div class="ctx-row"><span class="ctx-row-label">Standing</span><span class="ctx-row-val">${d.standing.replace('_',' ')}</span></div>
+        <div class="ctx-row"><span class="ctx-row-label">Anchor</span><span class="ctx-row-val ${isUnanchored?'v-warn':''}">${isUnanchored?'unanchored':d.anchor||'—'}</span></div>
+        ${d.ref ? `<div class="ctx-row"><span class="ctx-row-label" style="white-space:nowrap">Ref</span><span class="ctx-row-val" style="font-size:9px;text-align:right">${d.ref}</span></div>` : ''}
+        ${isUnanchored ? `<div class="ctx-note" style="padding-top:8px;color:var(--warn)">Gap: no roadmap step anchors this deliverable. Requires a milestone or explicit deferral.</div>` : ''}
+      </div>`;
+    }
+  }
+
+  /* standing legend */
+  const legendH = DOC_STANDINGS.map(s => {
+    const count = s === 'unanchored'
+      ? DOC_DELIVERABLES.filter(d => d.anchor === null).length
+      : DOC_DELIVERABLES.filter(d => d.standing === s && (s !== 'projected' || d.anchor !== null)).length;
+    return `<div class="dc-legend-row">
+      <div class="dc-legend-swatch st-${s}"></div>
+      <span style="flex:1">${DOC_STANDING_LABELS[s]||s}</span>
+      <span style="color:var(--faint)">${count}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('ctxPanel').innerHTML = `
+    ${inspectorH}
+    <div class="ctx-section">
+      <div class="ctx-head">Standings</div>
+      ${legendH}
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Framework</div>
+      <div class="ctx-note">6 standings + unanchored flag. T1–T6 decision procedure. 3-layer provenance: canonical · record · editorial.<br><br>Seeded June 2026 from §11 of Documentation Fulfilment Agent Framework v0.1.</div>
+    </div>
+    <div class="ctx-section">
+      <div class="ctx-head">Links</div>
+      <a href="documentation-fulfilment-agent-framework-v0_1.html" class="ctx-link">Framework v0.1</a>
+      <a href="cis-prd-v0.2.html" class="ctx-link">CIS PRD v0.2</a>
+      <a href="AGENTS.md" class="ctx-link">AGENTS.md</a>
+    </div>
+  `;
+}
+
 /* ── explorer ── */
 const ALL_WAVES_EX = ['ALL', ...WAVE_ORDER];
 
@@ -1544,11 +2017,14 @@ function renderExplorer(nodes) {
 function setWave(w) {
   hubMode = false;
   loopMode = false;
+  docMode = false;
   waveFilter = waveFilter === w ? null : w;
   const hc = document.getElementById('hubChip');
   if (hc) hc.style.outline = '';
   const lc = document.getElementById('loopChip');
   if (lc) lc.style.outline = '';
+  const dc = document.getElementById('docChip');
+  if (dc) dc.style.outline = '';
   render();
 }
 
@@ -1557,7 +2033,10 @@ function render() {
   if (!DATA) return;
   renderRail(DATA);
   renderChips(DATA);
-  if (loopMode) {
+  if (docMode) {
+    renderDocMain();
+    renderDocCtx();
+  } else if (loopMode) {
     renderLoopMain();
     renderLoopCtx();
   } else if (hubMode) {

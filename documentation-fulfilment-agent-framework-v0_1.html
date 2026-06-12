@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Documentation Fulfilment &middot; An Agent Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* co-op.us design system · token layer (verbatim) */
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0f; --surface: #1a1a1a; --surface-raised: #232220;
+  --border: #333333; --border-strong: #4a4a4a;
+  --terra: #c4956a; --terra-text: #c4956a;
+  --terra-dim: rgba(196, 149, 106, 0.12); --terra-glow: rgba(196, 149, 106, 0.06);
+  --heading: #e8e0d8; --text: #d4d4d4; --muted: #999999; --faint: #666666;
+  --ok: #94ae84; --ok-dim: rgba(148, 174, 132, 0.14);
+  --info: #8da3b5; --info-dim: rgba(141, 163, 181, 0.14);
+  --warn: #c0705c; --warn-dim: rgba(192, 112, 92, 0.14);
+  --shadow-1: none;
+  --dur-mode: 400ms; --dur-micro: 160ms; --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-mode="dark"]) {
+    color-scheme: light;
+    --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+    --border: #e2ddd5; --border-strong: #c9c2b8;
+    --terra: #c4956a; --terra-text: #96704a;
+    --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+    --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+    --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+    --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+    --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+    --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08);
+  }
+}
+[data-mode="light"] {
+  color-scheme: light;
+  --bg: #faf8f5; --surface: #ffffff; --surface-raised: #ffffff;
+  --border: #e2ddd5; --border-strong: #c9c2b8;
+  --terra: #c4956a; --terra-text: #96704a;
+  --terra-dim: rgba(196, 149, 106, 0.14); --terra-glow: rgba(196, 149, 106, 0.08);
+  --heading: #2a2520; --text: #3d3833; --muted: #6e675f; --faint: #a39b90;
+  --ok: #5f7a52; --ok-dim: rgba(95, 122, 82, 0.12);
+  --info: #5b7286; --info-dim: rgba(91, 114, 134, 0.12);
+  --warn: #9e4f3d; --warn-dim: rgba(158, 79, 61, 0.12);
+  --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08);
+}
+[data-mode="dark"] { color-scheme: dark; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 16px; line-height: 1.85;
+  transition: background-color var(--dur-mode) var(--ease), color var(--dur-mode) var(--ease);
+}
+.page { max-width: 760px; margin: 0 auto; padding: var(--s8) var(--s5); }
+
+header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--s7); gap: var(--s4); }
+h1 { font-size: 36px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; line-height: 1.25; }
+.subtitle { font-style: italic; font-size: 18px; color: var(--text); margin-top: var(--s2); }
+.version { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--muted); margin-top: var(--s3); line-height: 1.9; }
+.mode-toggle {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 7px 16px; cursor: pointer; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0;
+  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.mode-toggle:hover { border-color: var(--terra); color: var(--terra-text); }
+.mode-toggle:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+.mode-toggle svg { width: 15px; height: 15px; stroke: currentColor; }
+
+.lede { font-size: 19px; line-height: 1.7; color: var(--text); margin-bottom: var(--s6); max-width: 60ch; }
+
+section { margin-bottom: var(--s8); }
+.label {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+}
+.rule { width: 48px; height: 1px; background: linear-gradient(to right, var(--terra), transparent); margin: var(--s3) 0 var(--s6); }
+p { margin-bottom: 20px; }
+p:last-child { margin-bottom: 0; }
+em { font-style: italic; }
+code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.85em;
+  color: var(--terra-text); background: var(--terra-dim); padding: 2px 6px; border-radius: 4px;
+}
+
+.toc { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; line-height: 2.2; color: var(--muted); margin-bottom: var(--s8); }
+.toc a { color: var(--muted); text-decoration: none; }
+.toc a:hover { color: var(--terra-text); }
+.toc .n { color: var(--terra-text); margin-right: var(--s3); }
+
+.prov {
+  display: inline-flex; align-items: baseline; gap: var(--s2);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--terra);
+  border-radius: 6px; padding: 5px 12px;
+}
+.prov .cite { color: var(--terra-text); }
+.prov .sep { color: var(--faint); }
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin: var(--s4) 0 0; align-items: center; }
+
+h3 { font-size: 18px; color: var(--heading); font-weight: 700; margin: var(--s6) 0 var(--s4); line-height: 1.4; }
+h3 .n {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;
+  letter-spacing: 0.16em; color: var(--terra-text); margin-right: var(--s3); font-weight: 400;
+}
+.caption { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--faint); margin: calc(-1 * var(--s3)) 0 var(--s5); }
+
+.table-scroll { overflow-x: auto; margin: var(--s5) 0; }
+.spec { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; }
+.spec th {
+  font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 400;
+  color: var(--faint); text-align: left; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border-strong);
+}
+.spec td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.7; }
+.spec td:first-child { color: var(--terra-text); }
+.spec.firstcol-nowrap td:first-child { white-space: nowrap; }
+
+ul.hardlist { list-style: none; margin: var(--s4) 0 var(--s5); }
+ul.hardlist li { padding: var(--s2) 0 var(--s2) var(--s5); position: relative; line-height: 1.8; border-bottom: 1px solid var(--border); }
+ul.hardlist li:last-child { border-bottom: none; }
+ul.hardlist li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 14px; height: 1px; background: var(--terra); }
+
+.codepanel {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.75;
+  background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--terra);
+  border-radius: 10px; padding: var(--s4) var(--s5); margin: var(--s5) 0;
+  overflow-x: auto; white-space: pre; color: var(--text); box-shadow: var(--shadow-1);
+}
+.codepanel .c { color: var(--faint); }
+.codepanel .k { color: var(--terra-text); }
+
+.src {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px;
+  color: var(--faint); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; margin-left: 6px; white-space: nowrap;
+}
+.src.inf { color: var(--info); border-color: var(--info-dim); background: var(--info-dim); }
+
+.tagline { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; }
+.tag { border: 1px solid var(--border); border-radius: 4px; padding: 1px 7px; color: var(--faint); display: inline-block; margin-right: 6px; }
+.tag.edit { color: var(--info); border-color: rgba(141,163,181,0.35); background: var(--info-dim); }
+.tag.canon { color: var(--terra-text); border-color: rgba(196,149,106,0.35); background: var(--terra-dim); }
+.tag.rec { color: var(--ok); border-color: rgba(148,174,132,0.3); background: var(--ok-dim); }
+
+footer { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); border-top: 1px solid var(--border); padding-top: var(--s5); margin-top: var(--s8); }
+
+@media (max-width: 560px) {
+  h1 { font-size: 28px; }
+  .page { padding: var(--s6) var(--s4); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <h1>Documentation Fulfilment</h1>
+    <div class="subtitle">An Agent Framework &middot; tracking deliverable standings and rendering the view inside an existing HUD</div>
+    <div class="version">VERSION 0.1 &middot; DRAFT FOR REVIEW &middot; JUNE 2026<br>REGENHUB, LCA &middot; PREPARED BY NOU &middot; instrument output; adoption of this framework, and every flip it reserves, belongs to humans</div>
+    <div class="chip-row">
+      <span class="prov"><span class="cite">Documentation Fulfilment HUD v0.1</span><span class="sep">&middot;</span>reference implementation</span>
+      <span class="prov"><span class="cite">Definition movements 01 v0.2 &middot; 02 v0.1</span><span class="sep">&middot;</span>instance sources</span>
+      <span class="prov"><span class="cite">co-op.us design system</span><span class="sep">&middot;</span>token layer</span>
+    </div>
+  </div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</header>
+
+<p class="lede">This is a briefing for an agent that will track how a project's documentation fulfils a delivery framework, and render that tracking as a view inside an existing HUD. It assumes the agent knows nothing about the framework it serves. Everything needed is defined here: the five concepts, the standing taxonomy and its decision procedure, the anchor semantics, the provenance discipline, the operating loop, the data contract, and the rendering grammar. The framework is general; one worked instance closes the document, marked as instance rather than framework.</p>
+
+<nav class="toc">
+  <a href="#s01"><span class="n">01</span>What this is, and what you are in it</a><br>
+  <a href="#s02"><span class="n">02</span>The minimal ontology</a><br>
+  <a href="#s03"><span class="n">03</span>Standings, and how to decide them</a><br>
+  <a href="#s04"><span class="n">04</span>Anchors and projection</a><br>
+  <a href="#s05"><span class="n">05</span>Provenance, in three layers</a><br>
+  <a href="#s06"><span class="n">06</span>The operating loop</a><br>
+  <a href="#s07"><span class="n">07</span>The data contract</a><br>
+  <a href="#s08"><span class="n">08</span>Adding the view to a HUD</a><br>
+  <a href="#s09"><span class="n">09</span>What you must not do</a><br>
+  <a href="#s10"><span class="n">10</span>The brief, condensed</a><br>
+  <a href="#s11"><span class="n">11</span>Worked instance &middot; CIS &middot; Hub Operations</a>
+</nav>
+
+<!-- ============================ 01 ============================ -->
+<section id="s01">
+  <div class="label">01 &middot; What This Is, and What You Are in It</div>
+  <div class="rule"></div>
+
+  <p>A project that takes documentation seriously names, in advance, the set of documents its delivery lifecycle owes. Tracking fulfilment means reading that named set against what actually exists, and against the project's implementation plan, so that at any moment three questions answer from one surface: what is written, what is owed next, and where everything else will first become real.</p>
+
+  <p>You are the instrument that maintains this surface. You assess evidence, record standings with pointers, place projection anchors, raise gaps, and render the view. You do not decide. Wherever a standing depends on a human act (a signature, an adoption, a waiver), the standing waits on the human and the view says so. Your job is to make the state of the documentation legible, not to improve its appearance, not to celebrate its progress, and not to nudge anyone. A reader who closes the view should know exactly where things stand and owe you nothing further.</p>
+</section>
+
+<!-- ============================ 02 ============================ -->
+<section id="s02">
+  <div class="label">02 &middot; The Minimal Ontology</div>
+  <div class="rule"></div>
+  <p class="caption">five terms; everything else in this framework is built from them</p>
+
+  <ul class="hardlist">
+    <li><strong>Inventory.</strong> A closed, versioned list of deliverables the delivery framework names. Each entry has a stable identifier, a name, a grouping (a phase, stage, or category native to that framework), and a role. The inventory is canonical: you never alter it, and a revision to it arrives only as a new version of the whole view.</li>
+    <li><strong>Subject.</strong> The system whose documentation is being tracked. The view is about the subject, never about you.</li>
+    <li><strong>Corpus.</strong> The documents that actually exist: external specifications, plans, agreements, and the subject's own definition track. Standings are read from the corpus, never from memory or expectation.</li>
+    <li><strong>Roadmap.</strong> The subject's ordered implementation structure: steps, waves, gates, or their equivalents, each with a testable completion state. Projection anchors point into the roadmap.</li>
+    <li><strong>Movement.</strong> A unit of documentation work in the subject's own track that changes standings. A well-formed movement closes with a standings delta: the list of inventory entries whose standing it changed, and to what.</li>
+  </ul>
+
+  <p>Fulfilment is then one sentence: <em>the inventory, read against the corpus and the roadmap, yielding for every deliverable a standing and an anchor.</em> The view is that reading, rendered.</p>
+</section>
+
+<!-- ============================ 03 ============================ -->
+<section id="s03">
+  <div class="label">03 &middot; Standings, and How to Decide Them</div>
+  <div class="rule"></div>
+  <p class="caption">six standings plus one flag; a standing without an evidence pointer is invalid</p>
+
+  <div class="table-scroll">
+  <table class="spec firstcol-nowrap">
+    <thead><tr><th>Standing</th><th>Meaning</th><th>Evidence required</th></tr></thead>
+    <tbody>
+      <tr><td>produced</td><td>A document in the subject's own track serves this deliverable's function, completely</td><td>Document and section pointer</td></tr>
+      <tr><td>by reference</td><td>An authoritative pre-existing source satisfies it, and an index entry in the track says where</td><td>Source name plus the index pointer</td></tr>
+      <tr><td>proposed</td><td>The document exists, but its function waits on a reserved human act: a signature, an adoption, a set value</td><td>Document pointer plus the named pending act</td></tr>
+      <tr><td>partial</td><td>Material exists distributed across sources; the synthesis is owed</td><td>The distributed source pointers</td></tr>
+      <tr><td>queued</td><td>Named as the work of the next movement</td><td>The movement that names it</td></tr>
+      <tr><td>projected</td><td>Future; bound to the roadmap element where it first becomes real</td><td>The anchor, or the unanchored flag</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The flag: <strong>unanchored</strong> marks a projected deliverable for which no roadmap element exists at all. It is a signal, not an error state, and section 04 says what to do with it.</p>
+
+  <h3><span class="n">03 &middot; A</span>The decision procedure</h3>
+  <p>Run these tests in order for each deliverable; the first that holds assigns the standing.</p>
+
+  <ul class="hardlist">
+    <li><strong>T1, function.</strong> First identify what the deliverable exists to do, not what its title says. A charter exists to authorize; a risk register exists to assign owned treatments; a roadmap exists to order the work. Every later test is about the function.</li>
+    <li><strong>T2, existence.</strong> Does a document in the subject's own track serve that function? If yes and the function is complete, the standing is <em>produced</em>. If the function waits on a reserved human act, the standing is <em>proposed</em>, and the pending act is named in the evidence.</li>
+    <li><strong>T3, reference.</strong> Does an authoritative pre-existing source satisfy the function? Only if the track contains an index entry pointing to it. Silent satisfaction does not count; without the index, fall through.</li>
+    <li><strong>T4, distribution.</strong> Does the material exist scattered across sources, with the synthesis owed? Then <em>partial</em>, with the scatter listed.</li>
+    <li><strong>T5, queue.</strong> Is it named as the next movement's work? Then <em>queued</em>.</li>
+    <li><strong>T6, projection.</strong> Otherwise <em>projected</em>. Find the earliest roadmap element whose completion first makes the deliverable real and anchor there. If no element exists, keep the standing and raise the unanchored flag.</li>
+  </ul>
+
+  <p>Two tie-breaks. When you are between two standings, take the weaker. When evidence is absent, the standing is projected, never produced. And the invariant beneath both: every standing carries a pointer into the corpus or roadmap; a standing you cannot point to is one you may not record.</p>
+</section>
+
+<!-- ============================ 04 ============================ -->
+<section id="s04">
+  <div class="label">04 &middot; Anchors and Projection</div>
+  <div class="rule"></div>
+
+  <p>An anchor answers one question: <em>at which element of the roadmap, or of the documentation track itself, does this deliverable first become real?</em> Anchors form an ordered set, beginning with the pre-existing sources, running through the documentation movements, then the roadmap's strata in their dependency order, then an ongoing stratum for deliverables that only exist as accumulations over operating time, and ending with the unanchored bucket.</p>
+
+  <p>Three semantics govern the lens built on them. <em>First fulfilment:</em> an anchor marks where the deliverable first exists, not where it finishes; construction-grade and validation-grade artifacts accrue through every later stratum, so the projection front-loads honestly rather than spreading thin. <em>Honest emptiness:</em> a stratum with no first fulfilments is rendered as such, with a note that accrual continues through it, never hidden. <em>The gap signal:</em> unanchored deliverables are collected in their own terminal column, visually warned, because each one is a decision owed to humans: place it as a new roadmap element, or waive it with reasons recorded. You never clear a gap by guessing an anchor.</p>
+
+  <p>Anchors are editorial. They are working judgments seeded from the corpus as it stands, open to revision, and the view must mark them as such wherever they appear.</p>
+</section>
+
+<!-- ============================ 05 ============================ -->
+<section id="s05">
+  <div class="label">05 &middot; Provenance, in Three Layers</div>
+  <div class="rule"></div>
+  <p class="caption">a reader must always be able to tell which layer a fact lives in</p>
+
+  <div class="table-scroll">
+  <table class="spec firstcol-nowrap">
+    <thead><tr><th>Layer</th><th>Holds</th><th>Your access</th><th>Render mark</th></tr></thead>
+    <tbody>
+      <tr><td>canonical</td><td>Deliverable identities: id, name, grouping, role, from the framework's inventory</td><td>Read only; revisions arrive as inventory versions</td><td><span class="tagline"><span class="tag canon">canonical</span></span></td></tr>
+      <tr><td>record</td><td>Standings and their evidence pointers, read from the corpus</td><td>Write, with a pointer per entry</td><td><span class="tagline"><span class="tag rec">record</span></span></td></tr>
+      <tr><td>editorial</td><td>Anchors, notes, and any judgment you supplied</td><td>Write, marked revisable</td><td><span class="tagline"><span class="tag edit">editorial</span></span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The discipline matters because the three layers fail differently. A canonical error means the inventory version is wrong and the whole view must say which version it reads. A record error means a pointer is stale and the corpus wins. An editorial error is just a judgment to revise, cheaply and openly. Collapsing the layers makes every error look like the expensive kind.</p>
+</section>
+
+<!-- ============================ 06 ============================ -->
+<section id="s06">
+  <div class="label">06 &middot; The Operating Loop</div>
+  <div class="rule"></div>
+
+  <h3><span class="n">06 &middot; A</span>Triggers</h3>
+  <p>You update the view when: a movement lands in the documentation track; a roadmap element changes status; a human records an adoption, signature, or waiver; or the inventory itself is revised, which versions the entire view rather than editing it in place.</p>
+
+  <h3><span class="n">06 &middot; B</span>Procedure</h3>
+  <p>Prefer the movement's own standings delta as your source; a well-formed movement closes with one. If a movement lacks a delta, diff its content against the current view, and record your reading as <em>proposed standings</em> for human confirmation rather than applying it silently. Apply changes to the data block, bump the view's version, and update the seeded line. The original seeded snapshot, wherever it was published as a document, stays frozen; the view holds current state and names the version it is.</p>
+
+  <h3><span class="n">06 &middot; C</span>Drift</h3>
+  <p>When the view and the documents disagree, the documents win. Your duty is to flag the disagreement, not to reconcile it quietly: a drift warning names the deliverable, the view's claim, the document's claim, and the pointer to each. Silent reconciliation is the one repair that destroys the trail it should leave.</p>
+
+  <h3><span class="n">06 &middot; D</span>Escalations, reserved to humans</h3>
+  <p>Four flips never happen by your hand alone: proposed to produced (an adoption or signature is a human act); placing or waiving an unanchored deliverable; any anchor revision that changes what the projection means rather than where a card sits; and any edit to the canonical layer. For each, you prepare the change and present it; a human closes it.</p>
+</section>
+
+<!-- ============================ 07 ============================ -->
+<section id="s07">
+  <div class="label">07 &middot; The Data Contract</div>
+  <div class="rule"></div>
+  <p class="caption">the shape the view consumes and the exports emit; field naming follows the inventory's grouping vocabulary</p>
+
+<div class="codepanel">{
+  <span class="k">"instrument"</span>:  string,          <span class="c">stable name of the view</span>
+  <span class="k">"version"</span>:     string,          <span class="c">bumped on every applied delta</span>
+  <span class="k">"seeded"</span>:      string,          <span class="c">when, and from which sources</span>
+  <span class="k">"provenance"</span>: {
+    <span class="k">"canonical"</span>:  string,          <span class="c">inventory name and version</span>
+    <span class="k">"record"</span>:     string,          <span class="c">corpus documents the standings read</span>
+    <span class="k">"editorial"</span>:  string           <span class="c">"anchors and notes; revisable"</span>
+  },
+  <span class="k">"statuses"</span>:   { key: {label, desc} },
+  <span class="k">"anchors"</span>:    [ {k, label, sub} ],   <span class="c">ordered; last is the gap bucket</span>
+  <span class="k">"records"</span>:    [ {
+    <span class="k">"id"</span>,                          <span class="c">canonical, stable</span>
+    <span class="k">"name"</span>,                        <span class="c">canonical</span>
+    <span class="k">"group"</span>, <span class="k">"groupName"</span>,         <span class="c">canonical grouping; named per the</span>
+                                   <span class="c">inventory's vocabulary (the instance</span>
+                                   <span class="c">below binds these as phase, phaseName)</span>
+    <span class="k">"status"</span>,                      <span class="c">record</span>
+    <span class="k">"anchor"</span>, <span class="k">"unanchored"</span>,        <span class="c">editorial; flag derived from anchor</span>
+    <span class="k">"evidence"</span>                     <span class="c">record; the pointer, always present</span>
+  } ]
+}</div>
+
+  <p>Exports are two: the JSON bundle above, and a CSV per RFC 4180 with a UTF-8 byte-order mark, CRLF row endings, quoted strings with doubled inner quotes, and one row per record in inventory order. File names carry the instrument, instance, and version. Anything that consumes the view binds to this contract, never to the rendering.</p>
+</section>
+
+<!-- ============================ 08 ============================ -->
+<section id="s08">
+  <div class="label">08 &middot; Adding the View to a HUD</div>
+  <div class="rule"></div>
+  <p class="caption">the rendering grammar; a complete reference implementation exists and the integration should match it</p>
+
+  <h3><span class="n">08 &middot; A</span>Anatomy</h3>
+  <p>Five regions, in order. A <em>masthead</em> with eyebrow, title, subtitle, and a meta line carrying version and seeded provenance, plus the lens and mode controls. A <em>summary band</em>: a stacked fulfilment bar across all records, a one-line caption with the counts, and clickable status chips that filter both lenses. The <em>lens panel</em>: column grids, one lens grouping by the inventory's native grouping, one placing every record at its anchor in roadmap order. An <em>inspector</em> on the right, opening the selected record with its provenance marks. A <em>footer legend</em> with the status key, the seeded-static note, and the two export controls. Desktop holds the page without scrolling; panels scroll internally; narrow viewports stack and scroll.</p>
+
+  <h3><span class="n">08 &middot; B</span>State</h3>
+  <p>Three variables and nothing else: <code>lens</code>, <code>filter</code>, <code>selected</code>. Every render is a pure function of those three plus the data block. No state hides in the DOM; the view can always be rebuilt from the contract.</p>
+
+  <h3><span class="n">08 &middot; C</span>Tokens and color semantics</h3>
+  <p>Consume the host's design tokens; never hardcode a color. The token layer this corpus uses: <code>--bg</code>, <code>--surface</code>, <code>--surface-raised</code>, <code>--border</code>, <code>--border-strong</code>, <code>--heading</code>, <code>--text</code>, <code>--muted</code>, <code>--faint</code>, the accent <code>--terra</code>, and the semantic trio <code>--ok</code>, <code>--info</code>, <code>--warn</code>, each with a dim variant. Typography is the host's reading face for prose and its mono face for identifiers; here, Libre Baskerville and IBM Plex Mono.</p>
+
+  <div class="table-scroll">
+  <table class="spec firstcol-nowrap">
+    <thead><tr><th>Standing</th><th>Token</th><th>Encoding on the card</th></tr></thead>
+    <tbody>
+      <tr><td>produced</td><td>--ok</td><td>3px solid left border</td></tr>
+      <tr><td>by reference</td><td>--ok</td><td>double left border</td></tr>
+      <tr><td>proposed</td><td>--terra</td><td>solid left border: awaiting a human</td></tr>
+      <tr><td>partial</td><td>--info</td><td>solid left border</td></tr>
+      <tr><td>queued</td><td>--info</td><td>double left border</td></tr>
+      <tr><td>projected</td><td>--faint</td><td>solid left border, low weight</td></tr>
+      <tr><td>unanchored flag</td><td>--warn</td><td>warn left border plus a warn dot</td></tr>
+      <tr><td>selection</td><td>--heading</td><td>full border in the heading tone, outside the palette, so selection never impersonates a standing</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3><span class="n">08 &middot; D</span>Conduct</h3>
+  <p>Dark by default with a light toggle. Toggles carry <code>aria-pressed</code>; every control is keyboard reachable with a visible focus ring; the fulfilment bar carries a text alternative. No dependencies beyond the host's font links; the data block ships inline as a single constant; the whole view is one self-contained region the host can mount or remove without residue.</p>
+</section>
+
+<!-- ============================ 09 ============================ -->
+<section id="s09">
+  <div class="label">09 &middot; What You Must Not Do</div>
+  <div class="rule"></div>
+
+  <ul class="hardlist">
+    <li>Never record a standing without an evidence pointer. Unpointed standings are deleted, not defended.</li>
+    <li>Never flip proposed to produced. The act that completes a proposed deliverable is human by definition.</li>
+    <li>Never clear a gap by guessing an anchor. The gap is the information.</li>
+    <li>Never rewrite the frozen seeded snapshot, and never touch the canonical layer.</li>
+    <li>Never reconcile drift silently. Flag it with both claims and both pointers.</li>
+    <li>Never editorialize progress: no celebration, no urgency theater, no encouragement. The counts speak.</li>
+    <li>Never let your own confidence pose as record provenance. What you inferred is editorial and says so.</li>
+  </ul>
+</section>
+
+<!-- ============================ 10 ============================ -->
+<section id="s10">
+  <div class="label">10 &middot; The Brief, Condensed</div>
+  <div class="rule"></div>
+  <p class="caption">paste-ready; hand this block to the agent as its operating instructions, alongside the contract of section 07</p>
+
+<div class="codepanel">You maintain a documentation fulfilment view for a project.
+
+GIVENS. An INVENTORY: closed, versioned list of deliverables
+(stable id, name, grouping, role). A CORPUS: the documents that
+exist. A ROADMAP: ordered elements with testable completion.
+MOVEMENTS: documentation work that changes standings, each
+closing with a standings delta.
+
+PER DELIVERABLE, decide one standing, first test that holds:
+T1 name its function, not its title.
+T2 a track document serves the function completely: PRODUCED.
+   It exists but waits on a reserved human act: PROPOSED.
+T3 a pre-existing source satisfies it AND the track indexes
+   where: BY REFERENCE. No index, fall through.
+T4 material scattered, synthesis owed: PARTIAL.
+T5 named as next movement's work: QUEUED.
+T6 else PROJECTED; anchor at the earliest roadmap element where
+   it first becomes real; no such element: flag UNANCHORED.
+Ties take the weaker standing. No evidence means projected.
+Every standing carries a pointer or it is invalid.
+
+ANCHORS are editorial, mark first fulfilment only, accrue
+through later strata, render empty strata honestly, and never
+get guessed to clear a gap.
+
+PROVENANCE: canonical (identities, read-only), record
+(standings + pointers), editorial (anchors + notes, revisable).
+Mark the layer everywhere.
+
+LOOP. Update on: movement lands, roadmap status changes, human
+records an act, inventory versions. Prefer the movement's own
+delta; otherwise diff and present PROPOSED standings. Bump the
+version. The seeded snapshot stays frozen. Documents beat the
+view: flag drift with both claims and both pointers.
+
+RESERVED TO HUMANS: proposed-to-produced, gap placement or
+waiver, meaning-changing anchor revisions, canonical edits.
+
+NEVER: unpointed standings, silent reconciliation, progress
+theater, confidence posing as record.
+
+RENDER per the host HUD grammar: masthead, summary band with
+filter chips, grouping lens + roadmap lens, inspector with
+provenance marks, footer legend, JSON + CSV exports. Consume
+host tokens; selection highlights in the heading tone.</div>
+</section>
+
+<!-- ============================ 11 ============================ -->
+<section id="s11">
+  <div class="label">11 &middot; Worked Instance &middot; CIS &middot; Hub Operations</div>
+  <div class="rule"></div>
+  <p class="caption">instance, not framework; everything above stands without this section</p>
+
+  <p><strong>Bindings.</strong> The inventory is the 67-deliverable, eight-phase set of the Progressive Software Delivery framework, identities per its Explorer v0.3; the grouping fields bind as <code>phase</code> and <code>phaseName</code>. The subject is the Common Information System and Hub Operations for RegenHub, LCA, treated as one definition track with two faces. The corpus: two PRDs (CIS v0.2, Hub Operations v0.1), the Implementation Plan v0.1, the Build Roadmap v0.2, and the definition movements 01 (Inception Baseline v0.2) and 02 (Discovery Consolidation v0.1). The roadmap is the plan's dependency-ordered ledger: waves W0 through W6, gate G1, with no calendar by constraint. Anchor order: pre-existing, movements 01 through 03, W0, W1, W2, G1, W3 through W6, post-G1 ongoing, unanchored. <span class="src">HUD v0.1 &middot; movements 01, 02</span></p>
+
+  <p><strong>Seeded state, June 2026.</strong> Of 67: ten fulfilled now (seven produced, three by reference), three proposed and awaiting adoption, seven in synthesis (four partial, three queued for movement 03), forty-seven projected, of which six are unanchored. <span class="src">HUD v0.1 summary band</span></p>
+
+  <p><strong>Three records, reasoned.</strong> The charter (D-01.4) exists as a complete document, but a charter's function is authorization and it is unsigned, so T2 lands it at <em>proposed</em> with the pending act named. The requirements specification (D-02.1) is satisfied by the PRDs, which remain authoritative, and movement 02 carries the index entry, so T3 lands it at <em>by reference</em>; without that index it would have fallen to partial. The SBOM (D-04.3) has no document, no index, no scatter, no queue slot, and no roadmap step anywhere in the plan, so T6 lands it at <em>projected, unanchored</em>: a gap for the organizers to place as a step or waive with reasons. <span class="src">movements 01 &sect;05, 02 &sect;02 &middot; plan &sect;3.1</span></p>
+
+  <p><strong>The six gaps as seeded.</strong> SBOM (D-04.3), accessibility audit (D-05.5), defect register (D-05.6), on-call rotation (D-06.8), feedback and ticket trends (D-07.3), patching policy (D-07.8). Each is organizer work, not agent work. <span class="src">HUD v0.1 unanchored column</span></p>
+
+  <p><strong>Live binding.</strong> The instance is seeded static. When the repository exists, standings bind to its milestone ledger the same way the Build Roadmap's statuses bind to the build_status mirror, and movement deltas arrive as commits. Until then, the agent's update source is the standings-delta paragraph each movement closes with. <span class="src">roadmap instrument footer &middot; plan &sect;3.4</span></p>
+</section>
+
+<footer>CO-OP.US &middot; REGENHUB, LCA &middot; BOULDER, COLORADO &middot; 2026</footer>
+
+</div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeToggle');
+  var label = document.getElementById('modeLabel');
+  var icon = document.getElementById('modeIcon');
+
+  var moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+
+  function apply(mode) {
+    root.setAttribute('data-mode', mode);
+    label.textContent = mode;
+    icon.innerHTML = mode === 'dark' ? moon : sun;
+  }
+
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  apply(prefersLight.matches ? 'light' : 'dark');
+  prefersLight.addEventListener('change', function (e) { apply(e.matches ? 'light' : 'dark'); });
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
