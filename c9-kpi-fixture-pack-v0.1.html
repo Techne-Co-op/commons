@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>C9 · KPI Fixture Pack · Hub Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--bg:#0f0f0f;--surface:#1a1a1a;--surface-raised:#232220;--border:#333333;--border-strong:#4a4a4a;
+--terra:#c4956a;--terra-text:#c4956a;--terra-dim:rgba(196,149,106,.12);--terra-glow:rgba(196,149,106,.06);
+--heading:#e8e0d8;--text:#d4d4d4;--muted:#999999;--faint:#666666;
+--ok:#94ae84;--ok-dim:rgba(148,174,132,.14);--info:#8da3b5;--info-dim:rgba(141,163,181,.14);--warn:#c0705c;--warn-dim:rgba(192,112,92,.14);
+--shadow-1:none;--shadow-2:none;--dur-mode:400ms;--dur-micro:160ms;--ease:cubic-bezier(.4,0,.2,1);
+--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;}
+@media (prefers-color-scheme: light){:root:not([data-mode="dark"]){color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}}
+[data-mode="light"]{color-scheme:light;
+--bg:#faf8f5;--surface:#ffffff;--surface-raised:#ffffff;--border:#e2ddd5;--border-strong:#c9c2b8;
+--terra:#c4956a;--terra-text:#96704a;--terra-dim:rgba(196,149,106,.14);--terra-glow:rgba(196,149,106,.08);
+--heading:#2a2520;--text:#3d3833;--muted:#6e675f;--faint:#a39b90;
+--ok:#5f7a52;--ok-dim:rgba(95,122,82,.12);--info:#5b7286;--info-dim:rgba(91,114,134,.12);--warn:#9e4f3d;--warn-dim:rgba(158,79,61,.12);
+--shadow-1:0 1px 3px rgba(42,37,32,.08);--shadow-2:0 4px 16px rgba(42,37,32,.10);}
+[data-mode="dark"]{color-scheme:dark;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}html{background:var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;
+transition:background-color var(--dur-mode) var(--ease),color var(--dur-mode) var(--ease);overflow:hidden;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+button:focus-visible{outline:2px solid var(--terra);outline-offset:2px;}
+.app{height:100vh;display:flex;flex-direction:column;}
+.top{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s5);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.top h1{font-family:'Libre Baskerville',Georgia,serif;font-size:19px;font-weight:700;color:var(--heading);letter-spacing:-.3px;white-space:nowrap;}
+.top .sub{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
+.top .grow{flex:1;}
+.seg{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--surface);}
+.seg button{padding:5px 13px;font-size:11.5px;color:var(--muted);letter-spacing:.06em;transition:color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.seg button[aria-pressed="true"]{color:var(--terra-text);background:var(--terra-dim);}
+.mode-toggle{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 13px;display:flex;align-items:center;gap:var(--s2);
+transition:border-color var(--dur-micro) var(--ease),color var(--dur-micro) var(--ease);}
+.mode-toggle:hover{border-color:var(--terra);color:var(--terra-text);}
+.mode-toggle svg{width:14px;height:14px;stroke:currentColor;}
+.main{flex:1;display:grid;grid-template-columns:216px minmax(0,1fr) 400px;gap:var(--s4);padding:var(--s4) var(--s5) var(--s3);min-height:0;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;min-height:0;
+transition:background-color var(--dur-mode) var(--ease);}
+.phead{padding:var(--s3) var(--s4) 0;}
+.plabel{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra-text);}
+.prule{width:40px;height:1px;background:linear-gradient(to right,var(--terra),transparent);margin:var(--s2) 0 var(--s3);}
+.pscroll{overflow:auto;padding:0 var(--s4) var(--s4);min-height:0;scrollbar-width:thin;}
+.itm{width:100%;text-align:left;border:1px solid var(--border);border-radius:8px;padding:5px var(--s3);margin-bottom:6px;background:var(--bg);
+transition:border-color var(--dur-micro) var(--ease),background-color var(--dur-micro) var(--ease);}
+.itm:hover{border-color:var(--terra);}
+.itm[aria-pressed="true"]{border-color:var(--terra);background:var(--terra-dim);}
+.itm .ia{font-size:10px;letter-spacing:.14em;color:var(--terra-text);margin-right:var(--s2);}
+.itm .in{color:var(--text);font-size:11.5px;}
+.railnote{font-size:10px;color:var(--faint);line-height:1.7;margin:var(--s2) 0 var(--s3);}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);padding:var(--s3) var(--s4);}
+.tile{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:var(--s3) var(--s3) var(--s2);}
+.tile .tl{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.tile .fig{font-size:21px;font-weight:500;color:var(--heading);font-variant-numeric:tabular-nums;line-height:1.15;}
+.tile .ts{font-size:10.5px;color:var(--muted);}
+.gbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;padding:0 var(--s4) var(--s3);}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;}
+.lg .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.lg.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.lg.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.lg.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.gnote{font-size:10px;color:var(--faint);}
+.mwrap{overflow:auto;flex:1;min-height:0;padding:0 var(--s4) var(--s4);scrollbar-width:thin;}
+table.cal{border-collapse:collapse;width:100%;}
+table.cal th{position:sticky;top:0;background:var(--surface);z-index:1;font-weight:400;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+color:var(--faint);text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--border-strong);}
+table.cal td{padding:5px var(--s3);border-bottom:1px solid var(--border);font-size:11.5px;color:var(--text);vertical-align:middle;}
+table.cal tr.wk{cursor:pointer;transition:background-color var(--dur-micro) var(--ease);}
+table.cal tr.wk:hover td{background:var(--bg);}
+table.cal tr.sel td{background:var(--surface-raised);}
+table.cal td.wn{color:var(--heading);white-space:nowrap;}
+table.cal td.wn .dates{color:var(--faint);font-size:9.5px;display:block;}
+tr.mband td{padding:10px var(--s3) 4px;position:relative;cursor:pointer;}
+tr.mband .mn{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra-text);margin-right:var(--s3);}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;white-space:nowrap;}
+.st .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.st.ok{color:var(--ok);background:var(--ok-dim);border-color:var(--ok);}
+.st.info{color:var(--info);background:var(--info-dim);border-color:var(--info);}
+.st.warn{color:var(--warn);background:var(--warn-dim);border-color:var(--warn);}
+.num{font-variant-numeric:tabular-nums;}
+.evd{color:var(--faint);font-size:10px;}
+.det .dhead{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2);}
+.det .did{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-text);}
+.det h2{font-family:'Libre Baskerville',Georgia,serif;font-size:16.5px;font-weight:700;color:var(--heading);line-height:1.4;}
+.det .plain{font-family:'Libre Baskerville',Georgia,serif;font-style:italic;font-size:13.5px;color:var(--text);line-height:1.75;margin:var(--s2) 0 var(--s3);}
+.det .blk{margin-bottom:var(--s4);}
+.det .bk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:var(--s1);}
+.det .bv{font-size:11.5px;line-height:1.8;color:var(--text);}
+.det .bv.serif{font-family:'Libre Baskerville',Georgia,serif;font-size:13px;}
+.prov{display:inline-flex;align-items:baseline;gap:var(--s2);font-size:10.5px;color:var(--muted);background:var(--bg);
+border:1px solid var(--border);border-left:2px solid var(--terra);border-radius:6px;padding:4px 10px;}
+.prov .cite{color:var(--terra-text);}
+.det pre{font-size:10.5px;line-height:1.7;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;
+padding:var(--s3);overflow:auto;max-height:300px;}
+.foot{font-size:10px;color:var(--faint);text-align:center;padding:var(--s2) var(--s5) var(--s3);border-top:1px solid var(--border);}
+.viewseg{display:none;}
+@media (max-width:980px){
+ body{overflow:auto;}.app{height:100dvh;}
+ .main{grid-template-columns:1fr;overflow:hidden;}
+ .panel{display:none;}
+ body[data-view="rail"] .panel.rail,body[data-view="cal"] .panel.mid,body[data-view="detail"] .panel.det{display:flex;}
+ .viewseg{display:flex;margin:0 var(--s5) var(--s3);}
+ .viewseg button{flex:1;}
+ .tiles{grid-template-columns:repeat(2,1fr);}
+ .top h1{font-size:16px;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0ms!important;animation:none!important;}}
+</style>
+</head>
+<body data-view="cal">
+<div class="app">
+<div class="top">
+  <div><a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-decoration:none;letter-spacing:.1em;display:block;margin-bottom:3px;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a><h1>KPI Fixture Pack</h1><div class="sub">c9 &middot; weeks that pass, weeks that fail, by design &middot; consumed at W2.5</div></div>
+  <div class="grow"></div>
+  <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
+    <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+    <span id="modeLabel">dark</span>
+  </button>
+</div>
+
+<div class="seg viewseg" role="group" aria-label="View">
+  <button data-v="rail" aria-pressed="false">index</button>
+  <button data-v="cal" aria-pressed="true">calendar</button>
+  <button data-v="detail" aria-pressed="false">detail</button>
+</div>
+
+<div class="main">
+  <div class="panel rail">
+    <div class="phead"><div class="plabel">Index</div><div class="prule"></div></div>
+    <div class="pscroll" id="rail"></div>
+  </div>
+  <div class="panel mid">
+    <div class="tiles" id="tiles"></div>
+    <div class="gbar" id="gbar"></div>
+    <div class="mwrap" id="mwrap"></div>
+  </div>
+  <div class="panel det">
+    <div class="phead"><div class="plabel" id="detLabel">Detail</div><div class="prule"></div></div>
+    <div class="pscroll det" id="detail"></div>
+  </div>
+</div>
+<div class="foot">repo home supabase/seed/kpi-fixtures.json + supabase/tests/kpi.sql \u00b7 loads inside the pgTAP transaction with FIXKPI- prefixes and rolls back \u00b7 never perturbs the C4 standing seed \u00b7 co-op.us \u00b7 regenhub, lca \u00b7 2026</div>
+</div>
+
+<script>
+/* ---------- the three computations ---------- */
+const K=[
+ {id:"KPI-1",t:"Events per month \u2265 1",cite:"Hub \u00a707 \u00b7 grant:\u00a74",
+  spec:"For each calendar month: count hub_events rows with held_at in the month. Threshold: count \u2265 1.",
+  readings:[["loose","any event kind counts","prop \u00b7 encoded as default"],["strict","only kind = meetup counts; the meetup cadence is the grant-mandatory rhythm","prop \u00b7 alternative"]],
+  note:"April 2026 is the discriminating month: one workshop, no meetup. Loose passes it, strict fails it. The fixture makes finding F12 a failing or passing test instead of a latent disagreement.",
+  drv:"Computed by monthly_kpi_status; weeks attribute to the month containing their ISO Thursday [prop \u00b7 ISO 8601-consistent attribution rule], which is why W14 (Mar 30 \u2013 Apr 5) belongs to April."},
+ {id:"KPI-2",t:"Complimentary seats per ISO week \u2265 10",cite:"Hub \u00a707 \u00b7 grant:\u00a72",
+  spec:"For each ISO week: count distinct coworking_seats of kind complimentary whose active range covers any day of the week. Threshold: count \u2265 10.",
+  readings:[["capacity","seats offered, registry-based; encoded","drv \u00b7 the grant promises offered seats"],["utilization","seat-sessions used; would require session volume this pack deliberately omits","prop \u00b7 alternative, finding F13"]],
+  note:"Retiring comp seat C-10 on Monday April 6 drops capacity to nine for W15 and W16; re-adding C-11 on April 20 restores ten. Two designed failing weeks, registry-driven, no sessions needed.",
+  drv:"Computed against the seat registry timeline; sessions enter utilization reporting, not this threshold, under the capacity reading."},
+ {id:"KPI-3",t:"Open seats per business day in 2\u20133",cite:"Hub \u00a707 \u00b7 grant:\u00a72",
+  spec:"For each business day (v1: Monday\u2013Friday): count active open seats. Threshold: count within the band [2,3].",
+  readings:[["band","2\u20133 read literally: four open seats also fails","prop \u00b7 encoded as default"],["floor","\u2265 2 passes; over-provisioning is benign","prop \u00b7 alternative"]],
+  note:"W16 fails both readings (one seat from Wednesday). W18 discriminates: O-6 added Wednesday April 29 makes three days at four seats, failing band, passing floor. And W22 contains Memorial Day, May 25: the v1 Mon\u2013Fri rule counts it; a holiday calendar would not. Finding F14 carries both.",
+  drv:"Daily counts summarized per week as min\u2013max for the calendar; the assertion runs per day, 65 business days across the span."}
+];
+/* ---------- fixture calendar · 13 ISO weeks ---------- */
+/* k2: comp capacity; k3:[min,max] open per business day; ev: events; st2/st3: ok|warn|info */
+const W=[
+ {w:"2026-W10",d:"Mar 2 \u2013 8",m:0,cap:10,o:[3,3],ev:["HE-F1 \u00b7 meetup \u00b7 Mar 5"],tl:[]},
+ {w:"2026-W11",d:"Mar 9 \u2013 15",m:0,cap:10,o:[3,3],ev:[],tl:[]},
+ {w:"2026-W12",d:"Mar 16 \u2013 22",m:0,cap:10,o:[3,3],ev:["HE-F2 \u00b7 workshop \u00b7 Mar 19"],tl:[]},
+ {w:"2026-W13",d:"Mar 23 \u2013 29",m:0,cap:10,o:[3,3],ev:[],tl:[]},
+ {w:"2026-W14",d:"Mar 30 \u2013 Apr 5",m:1,cap:10,o:[3,3],ev:[],tl:[],edge:"the straddle week: ISO Thursday is Apr 2, so W14 attributes to April under the attribution rule"},
+ {w:"2026-W15",d:"Apr 6 \u2013 12",m:1,cap:9,o:[2,3],ev:["HE-F3 \u00b7 workshop \u00b7 Apr 9"],tl:["retire comp C-10 \u00b7 Mon Apr 6","retire open O-3 \u00b7 Wed Apr 8"]},
+ {w:"2026-W16",d:"Apr 13 \u2013 19",m:1,cap:9,o:[1,2],ev:[],tl:["retire open O-2 \u00b7 Wed Apr 15"]},
+ {w:"2026-W17",d:"Apr 20 \u2013 26",m:1,cap:10,o:[3,3],ev:[],tl:["add comp C-11 \u00b7 Mon Apr 20","add open O-4, O-5 \u00b7 Mon Apr 20"]},
+ {w:"2026-W18",d:"Apr 27 \u2013 May 3",m:1,cap:10,o:[3,4],ev:[],tl:["add open O-6 \u00b7 Wed Apr 29"],disc3:1},
+ {w:"2026-W19",d:"May 4 \u2013 10",m:2,cap:10,o:[3,3],ev:[],tl:["retire open O-6 \u00b7 Mon May 4"]},
+ {w:"2026-W20",d:"May 11 \u2013 17",m:2,cap:10,o:[3,3],ev:[],tl:[]},
+ {w:"2026-W21",d:"May 18 \u2013 24",m:2,cap:10,o:[3,3],ev:[],tl:[]},
+ {w:"2026-W22",d:"May 25 \u2013 31",m:2,cap:10,o:[3,3],ev:[],tl:[],edge:"contains Memorial Day, May 25: counted under the v1 Mon\u2013Fri rule, excluded under a holiday calendar (F14)"}
+];
+const MONTHS=[
+ {m:"2026-03",label:"March 2026",weeks:"W10\u2013W13",ev:2,meetups:1,loose:"ok",strict:"ok",
+  why:"Two events, one a meetup. Passes both readings; the green month."},
+ {m:"2026-04",label:"April 2026",weeks:"W14\u2013W18",ev:1,meetups:0,loose:"ok",strict:"warn",
+  why:"One workshop, no meetup. The discriminating month for finding F12: loose passes, strict fails."},
+ {m:"2026-05",label:"May 2026",weeks:"W19\u2013W22",ev:0,meetups:0,loose:"warn",strict:"warn",
+  why:"Zero events. Fails both readings; the unambiguous red month, isolated from seat noise on purpose."}
+];
+function k2st(w){return w.cap>=10?"ok":"warn";}
+function k3st(w){if(w.disc3)return "info";return (w.o[0]>=2&&w.o[1]<=3)?"ok":"warn";}
+const FINDINGS=[
+ ["F12","What counts as the monthly event.","Hub \u00a707 sets events per month at one or more while the meetup cadence is separately mandatory. Encoded loose (any kind counts) with strict as the alternative; April 2026 discriminates. Decide at W2.5's PR with the EE liaison surface (D9) in view, since the liaison reads this number."],
+ ["F13","Capacity or utilization.","The ten-seat weekly promise is encoded as capacity offered, registry-based, which matches the grant's language of offering seats. The utilization reading would key the threshold to sessions used and would need session volume this pack deliberately omits; adopting it is a fixture extension, sized in the machine view."],
+ ["F14","The semantics of two-to-three.","Encoded as a band: four open seats fails. The floor reading treats over-provisioning as benign; W18 discriminates. Folded in: the business-day calendar is v1 Mon\u2013Fri with holidays unnamed, and W22's Memorial Day is the live example sitting in the fixture, counted today, excluded under any holiday calendar."]
+];
+const ASSERT={kpi1:6,kpi2:13,kpi3:26,drill:2,guard:1};
+const totalAssert=Object.values(ASSERT).reduce((a,b)=>a+b,0);
+
+const S={sel:null,selM:null};
+function rRail(){
+ const el=document.getElementById("rail");
+ let h='<div class="railnote">three computations, three months, thirteen weeks \u00b7 click anything</div>';
+ K.forEach((k,i)=>{h+=`<button class="itm" data-k="${i}"><span class="ia">${k.id}</span><span class="in">${k.t}</span></button>`;});
+ h+='<div class="railnote" style="margin-top:var(--s3)">months</div>';
+ MONTHS.forEach((m,i)=>{h+=`<button class="itm" data-m="${i}"><span class="ia">${m.m}</span><span class="in">${m.label.split(" ")[0]}</span></button>`;});
+ h+=`<button class="itm" data-f="1" style="margin-top:var(--s3)"><span class="in">findings \u00b7 ${FINDINGS.length}</span></button>`;
+ h+=`<button class="itm" data-j="1"><span class="in">machine view \u00b7 json</span></button>`;
+ el.innerHTML=h;
+ el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{showK(+b.dataset.k);setMobile("detail");});
+ el.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{showMonth(+b.dataset.m);setMobile("detail");});
+ el.querySelector("[data-f]").onclick=()=>{showFindings();setMobile("detail");};
+ el.querySelector("[data-j]").onclick=()=>{showJson();setMobile("detail");};
+}
+function rTiles(){
+ const fails=W.filter(w=>k2st(w)==="warn").length+W.filter(w=>k3st(w)==="warn").length+2; /* +2: strict April, May both */
+ const disc=2; /* April strict month, W18 band */
+ document.getElementById("tiles").innerHTML=
+ `<div class="tile"><div class="tl">span</div><div class="fig">13</div><div class="ts">ISO weeks \u00b7 3 months \u00b7 65 business days</div></div>
+  <div class="tile"><div class="tl">assertions</div><div class="fig">${totalAssert}</div><div class="ts">incl. 2 drill-downs + rollback guard</div></div>
+  <div class="tile"><div class="tl">designed failures</div><div class="fig">${fails}</div><div class="ts">every failure is on purpose</div></div>
+  <div class="tile"><div class="tl">discriminators</div><div class="fig">${disc}</div><div class="ts">cells that decide a reading</div></div>`;
+}
+function rGbar(){
+ document.getElementById("gbar").innerHTML=
+ `<span class="lg ok"><span class="dot"></span>designed pass</span>
+  <span class="lg warn"><span class="dot"></span>designed fail</span>
+  <span class="lg info"><span class="dot"></span>depends on reading</span>
+  <span class="gnote">expected states of a synthetic calendar, not measurements \u00b7 KPI-1 sits on the month bands; KPI-2 and KPI-3 on the weeks \u00b7 fixture ids carry FIXKPI- prefixes</span>`;
+}
+function stChip(s,txt){return `<span class="st ${s}"><span class="dot"></span>${txt}</span>`;}
+function rCal(){
+ const el=document.getElementById("mwrap");
+ let h='<table class="cal"><thead><tr><th>iso week</th><th>kpi-2 \u00b7 comp capacity</th><th>kpi-3 \u00b7 open / business day</th><th>fixture activity</th></tr></thead><tbody>';
+ W.forEach((w,wi)=>{
+  if(wi===0||w.m!==W[wi-1].m){
+   const m=MONTHS[w.m];
+   h+=`<tr class="mband" data-m="${w.m}"><td colspan="4"><span class="mn">${m.label} \u00b7 kpi-1</span>
+     ${stChip(m.loose,"loose "+(m.loose==="ok"?"pass":"fail"))} ${stChip(m.strict,"strict "+(m.strict==="ok"?"pass":"fail"))}
+     <span class="evd" style="margin-left:8px">${m.ev} event${m.ev===1?"":"s"} \u00b7 ${m.meetups} meetup${m.meetups===1?"":"s"}</span></td></tr>`;}
+  const s2=k2st(w),s3=k3st(w);
+  h+=`<tr class="wk ${S.sel===wi?"sel":""}" data-w="${wi}">
+   <td class="wn">${w.w}<span class="dates">${w.d}${w.edge?" \u00b7 edge":""}</span></td>
+   <td>${stChip(s2,(s2==="ok"?"pass":"fail")+" \u00b7 "+w.cap)}</td>
+   <td>${stChip(s3,(s3==="info"?"band fail \u00b7 floor pass":(s3==="ok"?"pass":"fail"))+" \u00b7 "+w.o[0]+"\u2013"+w.o[1])}</td>
+   <td class="evd">${[...w.ev,...w.tl].join(" \u00b7 ")||"\u2014"}</td></tr>`;});
+ h+='</tbody></table>';
+ el.innerHTML=h;
+ el.querySelectorAll("tr.wk").forEach(tr=>tr.onclick=()=>{S.sel=+tr.dataset.w;rCal();showWeek(+tr.dataset.w);setMobile("detail");});
+ el.querySelectorAll("tr.mband").forEach(tr=>tr.onclick=()=>{showMonth(+tr.dataset.m);setMobile("detail");});
+}
+const det=()=>document.getElementById("detail");
+const dlab=t=>document.getElementById("detLabel").textContent=t;
+function showK(i){
+ const k=K[i];dlab("Detail \u00b7 "+k.id);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${k.id}</span></div>
+  <h2>${k.t}</h2>
+  <div class="blk"><div class="bk">citation</div><span class="prov"><span class="cite">${k.cite}</span></span></div>
+  <div class="blk"><div class="bk">computation</div><div class="bv">${k.spec}</div></div>
+  <div class="blk"><div class="bk">readings</div>${k.readings.map(r=>`<div class="bv"><span style="color:var(--terra-text)">${r[0]}</span> \u00b7 ${r[1]} <span style="color:var(--faint)">[${r[2]}]</span></div>`).join("")}</div>
+  <div class="blk"><div class="bk">view mechanics</div><div class="bv">${k.drv}</div></div>
+  <div class="blk"><div class="bk">why the fixture is shaped this way</div><div class="bv serif">${k.note}</div></div>`;
+}
+function showWeek(wi){
+ const w=W[wi];const m=MONTHS[w.m];dlab("Detail \u00b7 "+w.w);
+ const s2=k2st(w),s3=k3st(w);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${w.w} \u00b7 ${m.m}</span></div>
+  <h2>${w.d}</h2>
+  ${w.edge?`<p class="plain">${w.edge}.</p>`:""}
+  <div class="blk"><div class="bk">expected \u00b7 kpi-2</div><div class="bv">${stChip(s2,(s2==="ok"?"pass":"fail"))} <span class="num">capacity ${w.cap}</span> \u00b7 assert: distinct active complimentary seats covering ${w.w} = ${w.cap}; threshold \u2265 10 ${s2==="ok"?"holds":"is violated by design"}</div></div>
+  <div class="blk"><div class="bk">expected \u00b7 kpi-3</div><div class="bv">${stChip(s3,(s3==="info"?"reading-dependent":(s3==="ok"?"pass":"fail")))} <span class="num">open ${w.o[0]}\u2013${w.o[1]} per business day</span>${s3==="info"?" \u00b7 band fails on the four-seat days, floor passes; this cell decides F14":""}</div></div>
+  <div class="blk"><div class="bk">fixture activity</div><div class="bv">${[...w.ev,...w.tl].join("<br>")||"steady state"}</div></div>
+  <div class="blk"><div class="bk">month context</div><div class="bv serif">${m.why}</div></div>`;
+}
+function showMonth(mi){
+ const m=MONTHS[mi];dlab("Detail \u00b7 "+m.m);
+ det().innerHTML=`
+  <div class="dhead"><span class="did">${m.m} \u00b7 weeks ${m.weeks}</span></div>
+  <h2>${m.label}</h2>
+  <p class="plain">${m.why}</p>
+  <div class="blk"><div class="bk">expected \u00b7 kpi-1</div>
+   <div class="bv">${stChip(m.loose,"loose "+(m.loose==="ok"?"pass":"fail"))} any-kind count = ${m.ev}</div>
+   <div class="bv" style="margin-top:4px">${stChip(m.strict,"strict "+(m.strict==="ok"?"pass":"fail"))} meetup count = ${m.meetups}</div></div>
+  <div class="blk"><div class="bk">drill-down assertion</div><div class="bv">${m.ev>0?`the month figure must drill to exactly ${m.ev} hub_events row id${m.ev===1?"":"s"}; identity, not just count`:"a zero drills to an empty set, and the dashboard must render the absence honestly rather than hiding the month"}</div></div>
+  <div class="blk"><div class="bk">attribution</div><div class="bv">weeks attribute to the month containing their ISO Thursday [prop]; W14 belongs here${mi===1?" by that rule, which is the rule's own test":""}</div></div>`;
+}
+function showFindings(){
+ dlab("Detail \u00b7 findings");
+ det().innerHTML=`<div class="dhead"><span class="did">findings F12\u2013F14</span></div>
+  <h2>What the thresholds forced</h2>
+  <p class="plain">Three readings the PRDs leave open, each given a fixture cell that makes the difference visible. Adopting a reading flips a chip, not a paragraph.</p>`+
+  FINDINGS.map(f=>`<div class="blk"><div class="bk">${f[0]} \u00b7 ${f[1]}</div><div class="bv serif">${f[2]}</div></div>`).join("");
+}
+function showJson(){
+ dlab("Detail \u00b7 machine view");
+ const data={span:{weeks:W.map(w=>w.w),business_days:65,attribution_rule:"iso-thursday [prop]"},
+  computations:K.map(k=>({id:k.id,threshold:k.t,cite:k.cite,readings:k.readings.map(r=>r[0]),encoded:k.readings[0][0]})),
+  seats_timeline:[
+   {seat:"FIXKPI-C-01..C-09",kind:"complimentary",active_from:"2026-03-01",active_to:null},
+   {seat:"FIXKPI-C-10",kind:"complimentary",active_from:"2026-03-01",active_to:"2026-04-05"},
+   {seat:"FIXKPI-C-11",kind:"complimentary",active_from:"2026-04-20",active_to:null},
+   {seat:"FIXKPI-O-1",kind:"open",active_from:"2026-03-01",active_to:null},
+   {seat:"FIXKPI-O-2",kind:"open",active_from:"2026-03-01",active_to:"2026-04-14"},
+   {seat:"FIXKPI-O-3",kind:"open",active_from:"2026-03-01",active_to:"2026-04-07"},
+   {seat:"FIXKPI-O-4",kind:"open",active_from:"2026-04-20",active_to:null},
+   {seat:"FIXKPI-O-5",kind:"open",active_from:"2026-04-20",active_to:null},
+   {seat:"FIXKPI-O-6",kind:"open",active_from:"2026-04-29",active_to:"2026-05-03"}],
+  events:[{id:"FIXKPI-HE-F1",kind:"meetup",held_at:"2026-03-05"},
+   {id:"FIXKPI-HE-F2",kind:"workshop",held_at:"2026-03-19"},
+   {id:"FIXKPI-HE-F3",kind:"workshop",held_at:"2026-04-09"}],
+  expected:{kpi1:MONTHS.map(m=>({month:m.m,loose:m.loose==="ok",strict:m.strict==="ok",events:m.ev,meetups:m.meetups})),
+   kpi2:W.map(w=>({week:w.w,capacity:w.cap,pass:w.cap>=10})),
+   kpi3:W.map(w=>({week:w.w,min:w.o[0],max:w.o[1],band_pass:w.o[0]>=2&&w.o[1]<=3,floor_pass:w.o[0]>=2}))},
+  utilization_extension:{if_reading:"utilization (F13)",adds:"~3 sessions/comp seat/week \u2248 390 session rows over the span",status:"not loaded"},
+  loading:"transactional: load FIXKPI- rows inside the pgTAP transaction, assert, roll back; the C4 standing seed is never perturbed",
+  assertions:ASSERT};
+ det().innerHTML=`<div class="dhead"><span class="did">supabase/seed/kpi-fixtures.json</span></div>
+  <h2>Machine view</h2>
+  <p class="plain">The calendar as data: nine seat timeline rows plus the steady block, three events, and the expected-output tables ci:db-verify asserts row for row.</p>
+  <pre>${JSON.stringify(data,null,1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>`;
+}
+function showDefault(){
+ dlab("Detail");
+ det().innerHTML=`
+  <div class="dhead"><span class="did">how to read this</span></div>
+  <h2>A rigged season, honestly labeled</h2>
+  <p class="plain">Thirteen weeks across three months, arranged so the three grant computations encounter everything that can happen to them: clean passes, a capacity dip, a one-seat famine, an over-provisioned Wednesday, a month with no meetup, a month with nothing at all, a straddling week, and one federal holiday. Every failure is designed, every chip is an expected state, and the suite asserts the whole table row for row.</p>
+  <div class="blk"><div class="bk">the discriminators</div><div class="bv serif">Two cells carry slate because their outcome depends on a reading not yet adopted: April under strict counting, W18 under the band. Adopting a reading at W2.5 flips a chip and a JSON flag; the fixture already proves both branches.</div></div>
+  <div class="blk"><div class="bk">the boundary with C4</div><div class="bv serif">This pack loads transactionally with FIXKPI- prefixes and rolls back, so the standing seed's 197 assertable rows stay exactly 197. Scopes and arcs live there; thresholds live here.</div></div>
+  <div class="blk"><div class="bk">provenance</div>
+   <span class="prov"><span class="cite">Hub \u00a707 \u00b7 grant:\u00a72, \u00a74 \u00b7 plan W2.5 \u00b7 C4 boundary note</span></span></div>`;
+}
+function rAll(){rRail();rTiles();rGbar();rCal();}
+document.querySelectorAll(".viewseg button").forEach(b=>b.onclick=()=>setMobile(b.dataset.v,true));
+function setMobile(v,force){if(!window.matchMedia("(max-width:980px)").matches&&!force)return;
+ document.body.dataset.view=v;document.querySelectorAll(".viewseg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));}
+(function(){var root=document.documentElement,btn=document.getElementById("modeToggle"),label=document.getElementById("modeLabel"),icon=document.getElementById("modeIcon");
+var moon='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+var sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+function apply(m){root.setAttribute("data-mode",m);label.textContent=m;icon.innerHTML=m==="dark"?moon:sun;}
+var pl=window.matchMedia("(prefers-color-scheme: light)");apply(pl.matches?"light":"dark");
+pl.addEventListener("change",e=>apply(e.matches?"light":"dark"));
+btn.addEventListener("click",()=>apply(root.getAttribute("data-mode")==="dark"?"light":"dark"));})();
+rAll();showDefault();
+</script>
+</body>
+</html>
