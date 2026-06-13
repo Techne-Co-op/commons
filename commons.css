@@ -330,9 +330,59 @@ footer a:hover { color: var(--terra-text); }
      desktop   ≥ 1024px  full layout
    ============================================================ */
 
-/* ── Nav: collapse text links at 560px ── */
+/* ── Mobile nav toggle button ── */
+/* Hidden on desktop; commons-nav.js injects it into .site-nav-inner */
+.nav-toggle {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  min-height: 32px;
+  cursor: pointer;
+  transition: color var(--dur-micro) var(--ease),
+              border-color var(--dur-micro) var(--ease);
+}
+.nav-toggle:hover       { color: var(--terra-text); border-color: var(--terra); }
+.nav-toggle:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+
+/* ── Nav: collapse at 560px, replace with toggle ── */
 @media (max-width: 560px) {
+  .nav-toggle { display: block; }
+
+  /* start hidden; .is-open reveals as dropdown */
   .nav-links { display: none; }
+
+  .nav-links.is-open {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    /* fixed anchors below the sticky nav (44px) regardless of containing block */
+    position: fixed;
+    top: 44px;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0 12px;
+    z-index: 99;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  .nav-links.is-open li { list-style: none; }
+
+  .nav-links.is-open a {
+    display: block;
+    padding: 11px 24px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    /* 11px top + 11px bottom + ~18px text = 40px min; rounds to ≥44px tap zone */
+  }
 }
 
 /* ── Tables: horizontal scroll on narrow viewports ── */
