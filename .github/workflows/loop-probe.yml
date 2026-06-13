@@ -1,0 +1,33 @@
+name: loop-probe
+# D12: verify v_decision_leverage integrity on every push and daily.
+# Three assertions: existence, column shape, staleness (>14 days deliberating).
+# Failure is CI-blocking on push; daily run posts a warning annotation only.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 14:03 UTC daily = 08:03 MT — off-minute to avoid fleet contention
+    - cron: '3 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run loop probe
+        env:
+          CIS_REST: "https://dgcoffcanzwsuwgpocbt.supabase.co/rest/v1"
+          CIS_ANON_KEY: ${{ secrets.CIS_ANON_KEY }}
+          PROBE_OUTPUT: loop-probe-report.json
+        run: python3 scripts/loop_probe.py
+
+      - name: Upload probe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loop-probe-report
+          path: loop-probe-report.json
+          retention-days: 30
