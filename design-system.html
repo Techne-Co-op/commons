@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-mode="dark">
+<html lang="en" data-mode="dark" data-page-type="reference" data-pub-tier="public">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -790,7 +790,90 @@ footer {
     </tbody>
   </table>
 
-  <p>Current public pages: <code>index.html</code>, <code>hud.html</code>, <code>loop.html</code>, <code>design-system.html</code>. Everything else in the repository is internal until explicitly promoted.</p>
+  <p>Current public pages: <code>index.html</code>, <code>hud.html</code>, <code>loop.html</code>, <code>design-system.html</code>, <code>tree.html</code>. Everything else in the repository is internal until explicitly promoted.</p>
+</section>
+
+<section>
+  <div class="label">Page Class</div>
+  <div class="rule"></div>
+  <p>Every page in the commons carries three orthogonal classification axes. These axes are independent — a page's content type does not determine its publication tier, and neither determines which nav surfaces include it. This is the key invariant: no axis implies the value of another. Composable, not inherited.</p>
+
+  <p>The three axes are declared as <code>data-*</code> attributes on the <code>&lt;html&gt;</code> element and as fields on each node in <code>tree.manifest.json</code>. The manifest is the authoritative record; the HTML attributes are the local declaration that CSS and JavaScript can read.</p>
+
+  <table class="spec">
+    <thead><tr><th>Axis</th><th>HTML attribute</th><th>Manifest field</th><th>Determines</th></tr></thead>
+    <tbody>
+      <tr><td>Content type</td><td><code>data-page-type</code></td><td><code>content_type</code></td><td>What is this page</td></tr>
+      <tr><td>Publication tier</td><td><code>data-pub-tier</code></td><td><code>tier</code></td><td>Who it is for</td></tr>
+      <tr><td>Nav surfaces</td><td><em>manifest only</em></td><td><code>nav_surfaces</code></td><td>Where it appears in navigation</td></tr>
+    </tbody>
+  </table>
+
+  <p>Nav surfaces live in the manifest only. A page does not know which surfaces include it — that is a system concern, not a page concern. <code>tree.html</code> derives and surfaces this information at render time.</p>
+
+  <p><strong>content_type</strong> — what kind of page is this:</p>
+  <table class="spec">
+    <thead><tr><th>Value</th><th>Meaning</th><th>Default grammar</th></tr></thead>
+    <tbody>
+      <tr><td><code>landing</code></td><td>The root entry point. One per site.</td><td>Index</td></tr>
+      <tr><td><code>instrument</code></td><td>A live interactive tool — HUD, signal loop, tree, roadmap.</td><td>Instrument</td></tr>
+      <tr><td><code>guide</code></td><td>Procedural or explanatory content written for a specific reader.</td><td>Document</td></tr>
+      <tr><td><code>reference</code></td><td>A specification, schema card, or framework document.</td><td>Document</td></tr>
+      <tr><td><code>assessment</code></td><td>An audit, probe matrix, or evaluation record.</td><td>Document</td></tr>
+      <tr><td><code>planning</code></td><td>A progressive definition, implementation plan, or wave boundary document.</td><td>Document</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>pub_tier</strong> — who is this page for. Sets robots, sitemap inclusion, and canonical block requirements:</p>
+  <table class="spec">
+    <thead><tr><th>Value</th><th>Robots</th><th>Sitemap</th><th>OG + canonical</th></tr></thead>
+    <tbody>
+      <tr><td><code>public</code></td><td><code>index,follow</code></td><td>yes</td><td>required</td></tr>
+      <tr><td><code>member</code></td><td><code>noindex</code></td><td>no</td><td>omit</td></tr>
+      <tr><td><code>internal</code></td><td><code>noindex,nofollow</code></td><td>no</td><td>omit</td></tr>
+      <tr><td><code>admin</code></td><td><code>noindex,nofollow</code></td><td>no</td><td>omit</td></tr>
+    </tbody>
+  </table>
+
+  <p>All commons pages are currently in the <code>public</code> tier. The vocabulary is defined here in anticipation of member-scoped and internal pages.</p>
+
+  <p><strong>nav_surfaces</strong> — where this page appears in navigation. An array of one or more values:</p>
+  <table class="spec">
+    <thead><tr><th>Value</th><th>Surface</th></tr></thead>
+    <tbody>
+      <tr><td><code>primary</code></td><td>The main site nav bar, visible on every page.</td></tr>
+      <tr><td><code>hamburger</code></td><td>The expanded secondary menu.</td></tr>
+      <tr><td><code>footer</code></td><td>The site footer nav.</td></tr>
+      <tr><td><code>profile</code></td><td>The user's profile menu (future).</td></tr>
+      <tr><td><code>account</code></td><td>Account configuration navigation (future).</td></tr>
+      <tr><td><code>none</code></td><td>Not navigable from a shared surface. Reached via deep links only.</td></tr>
+    </tbody>
+  </table>
+
+  <p>The canonical HTML declaration — two attributes alongside <code>data-mode</code>:</p>
+  <pre><code>&lt;html lang="en" data-mode="dark" data-page-type="instrument" data-pub-tier="public"&gt;</code></pre>
+
+  <p>Current page class register (source of truth: <code>tree.manifest.json</code>):</p>
+  <table class="spec">
+    <thead><tr><th>Page</th><th>content_type</th><th>pub_tier</th><th>nav_surfaces</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>landing</td><td>public</td><td>primary, footer</td></tr>
+      <tr><td><code>/loop.html</code></td><td>instrument</td><td>public</td><td>primary</td></tr>
+      <tr><td><code>/hud.html</code></td><td>instrument</td><td>public</td><td>primary</td></tr>
+      <tr><td><code>/tree.html</code></td><td>instrument</td><td>public</td><td>primary</td></tr>
+      <tr><td><code>/member-guide.html</code></td><td>guide</td><td>public</td><td>primary</td></tr>
+      <tr><td><code>/dev.html</code></td><td>guide</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/design-system.html</code></td><td>reference</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/pre-build-audit-v0.1.html</code></td><td>assessment</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/builders-collection-map-v0.1.html</code></td><td>reference</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/cis-prd-v0.2.html</code></td><td>reference</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/hub-ops-prd-v0.1.html</code></td><td>reference</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/cis-build-roadmap-instrument-v0.2.html</code></td><td>instrument</td><td>public</td><td>hamburger</td></tr>
+      <tr><td><code>/cis-hubops-documentation-fulfilment-hud-v0_1.html</code></td><td>instrument</td><td>public</td><td>hamburger</td></tr>
+      <tr><td>c6–c11 collection items</td><td>reference / assessment / guide</td><td>public</td><td>none</td></tr>
+      <tr><td>progressive definitions, plans</td><td>planning</td><td>public</td><td>none</td></tr>
+    </tbody>
+  </table>
 </section>
 
 <footer>
