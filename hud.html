@@ -811,6 +811,140 @@
     }
     .inst-footer a { color: var(--faint); text-decoration: none; }
     .inst-footer a:hover { color: var(--terra-text); }
+
+    /* ── milestone overlay ── */
+    .overlay-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(2px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .overlay-backdrop.open { display: flex; }
+    .overlay-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 82vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 40px rgba(0,0,0,.45);
+    }
+    .overlay-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 15px 18px 11px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .overlay-header-id {
+      font-size: 10px;
+      letter-spacing: .09em;
+      color: var(--faint);
+      padding-top: 3px;
+      flex-shrink: 0;
+      min-width: 36px;
+    }
+    .overlay-header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 15px;
+      color: var(--heading);
+      flex: 1;
+      line-height: 1.4;
+    }
+    .overlay-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: -2px;
+    }
+    .overlay-close:hover { color: var(--text); }
+    .overlay-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      padding: 0 14px;
+    }
+    .overlay-tab {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .06em;
+      padding: 9px 12px;
+      border: none;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color .12s;
+    }
+    .overlay-tab.on { color: var(--text); border-bottom-color: var(--terra); }
+    .overlay-tab:hover:not(.on) { color: var(--terra-text); }
+    .overlay-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+    }
+    .overlay-pane { display: none; }
+    .overlay-pane.on { display: block; }
+    .ov-section { margin-bottom: 14px; }
+    .ov-section:last-child { margin-bottom: 0; }
+    .ov-label {
+      font-size: 9px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 4px;
+    }
+    .ov-value {
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .ov-plain-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--heading);
+    }
+    .ov-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 2px; }
+    .ov-chip {
+      font-size: 9.5px;
+      padding: 2px 7px;
+      border-radius: 2px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .ov-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    .ov-gh-link {
+      font-size: 10.5px;
+      color: var(--terra-text);
+      text-decoration: none;
+    }
+    .ov-gh-link:hover { text-decoration: underline; }
+    .ov-loading { font-size: 11px; color: var(--faint); }
+    .ov-fallback { font-size: 11px; color: var(--muted); font-style: italic; }
+    /* cards become clickable */
+    .m-card { cursor: pointer; transition: border-color .12s; }
+    .m-card:hover { border-color: var(--muted) !important; }
   </style>
 </head>
 <body>
@@ -871,6 +1005,27 @@
   <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
   <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
 </footer>
+
+<!-- ── milestone detail overlay ── -->
+<div class="overlay-backdrop" id="overlayBackdrop" onclick="if(event.target===this)closeOverlay()" role="presentation">
+  <div class="overlay-panel" id="overlayPanel" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+    <div class="overlay-header">
+      <span class="overlay-header-id" id="overlayId"></span>
+      <span class="overlay-header-title" id="overlayTitle"></span>
+      <button class="overlay-close" onclick="closeOverlay()" aria-label="Close">&times;</button>
+    </div>
+    <div class="overlay-tabs">
+      <button class="overlay-tab on" id="tabPlain" onclick="switchOverlayTab('plain')">Plain language</button>
+      <button class="overlay-tab" id="tabTech" onclick="switchOverlayTab('tech')">Technical</button>
+    </div>
+    <div class="overlay-body">
+      <div class="overlay-pane on" id="panePlain">
+        <span class="ov-loading">Loading&hellip;</span>
+      </div>
+      <div class="overlay-pane" id="paneTech"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ── mode toggle ── */
@@ -1211,7 +1366,7 @@ function renderChips(nodes) {
   if (active > 0) h += `<span class="chip c-active">${active} active</span>`;
   if (blockers > 0) h += `<span class="chip c-blocked">${blockers} decisions open</span>`;
   if (done === total && total > 0) h += `<span class="chip c-done">complete</span>`;
-  h += `<a href="pre-build-audit-v0.1.html" class="chip c-blocked" style="text-decoration:none;cursor:pointer" title="Pre-build assessment failed &middot; 4 W0 actions required before W1">pre-build audit &middot; 4 actions</a>`;
+  h += `<a href="pre-build-audit-v0.1.html" class="chip c-done" style="text-decoration:none;cursor:pointer" title="Pre-build audit complete &middot; 15/15 findings remediated">pre-build audit &middot; 15/15</a>`;
   chips.innerHTML = h;
 }
 
@@ -1301,7 +1456,7 @@ function renderMain(nodes) {
 function card(n, typeClass) {
   const deps = (n.depends_on || []);
   const depsH = deps.length ? `<span class="m-deps">&nbsp;&middot; needs: ${deps.map(d => `<span class="m-dep">${d}</span>`).join('')}</span>` : '';
-  return `<div class="m-card ${typeClass}">
+  return `<div class="m-card ${typeClass}" onclick="openOverlay('${n.id}')" role="button" tabindex="0" title="View ${n.id} details" onkeydown="if(event.key==='Enter'||event.key===' ')openOverlay('${n.id}')">
     <span class="m-id">${n.id}</span>
     <div class="m-body">
       <div class="m-title">${n.title}</div>
@@ -1348,13 +1503,9 @@ function renderCtx(nodes) {
 
   const w0ActionsH = waveFilter === 'W0' ? `
     <div class="ctx-section">
-      <div class="ctx-head" style="color:var(--warn)">Pre-build actions &middot; W0</div>
-      <div class="ctx-note" style="color:var(--warn);margin-bottom:6px">4 required before W1 &middot; audit failed</div>
-      <div class="ctx-row"><span class="ctx-row-label">W0-01</span><span class="ctx-row-val v-warn">SECRETS.md</span></div>
-      <div class="ctx-row"><span class="ctx-row-label">W0-02</span><span class="ctx-row-val v-warn">Supabase docs</span></div>
-      <div class="ctx-row"><span class="ctx-row-label">W0-03</span><span class="ctx-row-val v-warn">Schema lint CI</span></div>
-      <div class="ctx-row"><span class="ctx-row-label">W0-04</span><span class="ctx-row-val v-warn">W0.G gate file</span></div>
-      <a href="pre-build-audit-v0.1.html" class="ctx-link">&rarr; full audit</a>
+      <div class="ctx-head" style="color:var(--ok)">Pre-build audit &middot; W0</div>
+      <div class="ctx-note" style="color:var(--ok);margin-bottom:6px">15/15 findings remediated &middot; Jun 13 2026</div>
+      <a href="pre-build-audit-v0.1.html" class="ctx-link">&rarr; full audit report</a>
     </div>` : '';
 
   document.getElementById('ctxPanel').innerHTML = w0ActionsH + `
@@ -2066,7 +2217,7 @@ function renderExplorer(nodes) {
     tbody.innerHTML = `<tr><td colspan="6" style="color:var(--faint);text-align:center;padding:20px 10px;font-size:11px;">no results</td></tr>`;
     return;
   }
-  tbody.innerHTML = rows.map(n => `<tr>
+  tbody.innerHTML = rows.map(n => `<tr onclick="openOverlay('${n.id}')" style="cursor:pointer" title="View ${n.id} details">
     <td class="c-id">${n.id}</td>
     <td class="c-title">${n.title}</td>
     <td class="c-wave">${n.wave}</td>
@@ -2106,6 +2257,288 @@ function render() {
   renderExplorer(DATA);
   renderFilterBar();
 }
+
+/* ── milestone overlay ── */
+const MILESTONE_FILES = {
+  'D1':   'D/D1-front-end-framework.md',
+  'D2':   'D/D2-application-form-host.md',
+  'D3':   'D/D3-repository-visibility-and-naming.md',
+  'D4':   'D/D4-transactional-email-provider.md',
+  'D5':   'D/D5-make-com-adoption-trigger.md',
+  'D6':   'D/D6-alpha-access-posture.md',
+  'D7':   'D/D7-section-addressing-scheme.md',
+  'D8':   'D/D8-attestation-scope-and-key-custody.md',
+  'D9':   'D/D9-ee-liaison-interface-form.md',
+  'D10':  'D/D10-lease-entity-question.md',
+  'R1':   'R/R1-bylaws-ratification.md',
+  'R2':   'R/R2-hub-membership-agreement.md',
+  'W0.1': 'W0/W0.1-repo-bootstrap-and-governance.md',
+  'W0.2': 'W0/W0.2-ledger-scaffold-validator-status-board.md',
+  'W0.3': 'W0/W0.3-supabase-project-provisioning.md',
+  'W0.4': 'W0/W0.4-migration-pipeline-and-shadow-verification.md',
+  'W0.5': 'W0/W0.5-auth-invite-only-identity-layer.md',
+  'W0.6': 'W0/W0.6-rls-baseline-default-deny-cite-as-you-enforce.md',
+  'W0.7': 'W0/W0.7-rea-core-agents-agreements-signatures-event-en.md',
+  'W0.8': 'W0/W0.8-role-registry-and-access-helpers.md',
+  'W0.9': 'W0/W0.9-edge-functions-scaffold-and-secrets-boundary.md',
+  'W0.10':'W0/W0.10-scheduling-rails-and-job-registry.md',
+  'W0.11':'W0/W0.11-email-rail.md',
+  'W0.12':'W0/W0.12-portal-scaffold-and-pages-pipeline.md',
+  'W0.13':'W0/W0.13-design-tokens-and-base-components.md',
+  'W0.14':'W0/W0.14-export-paths-and-tested-restore.md',
+  'W0.15':'W0/W0.15-chokepoint-analysis-as-design-artifact.md',
+  'W0.16':'W0/W0.16-grammar-lint.md',
+  'W0.17':'W0/W0.17-observability-and-error-sink.md',
+  'W0.18':'W0/W0.18-build-status-mirror.md',
+  'W0.19':'W0/W0.19-library-restructure-and-document-manifest.md',
+  'W0.20':'W0/W0.20-site-build-pipeline-derived-views.md',
+  'W0.21':'W0/W0.21-decision-coherence-and-site-exhaustiveness-validation.md',
+  'W0.22':'W0/W0.22-decision-and-blocker-signal-loop.md',
+  'W1.1': 'W1/W1.1-memberships-and-class-model.md',
+  'W1.2': 'W1/W1.2-stock-ledger.md',
+  'W1.3': 'W1/W1.3-agreements-repository-populated.md',
+  'W1.4': 'W1/W1.4-signature-capture.md',
+  'W1.5': 'W1/W1.5-member-directory-and-profile.md',
+  'W1.6': 'W1/W1.6-admission-and-onboarding-workflow.md',
+  'W1.7': 'W1/W1.7-nou-v1-read-only-grounded-logged.md',
+  'W1.8': 'W1/W1.8-notices-v1.md',
+  'W2.1': 'W2/W2.1-hub-schema-extensions.md',
+  'W2.2': 'W2/W2.2-application-and-access.md',
+  'W2.3': 'W2/W2.3-co-working-sessions.md',
+  'W2.4': 'W2/W2.4-events-module.md',
+  'W2.5': 'W2/W2.5-kpi-and-performance-surface.md',
+  'W2.6': 'W2/W2.6-impact-reporting.md',
+  'W2.7': 'W2/W2.7-cross-pollination-registry.md',
+  'W2.8': 'W2/W2.8-educational-surface.md',
+  'W2.9': 'W2/W2.9-grant-lifecycle.md',
+  'W3.0': 'W3/W3.0-author-the-capital-wave-briefs.md',
+  'W3.1': 'W3/W3.1-capital-accounts-and-capital-events.md',
+  'W3.2': 'W3/W3.2-personal-balance-view.md',
+  'W3.3': 'W3/W3.3-manual-allocation-against-the-equal-default.md',
+  'W3.4': 'W3/W3.4-mercury-read-only-ingestion.md',
+  'W3.5': 'W3/W3.5-tax-records-and-k-1-preparation.md',
+  'W3.6': 'W3/W3.6-treasury-views-and-distribution-shape.md',
+  'W3.7': 'W3/W3.7-grant-tranches-joined-to-treasury.md',
+  'W4.0': 'W4/W4.0-author-the-governance-wave-briefs.md',
+  'W4.1': 'W4/W4.1-meetings-attendance-proxies-quorum.md',
+  'W4.2': 'W4/W4.2-motions-and-immutable-votes.md',
+  'W4.3': 'W4/W4.3-consents.md',
+  'W4.4': 'W4/W4.4-minutes-drafting-and-ratification.md',
+  'W4.5': 'W4/W4.5-notices-v2-receipt-hardening.md',
+  'W4.6': 'W4/W4.6-voting-interface-open-source.md',
+  'W4.7': 'W4/W4.7-attestation-extension-optional.md',
+  'W5.0': 'W5/W5.0-author-the-lifecycle-wave-briefs.md',
+  'W6.0': 'W6/W6.0-author-the-full-interface-wave-briefs.md',
+  'G0':   'G/G0-substrate-gate.md',
+  'G1':   'G/G1-alpha-gate.md',
+  'P1':   'P/P1-practice-cis-phase-06.md',
+};
+
+const GITHUB_RAW  = 'https://raw.githubusercontent.com/Techne-Co-op/commons/main/milestones/';
+const GITHUB_BLOB = 'https://github.com/Techne-Co-op/commons/blob/main/milestones/';
+
+function escHtml(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function parseMdSection(text, heading) {
+  /* Extract content of a ## heading section (stops at next ## heading). */
+  const lines = text.split('\n');
+  let inside = false;
+  const buf = [];
+  for (const line of lines) {
+    if (/^## /.test(line)) {
+      if (inside) break;
+      if (line.trim() === `## ${heading}`) { inside = true; continue; }
+    }
+    if (inside) buf.push(line);
+  }
+  return buf.join('\n').trim() || null;
+}
+
+function renderPlainPane(node, mdText) {
+  const plain  = mdText ? parseMdSection(mdText, 'Plain language') : null;
+  const brief  = mdText ? parseMdSection(mdText, 'Brief') : null;
+  const record = mdText ? parseMdSection(mdText, 'Record') : null;
+
+  let h = '';
+
+  /* lead: plain-language one-liner or fallback */
+  if (plain) {
+    h += `<div class="ov-section">
+      <div class="ov-label">In plain terms</div>
+      <div class="ov-plain-text">${escHtml(plain)}</div>
+    </div>`;
+  }
+
+  /* brief / context */
+  if (brief) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Context</div>
+      <div class="ov-value">${escHtml(brief)}</div>
+    </div>`;
+  }
+
+  /* record note for decisions */
+  if (record) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Record</div>
+      <div class="ov-value" style="font-size:10.5px;">${escHtml(record)}</div>
+    </div>`;
+  }
+
+  /* success state */
+  if (node.success_state) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Done when</div>
+      <div class="ov-value">${escHtml(node.success_state)}</div>
+    </div>`;
+  }
+
+  /* wave context */
+  const waveDesc = WAVE_FULL[node.wave] || node.wave;
+  h += `<div class="ov-section">
+    <div class="ov-label">Part of</div>
+    <div class="ov-value">${escHtml(waveDesc)}</div>
+  </div>`;
+
+  /* status */
+  h += `<div class="ov-section">
+    <div class="ov-label">Status</div>
+    <div>${badge(node.status)}</div>
+  </div>`;
+
+  if (!plain && !brief && !node.success_state) {
+    h += `<p class="ov-fallback">No brief text available for this milestone.</p>`;
+  }
+
+  document.getElementById('panePlain').innerHTML = h;
+}
+
+function renderTechPane(node) {
+  const file   = MILESTONE_FILES[node.id];
+  const ghBlob = file ? (GITHUB_BLOB + file) : null;
+
+  let h = '';
+
+  /* status + kind + wave chips */
+  h += `<div class="ov-section">
+    <div class="ov-label">Status &middot; kind &middot; wave</div>
+    <div class="ov-chips">
+      ${badge(node.status)}
+      <span class="ov-chip">${escHtml(node.kind)}</span>
+      <span class="ov-chip">${escHtml(node.wave)}</span>
+    </div>
+  </div>`;
+
+  /* owner */
+  if (node.owner) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Owner</div>
+      <div class="ov-value">${escHtml(node.owner)}</div>
+    </div>`;
+  }
+
+  /* verification */
+  if (node.verification) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Verification</div>
+      <div class="ov-value" style="font-size:10.5px;">${escHtml(node.verification)}</div>
+    </div>`;
+  }
+
+  /* depends_on */
+  const deps = node.depends_on || [];
+  if (deps.length > 0) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Depends on</div>
+      <div class="ov-chips">${deps.map(d => `<span class="ov-chip">${escHtml(d)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  /* decision_refs */
+  const drefs = node.decision_refs || [];
+  if (drefs.length > 0) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Decision refs</div>
+      <div class="ov-chips">${drefs.map(d => `<span class="ov-chip">${escHtml(d)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  /* success state */
+  if (node.success_state) {
+    h += `<div class="ov-section">
+      <div class="ov-label">Success state</div>
+      <div class="ov-value" style="font-size:10.5px;">${escHtml(node.success_state)}</div>
+    </div>`;
+  }
+
+  /* github link */
+  if (ghBlob) {
+    h += `<hr class="ov-divider">
+    <div class="ov-section">
+      <a href="${ghBlob}" target="_blank" rel="noopener" class="ov-gh-link">&rarr; view full brief on GitHub</a>
+    </div>`;
+  }
+
+  document.getElementById('paneTech').innerHTML = h;
+}
+
+function openOverlay(id) {
+  if (!DATA) return;
+  const node = DATA.find(n => n.id === id);
+  if (!node) return;
+
+  /* set header */
+  document.getElementById('overlayId').textContent    = node.id;
+  document.getElementById('overlayTitle').textContent = node.title;
+
+  /* default to plain tab */
+  switchOverlayTab('plain', true);
+
+  /* render tech pane immediately (no fetch needed) */
+  renderTechPane(node);
+
+  /* show loading in plain pane, then fetch MD */
+  document.getElementById('panePlain').innerHTML = '<span class="ov-loading">Loading brief&hellip;</span>';
+
+  const file = MILESTONE_FILES[id];
+  if (file) {
+    fetch(GITHUB_RAW + file)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(text => renderPlainPane(node, text))
+      .catch(() => renderPlainPane(node, null));
+  } else {
+    renderPlainPane(node, null);
+  }
+
+  /* open */
+  document.getElementById('overlayBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOverlay() {
+  document.getElementById('overlayBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function switchOverlayTab(tab, skipRender) {
+  const isPlain = tab === 'plain';
+  document.getElementById('tabPlain').classList.toggle('on', isPlain);
+  document.getElementById('tabTech').classList.toggle('on', !isPlain);
+  document.getElementById('panePlain').classList.toggle('on', isPlain);
+  document.getElementById('paneTech').classList.toggle('on', !isPlain);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('overlayBackdrop').classList.contains('open')) {
+    closeOverlay();
+  }
+});
 
 /* ── fetch data ── */
 fetch('milestones/index.json')
