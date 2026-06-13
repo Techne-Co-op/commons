@@ -1,0 +1,108 @@
+name: site-observe
+
+on:
+  schedule:
+    # 06:17 UTC daily — off-peak, off-minute to avoid fleet contention
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crawl declared pages
+        id: crawl
+        run: |
+          set -euo pipefail
+
+          BASE="https://techne-co-op.github.io/commons"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          UA="site-observer/1.0 (techne-co-op.github.io/commons; +tree.html)"
+
+          # Read declared paths from manifest
+          PATHS=$(jq -r '.nodes[].path' tree.manifest.json)
+
+          # Read existing observations (for first_seen and cycles_seen history)
+          PREV=tree.observations.json
+          CYCLE=1
+          if [ -f "$PREV" ]; then
+            CYCLE=$(( $(jq '.cycle // 0' "$PREV") + 1 ))
+          fi
+
+          echo "cycle=$CYCLE" >> "$GITHUB_OUTPUT"
+          echo "observed_at=$NOW" >> "$GITHUB_OUTPUT"
+
+          # Build new observations array
+          OBSERVATIONS="[]"
+          for PATH_ENTRY in $PATHS; do
+            # Normalize: / -> check index.html equivalent
+            URL="${BASE}${PATH_ENTRY}"
+
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              --max-time 15 \
+              --user-agent "$UA" \
+              "$URL" 2>/dev/null || echo "0")
+
+            # Retrieve history from previous observations
+            PREV_ENTRY=""
+            if [ -f "$PREV" ]; then
+              PREV_ENTRY=$(jq --arg p "$PATH_ENTRY" '.observations[] | select(.path == $p)' "$PREV" 2>/dev/null || echo "")
+            fi
+
+            if [ -n "$PREV_ENTRY" ]; then
+              FIRST_SEEN=$(echo "$PREV_ENTRY" | jq -r '.first_seen')
+              CYCLES=$(( $(echo "$PREV_ENTRY" | jq '.cycles_seen // 0') + 1 ))
+            else
+              FIRST_SEEN="$NOW"
+              CYCLES=1
+            fi
+
+            ENTRY=$(jq -n \
+              --arg path "$PATH_ENTRY" \
+              --argjson status "$STATUS" \
+              --arg first_seen "$FIRST_SEEN" \
+              --arg last_seen "$NOW" \
+              --argjson cycles_seen "$CYCLES" \
+              '{path: $path, status: $status, first_seen: $first_seen, last_seen: $last_seen, cycles_seen: $cycles_seen}')
+
+            OBSERVATIONS=$(echo "$OBSERVATIONS" | jq --argjson e "$ENTRY" '. + [$e]')
+
+            # Polite delay between requests
+            sleep 0.2
+          done
+
+          # Write updated observations file
+          jq -n \
+            --arg observed_at "$NOW" \
+            --argjson cycle "$CYCLE" \
+            --arg base "$BASE" \
+            --arg observer "$UA" \
+            --argjson observations "$OBSERVATIONS" \
+            '{
+              observed_at: $observed_at,
+              cycle: $cycle,
+              base: $base,
+              observer: $observer,
+              observations: $observations
+            }' > tree.observations.json
+
+          echo "Written tree.observations.json (cycle $CYCLE)"
+          jq '.observations | map(select(.status != 200)) | length' tree.observations.json \
+            | xargs -I{} echo "Non-200 pages: {}"
+
+      - name: Commit observations
+        run: |
+          git config user.email "site-observer@techne-co-op.github.io"
+          git config user.name "site-observer"
+          git add tree.observations.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "obs: site observation $(date -u +%Y-%m-%d) · cycle ${{ steps.crawl.outputs.cycle }}"
+            git push
+          fi

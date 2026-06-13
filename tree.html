@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Tree · RegenHub Commons</title>
+<meta name="description" content="The reconciled site manifest for the RegenHub, LCA Common Information System. One declared map, a scheduled observer, page health derived from their difference.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commons.css">
+<style>
+/* page layout — document grammar */
+.page { max-width: 860px; margin: 0 auto; padding: 64px 24px 96px; }
+
+/* eyebrow */
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-text);
+  margin-bottom: 16px;
+}
+
+/* rule */
+.rule { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+/* section label */
+.section-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+
+/* report strip */
+.report-strip {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  padding: 16px 20px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; margin: 24px 0;
+}
+.rs-cell { display: flex; flex-direction: column; gap: 2px; }
+.rs-num {
+  font-family: var(--font-mono); font-size: 22px; font-weight: 500; line-height: 1;
+}
+.rs-label {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.rs-num.ok      { color: var(--ok); }
+.rs-num.warn    { color: var(--warn); }
+.rs-num.terra   { color: var(--terra-text); }
+.rs-num.muted   { color: var(--muted); }
+.rs-num.info    { color: var(--info); }
+.rs-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+.rs-meta { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--muted); text-align: right; }
+
+/* state chips */
+.chip {
+  display: inline-block; font-family: var(--font-mono); font-size: 9.5px;
+  padding: 2px 7px; border-radius: 3px; border: 1px solid; white-space: nowrap;
+}
+.chip-healthy  { color: var(--ok);         border-color: rgba(95,122,82,0.45);   background: var(--ok-dim); }
+.chip-broken   { color: var(--warn);       border-color: rgba(158,79,61,0.5);    background: var(--warn-dim); }
+.chip-missing  { color: var(--terra-text); border-color: rgba(196,149,106,0.45); background: var(--terra-dim); }
+.chip-stale    { color: var(--muted);      border-color: var(--border);           background: var(--surface); }
+.chip-disc     { color: var(--info);       border-color: rgba(91,114,134,0.45);  background: var(--info-dim); }
+.chip-unobs    { color: var(--faint);      border-color: var(--border);           background: transparent; }
+
+/* node groups */
+.group-section { margin: 28px 0; }
+.group-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+
+/* node rows */
+.node-list { display: flex; flex-direction: column; gap: 1px; }
+.node-row {
+  display: grid; grid-template-columns: 24px 1fr auto;
+  gap: 10px; align-items: baseline;
+  padding: 9px 12px; background: var(--surface); border: 1px solid transparent;
+  border-radius: 5px; font-size: 13.5px; transition: border-color 0.1s;
+}
+.node-row:hover { border-color: var(--border); }
+.node-row.is-child { padding-left: 28px; }
+.node-indent { color: var(--border); font-family: var(--font-mono); font-size: 11px; }
+.node-title { color: var(--heading); font-weight: 600; font-size: 13.5px; }
+.node-title a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+.node-title a:hover { border-bottom-color: var(--border-strong); }
+.node-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.node-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.node-path { font-family: var(--font-mono); font-size: 10px; color: var(--faint); }
+
+/* discovered zone */
+.disc-zone {
+  margin: 32px 0; padding: 16px 18px;
+  border: 1px solid; border-left: 3px solid var(--info);
+  border-color: rgba(91,114,134,0.3); background: var(--info-dim); border-radius: 6px;
+}
+.disc-zone-head { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--info); margin-bottom: 8px; }
+.disc-path { font-family: var(--font-mono); font-size: 12px; color: var(--info); padding: 3px 0; }
+
+/* loading / error */
+#loading { padding: 48px 0; text-align: center; color: var(--muted);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; }
+.error-banner {
+  padding: 14px 18px; background: var(--warn-dim); border: 1px solid;
+  border-color: rgba(158,79,61,0.3); border-radius: 6px; font-size: 13px;
+  color: var(--warn); margin: 16px 0;
+}
+
+/* pattern note */
+.pattern-note {
+  margin-top: 48px; padding: 14px 18px;
+  border-top: 1px dashed var(--border); font-style: italic;
+  font-size: 12.5px; color: var(--muted); line-height: 1.7;
+}
+
+/* link */
+a.inline { color: var(--terra-text); border-bottom: 1px solid rgba(196,149,106,0.4); text-decoration: none; }
+a.inline:hover { border-bottom-color: var(--terra); }
+
+@media (max-width: 640px) {
+  .node-row { grid-template-columns: 20px 1fr; }
+  .node-meta { display: none; }
+  .rs-divider { display: none; }
+  .rs-meta { width: 100%; margin-left: 0; text-align: left; margin-top: 4px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="loop.html">Loop</a></li>
+      <li><a href="tree.html" style="color:var(--terra-text);">Tree</a></li>
+      <li><a href="dev.html">Dev</a></li>
+      <li><a href="member-guide.html">Guide</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page" id="top">
+
+  <header style="margin-bottom: 36px;">
+    <div class="eyebrow">RegenHub, LCA &middot; Common Information System &middot; Site Observability</div>
+    <h1 style="font-family:var(--font-serif);font-size:34px;font-weight:700;color:var(--heading);letter-spacing:-0.5px;line-height:1.2;margin-bottom:12px;">Site Tree</h1>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;max-width:54em;margin-bottom:0;">
+      The reconciled site manifest. One declared map (<a class="inline" href="tree.manifest.json">tree.manifest.json</a>), one scheduled observer, page health derived from their difference. Health is computed at render time — never stored, never an opinion. States: <span class="chip chip-healthy">healthy</span> <span class="chip chip-broken">broken</span> <span class="chip chip-missing">missing</span> <span class="chip chip-stale">stale</span> <span class="chip chip-disc">discovered</span> <span class="chip chip-unobs">unobservable</span>.
+    </p>
+  </header>
+
+  <hr class="rule">
+
+  <div id="loading">loading manifest and observations&hellip;</div>
+  <div id="report" style="display:none"></div>
+
+  <div class="pattern-note">
+    Pattern: The Reconciled Site Manifest &middot; Tier A static implementation.
+    Observer runs daily via GitHub Actions; results committed to <code style="font-family:var(--font-mono);font-size:11px;color:var(--terra-text)">tree.observations.json</code>.
+    Manifest amended by human curation only. The report is itself a declared node — listed in its own manifest, crawled by its own observer. Extracted pattern: <a class="inline" href="https://techne-co-op.github.io/commons/reconciled-site-manifest-template.html">The Reconciled Site Manifest</a>.
+  </div>
+
+</div>
+
+<footer class="site-footer" style="font-family:var(--font-mono);font-size:11px;color:var(--muted);text-align:center;padding:24px;border-top:1px solid var(--border);">
+  <a href="index.html" style="color:var(--muted);text-decoration:none;">RegenHub, LCA</a>
+  &middot; Boulder, Colorado
+  &middot; <button class="mode-btn" id="modeBtn">light</button>
+</footer>
+
+<script>
+(function(){
+  const btn = document.getElementById('modeBtn');
+  const root = document.documentElement;
+  const stored = localStorage.getItem('mode');
+  if (stored === 'light') { root.classList.add('light-mode'); btn.textContent = 'dark'; }
+  btn.addEventListener('click', () => {
+    const isLight = root.classList.toggle('light-mode');
+    btn.textContent = isLight ? 'dark' : 'light';
+    localStorage.setItem('mode', isLight ? 'light' : 'dark');
+  });
+})();
+</script>
+
+<script>
+(async function () {
+  const BASE = 'https://techne-co-op.github.io/commons';
+  const STALE_DAYS = 3; // staleAfterCycles × cadence (daily)
+
+  function normPath(p) {
+    // canonical: leading slash, no trailing slash except bare '/'
+    let n = p.trim();
+    if (!n.startsWith('/')) n = '/' + n;
+    if (n !== '/' && n.endsWith('/')) n = n.slice(0, -1);
+    return n;
+  }
+
+  function derive(node, obs, staleMs) {
+    const tier = node.tier;
+    if (tier === 'unobservable') return 'unobservable';
+    if (!obs) return 'missing';
+    if (obs.status >= 400 || obs.status === 0) return 'broken';
+    const lastSeen = new Date(obs.last_seen).getTime();
+    const age = Date.now() - lastSeen;
+    if (obs.cycles_seen > 0 && age > staleMs) return 'stale';
+    if (obs.status >= 200 && obs.status < 300) return 'healthy';
+    return 'missing';
+  }
+
+  function chipHtml(state) {
+    const labels = {
+      healthy:      'healthy',
+      broken:       'broken',
+      missing:      'missing',
+      stale:        'stale',
+      discovered:   'discovered',
+      unobservable: 'unobservable'
+    };
+    const cls = state === 'discovered' ? 'disc' : state;
+    return `<span class="chip chip-${cls}">${labels[state] || state}</span>`;
+  }
+
+  function relTime(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const diff = Date.now() - d.getTime();
+    const h = Math.floor(diff / 3600000);
+    if (h < 1) return 'just now';
+    if (h < 24) return `${h}h ago`;
+    const days = Math.floor(h / 24);
+    if (days < 30) return `${days}d ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  const report = document.getElementById('report');
+  const loading = document.getElementById('loading');
+
+  let manifest, observations;
+  try {
+    [manifest, observations] = await Promise.all([
+      fetch('tree.manifest.json').then(r => r.json()),
+      fetch('tree.observations.json').then(r => r.json()).catch(() => ({ observations: [], observed_at: null, cycle: 0 }))
+    ]);
+  } catch (err) {
+    loading.innerHTML = '';
+    report.style.display = '';
+    report.innerHTML = `<div class="error-banner">Could not load manifest. ${err.message}</div>`;
+    return;
+  }
+
+  loading.style.display = 'none';
+  report.style.display = '';
+
+  const staleMs = (manifest.derive?.staleAfterCycles ?? 3) * 86400000;
+
+  // Build observation map by normalized path
+  const obsMap = new Map();
+  for (const o of (observations.observations || [])) {
+    obsMap.set(normPath(o.path), o);
+  }
+
+  // Reconcile nodes
+  const nodes = manifest.nodes.map(n => ({
+    ...n,
+    path: normPath(n.path),
+    state: derive(n, obsMap.get(normPath(n.path)), staleMs)
+  }));
+
+  // Discovered: observed paths not in manifest
+  const declaredPaths = new Set(nodes.map(n => n.path));
+  const discovered = [];
+  for (const o of (observations.observations || [])) {
+    const p = normPath(o.path);
+    if (!declaredPaths.has(p) && o.status >= 200 && o.status < 300) {
+      discovered.push({ path: p, obs: o });
+    }
+  }
+
+  // Counts
+  const counts = { healthy: 0, broken: 0, missing: 0, stale: 0, discovered: discovered.length, unobservable: 0 };
+  for (const n of nodes) counts[n.state] = (counts[n.state] || 0) + 1;
+
+  // Group nodes
+  const groups = manifest.groups.sort((a, b) => a.order - b.order);
+  const grouped = new Map(groups.map(g => [g.id, []]));
+  for (const n of nodes) {
+    if (grouped.has(n.group)) grouped.get(n.group).push(n);
+    else grouped.set(n.group || '_other', [...(grouped.get('_other') || []), n]);
+  }
+
+  // Render
+  const lastObs = observations.observed_at
+    ? `Observed ${relTime(observations.observed_at)} &middot; cycle ${observations.cycle || 1}`
+    : 'No observation data';
+
+  let html = `
+    <div class="section-label">Report</div>
+    <div class="report-strip">
+      <div class="rs-cell"><div class="rs-num ok">${counts.healthy}</div><div class="rs-label">Healthy</div></div>
+      <div class="rs-cell"><div class="rs-num warn">${counts.broken}</div><div class="rs-label">Broken</div></div>
+      <div class="rs-cell"><div class="rs-num terra">${counts.missing}</div><div class="rs-label">Missing</div></div>
+      <div class="rs-cell"><div class="rs-num muted">${counts.stale}</div><div class="rs-label">Stale</div></div>
+      <div class="rs-cell"><div class="rs-num info">${counts.discovered}</div><div class="rs-label">Discovered</div></div>
+      <div class="rs-divider"></div>
+      <div class="rs-meta">${lastObs}<br>${nodes.length} declared nodes &middot; ${manifest.tiers.length} tier</div>
+    </div>`;
+
+  html += `<div class="section-label" style="margin-top:32px;">Declared nodes</div>`;
+
+  for (const g of groups) {
+    const groupNodes = grouped.get(g.id) || [];
+    if (!groupNodes.length) continue;
+
+    html += `<div class="group-section"><div class="group-label">${g.label}</div><div class="node-list">`;
+    for (const n of groupNodes) {
+      const isChild = n.parent && n.parent !== '/';
+      const indent = isChild ? '<span class="node-indent">└</span>' : '<span class="node-indent" style="visibility:hidden">·</span>';
+      const href = BASE + n.path;
+      const editBadge = n.editorial !== 'production'
+        ? `<span style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.05em">${n.editorial}</span>`
+        : '';
+
+      html += `
+        <div class="node-row${isChild ? ' is-child' : ''}">
+          ${indent}
+          <div>
+            <div class="node-title"><a href="${href}" target="_blank" rel="noopener">${n.title}</a></div>
+            <div class="node-desc">${n.description}</div>
+          </div>
+          <div class="node-meta">
+            ${chipHtml(n.state)}
+            ${editBadge}
+            <div class="node-path">${n.path}</div>
+          </div>
+        </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // Discovered zone
+  if (discovered.length > 0) {
+    html += `
+      <div class="disc-zone">
+        <div class="disc-zone-head">Discovered &middot; ${discovered.length} page${discovered.length > 1 ? 's' : ''} observed but not declared</div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">Each is a pending curation decision: adopt into the manifest, or prune from the territory.</p>
+        ${discovered.map(d => `<div class="disc-path"><a href="${BASE}${d.path}" target="_blank" rel="noopener" style="color:var(--info);text-decoration:none;">${d.path}</a></div>`).join('')}
+      </div>`;
+  } else {
+    html += `
+      <div style="margin:24px 0;font-family:var(--font-mono);font-size:11px;color:var(--muted);">
+        No discovered pages &mdash; territory matches map.
+      </div>`;
+  }
+
+  report.innerHTML = html;
+})();
+</script>
+
+</body>
+</html>

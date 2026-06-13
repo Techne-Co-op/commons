@@ -1,0 +1,293 @@
+{
+  "site": {
+    "base": "https://techne-co-op.github.io/commons",
+    "treeRoute": "/tree.html",
+    "name": "RegenHub, LCA · Common Information System",
+    "description": "The cooperative's shared knowledge layer — private alpha build workspace."
+  },
+  "tiers": [
+    {
+      "id": "public",
+      "label": "Public",
+      "access": "open",
+      "observable": true,
+      "expose": "all-states",
+      "note": "All pages are publicly accessible. No authentication required."
+    }
+  ],
+  "groups": [
+    { "id": "instruments", "label": "Live instruments", "order": 1 },
+    { "id": "guides",      "label": "Guides",           "order": 2 },
+    { "id": "design",      "label": "Design system",    "order": 3 },
+    { "id": "assessment",  "label": "Assessment",       "order": 4 },
+    { "id": "collection",  "label": "Builder's collection", "order": 5 },
+    { "id": "requirements","label": "Requirements",     "order": 6 },
+    { "id": "planning",    "label": "Planning",         "order": 7 }
+  ],
+  "nodes": [
+    {
+      "path": "/",
+      "title": "Common Information System",
+      "description": "The cooperative's shared knowledge layer — build workspace, instruments, and navigation hub.",
+      "tier": "public",
+      "parent": null,
+      "group": "instruments",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/loop.html",
+      "title": "Decision–Blocker Signal Loop",
+      "description": "Open decisions ranked by leverage, active blockers, and pulse for the RegenHub CIS.",
+      "tier": "public",
+      "parent": "/",
+      "group": "instruments",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/hud.html",
+      "title": "CIS Implementation HUD",
+      "description": "71 milestones across waves W0–W6. Hub Operations, Signal Loop, and Documentation Fulfilment modes.",
+      "tier": "public",
+      "parent": "/",
+      "group": "instruments",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/tree.html",
+      "title": "Site Tree",
+      "description": "The reconciled site manifest. One declared map, one scheduled observer, page health derived from their difference. This page.",
+      "tier": "public",
+      "parent": "/",
+      "group": "instruments",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/dev.html",
+      "title": "Developer Reference",
+      "description": "Repository structure, milestone schema, CI/CD pipeline, design system, Supabase integration, and conventions.",
+      "tier": "public",
+      "parent": "/",
+      "group": "guides",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/member-guide.html",
+      "title": "Member Guide",
+      "description": "A plain-language guide to the Common Information System for non-technical co-op members.",
+      "tier": "public",
+      "parent": "/",
+      "group": "guides",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/design-system.html",
+      "title": "Design System v3",
+      "description": "Tokens, typography, components, layout grammars, and voice guidelines for the RegenHub Commons.",
+      "tier": "public",
+      "parent": "/",
+      "group": "design",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/pre-build-audit-v0.1.html",
+      "title": "Pre-Build Audit v0.1",
+      "description": "Pre-build assessment protocol — 15 findings, 13 remediated. Conducted June 12, 2026.",
+      "tier": "public",
+      "parent": "/",
+      "group": "assessment",
+      "steward": "Nou",
+      "editorial": "production"
+    },
+    {
+      "path": "/builders-collection-map-v0.1.html",
+      "title": "Builder's Collection Map v0.1",
+      "description": "The contributor landscape and navigational layer for the RegenHub build — C0 through C11.",
+      "tier": "public",
+      "parent": "/",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/c6-schema-reference-card-v0.1.html",
+      "title": "C6 · Schema Reference Card",
+      "description": "31 tables consolidated — REA primitives, bylaw anchors, and CIS/Hub-Ops columns.",
+      "tier": "public",
+      "parent": "/builders-collection-map-v0.1.html",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/c7-probe-matrix-v0.1.html",
+      "title": "C7 · Probe Matrix",
+      "description": "Test design for ci:rls-audit — 15 roles against every table, allow or deny with citation.",
+      "tier": "public",
+      "parent": "/builders-collection-map-v0.1.html",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/c8-nou-gateway-spec-v0.1.html",
+      "title": "C8 · Nou Gateway Spec",
+      "description": "API gateway specification for the Nou collective intelligence agent — wire shapes, probes, refusal wording.",
+      "tier": "public",
+      "parent": "/builders-collection-map-v0.1.html",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/c9-kpi-fixture-pack-v0.1.html",
+      "title": "C9 · KPI Fixture Pack",
+      "description": "Expected outputs for grant computations so ci:db-verify can assert Hub §07 exactly.",
+      "tier": "public",
+      "parent": "/builders-collection-map-v0.1.html",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/c10-wave-boundary-authoring-guide-v0.1.html",
+      "title": "C10 · Wave-Boundary Authoring Guide",
+      "description": "How W3.0 and W4.0 turn seeded stub entries into full briefs — required sections and validator expectations.",
+      "tier": "public",
+      "parent": "/builders-collection-map-v0.1.html",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/c11-wave-gates-v0.1.html",
+      "title": "C11 · Wave Gates",
+      "description": "End-of-wave test suites and gate criteria for G0 (security floor) and G1 (alpha).",
+      "tier": "public",
+      "parent": "/builders-collection-map-v0.1.html",
+      "group": "collection",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/cis-prd-v0.2.html",
+      "title": "CIS PRD v0.2",
+      "description": "Product requirements for the RegenHub, LCA coordination and accounting platform.",
+      "tier": "public",
+      "parent": "/",
+      "group": "requirements",
+      "steward": "Todd Youngblood",
+      "editorial": "reference"
+    },
+    {
+      "path": "/hub-ops-prd-v0.1.html",
+      "title": "Hub Operations PRD v0.1",
+      "description": "Product requirements for the EE Grant hub operations module, RegenHub, LCA.",
+      "tier": "public",
+      "parent": "/",
+      "group": "requirements",
+      "steward": "Todd Youngblood",
+      "editorial": "reference"
+    },
+    {
+      "path": "/cis-hubops-progressive-definition-01-inception-v0_2.html",
+      "title": "Progressive Definition 01 · Inception Baseline v0.2",
+      "description": "Problem brief, stakeholder map, success criteria, project charter, and open questions for the first movement.",
+      "tier": "public",
+      "parent": "/",
+      "group": "planning",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/cis-hubops-progressive-definition-02-discovery-v0_1.html",
+      "title": "Progressive Definition 02 · Discovery Consolidation v0.1",
+      "description": "Requirements index, feasibility matrix, risk register, evidence standard, and open questions for movement two.",
+      "tier": "public",
+      "parent": "/",
+      "group": "planning",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/cis-build-roadmap-instrument-v0.2.html",
+      "title": "CIS Build Roadmap v0.2",
+      "description": "Wave plan, milestones, and gate sequence for the RegenHub Common Information System.",
+      "tier": "public",
+      "parent": "/",
+      "group": "planning",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/cis-hubops-private-alpha-implementation-plan-v0.1.html",
+      "title": "Private Alpha Implementation Plan",
+      "description": "Phases, milestones, and execution schedule for RegenHub, LCA private alpha.",
+      "tier": "public",
+      "parent": "/",
+      "group": "planning",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/documentation-fulfilment-agent-framework-v0_1.html",
+      "title": "Documentation Fulfilment Framework v0.1",
+      "description": "Deliverable taxonomy, anchor system, and standing definitions for CIS.",
+      "tier": "public",
+      "parent": "/",
+      "group": "planning",
+      "steward": "Nou",
+      "editorial": "reference"
+    },
+    {
+      "path": "/cis-hubops-documentation-fulfilment-hud-v0_1.html",
+      "title": "Documentation Fulfilment HUD",
+      "description": "67-deliverable tracker across 8 CIS phases, with phase and roadmap lenses and gap detection.",
+      "tier": "public",
+      "parent": "/",
+      "group": "planning",
+      "steward": "Nou",
+      "editorial": "reference"
+    }
+  ],
+  "edges": [
+    { "from": "/", "to": "/loop.html" },
+    { "from": "/", "to": "/hud.html" },
+    { "from": "/", "to": "/tree.html" },
+    { "from": "/", "to": "/dev.html" },
+    { "from": "/", "to": "/member-guide.html" },
+    { "from": "/", "to": "/design-system.html" },
+    { "from": "/", "to": "/pre-build-audit-v0.1.html" },
+    { "from": "/", "to": "/builders-collection-map-v0.1.html" },
+    { "from": "/builders-collection-map-v0.1.html", "to": "/c6-schema-reference-card-v0.1.html" },
+    { "from": "/builders-collection-map-v0.1.html", "to": "/c7-probe-matrix-v0.1.html" },
+    { "from": "/builders-collection-map-v0.1.html", "to": "/c8-nou-gateway-spec-v0.1.html" },
+    { "from": "/builders-collection-map-v0.1.html", "to": "/c9-kpi-fixture-pack-v0.1.html" },
+    { "from": "/builders-collection-map-v0.1.html", "to": "/c10-wave-boundary-authoring-guide-v0.1.html" },
+    { "from": "/builders-collection-map-v0.1.html", "to": "/c11-wave-gates-v0.1.html" },
+    { "from": "/", "to": "/cis-prd-v0.2.html" },
+    { "from": "/", "to": "/hub-ops-prd-v0.1.html" },
+    { "from": "/", "to": "/cis-hubops-progressive-definition-01-inception-v0_2.html" },
+    { "from": "/", "to": "/cis-hubops-progressive-definition-02-discovery-v0_1.html" },
+    { "from": "/", "to": "/cis-build-roadmap-instrument-v0.2.html" },
+    { "from": "/", "to": "/cis-hubops-private-alpha-implementation-plan-v0.1.html" },
+    { "from": "/", "to": "/documentation-fulfilment-agent-framework-v0_1.html" },
+    { "from": "/", "to": "/cis-hubops-documentation-fulfilment-hud-v0_1.html" }
+  ],
+  "observer": {
+    "maxPages": 50,
+    "delayMs": 200,
+    "cadence": "daily",
+    "respectRobots": true,
+    "userAgent": "site-observer/1.0 (techne-co-op.github.io/commons; +tree.html)"
+  },
+  "derive": {
+    "staleAfterCycles": 3
+  }
+}

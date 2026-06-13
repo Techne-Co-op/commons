@@ -230,6 +230,7 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
       <li><a href="#build">Build</a></li>
       <li><a href="#repo">Repository</a></li>
       <li><a href="hud.html" style="color:var(--terra-text);">HUD</a></li>
+      <li><a href="tree.html">Tree</a></li>
       <li><a href="design-system.html">Design</a></li>
       <li><a href="dev.html">Dev</a></li>
       <li><a href="member-guide.html">Guide</a></li>
@@ -316,7 +317,22 @@ footer { margin-top: 72px; display: flex; justify-content: space-between; flex-w
     <div class="section-label">Document library</div>
 
     <h2>Specifications, planning, and build artifacts</h2>
-    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Fourteen documents in five groups. New to the system: start with the member guide, then the CIS PRD. Building: use the roadmap instrument and the developer reference. Technical contributors: see the C6&ndash;C11 artifact series.</p>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">Fifteen documents in six groups. New to the system: start with the member guide, then the CIS PRD. Building: use the roadmap instrument and the developer reference. Technical contributors: see the C6&ndash;C11 artifact series.</p>
+
+    <div class="doc-group">
+      <div class="doc-group-label">Observability</div>
+      <div class="doc-list">
+
+        <a class="doc-item" href="tree.html">
+          <div class="doc-body">
+            <div class="doc-title">Site Tree &middot; Reconciled Site Manifest</div>
+            <div class="doc-desc">The live map of this site: every declared page, its health state derived from daily observation, and any pages found but not yet declared. States: healthy, broken, missing, stale, discovered, unobservable. The report lives at <code style="font-family:var(--font-mono);font-size:11px;color:var(--terra-text)">/tree.html</code> — listed in its own manifest, crawled by its own observer. Pattern: The Reconciled Site Manifest, Tier A static.</div>
+          </div>
+          <div class="doc-meta">v0.1 &middot; Jun 2026</div>
+        </a>
+
+      </div>
+    </div>
 
     <div class="doc-group">
       <div class="doc-group-label">Member guide</div>
