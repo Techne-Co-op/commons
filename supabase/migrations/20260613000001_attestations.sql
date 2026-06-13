@@ -2,7 +2,8 @@
 -- Mechanism: SHA-256 hash of canonical event payload, stored in Supabase.
 -- Tamper-evident audit trail without formal key custody infrastructure.
 -- Upgrade path: add a signature column when W3 key custody exists.
--- Uses pgcrypto (pre-enabled in Supabase projects).
+-- Uses pgcrypto (enabled via: CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions).
+-- search_path must include 'extensions' for digest() to resolve.
 
 -- ── attestations · REA: Event ─────────────────────────────────────────────
 create table public.attestations (
@@ -55,7 +56,7 @@ create or replace function public.attest_event(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public, pg_catalog
+set search_path = public, extensions, pg_catalog
 as $$
 declare
   v_attested_at  timestamptz := now();
