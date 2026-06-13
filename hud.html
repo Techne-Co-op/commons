@@ -945,6 +945,110 @@
     /* cards become clickable */
     .m-card { cursor: pointer; transition: border-color .12s; }
     .m-card:hover { border-color: var(--muted) !important; }
+
+    /* ── wave brief panel ── */
+    .wb-panel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .wb-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .wb-title {
+      font-size: 10px;
+      letter-spacing: .09em;
+      color: var(--terra-text);
+      text-transform: uppercase;
+    }
+    .wb-phase {
+      font-size: 9px;
+      color: var(--faint);
+      letter-spacing: .04em;
+    }
+    .wb-lens-strip {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .wb-lens-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .06em;
+      padding: 3px 9px;
+      border: none;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .1s, color .1s;
+    }
+    .wb-lens-btn.on { background: var(--terra-dim); color: var(--terra-text); }
+    .wb-lens-btn:hover:not(.on) { color: var(--terra-text); }
+    .wb-blocks { display: flex; flex-direction: column; gap: 9px; }
+    .wb-block { }
+    .wb-label {
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--terra-text);
+      margin-bottom: 3px;
+      opacity: .7;
+    }
+    .wb-body {
+      font-size: 11px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .wb-body.dim { color: var(--muted); }
+    .wb-body strong { color: var(--heading); font-weight: 500; }
+    .wb-body em { color: var(--terra-text); font-style: normal; }
+    .wb-body code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9.5px;
+      color: var(--muted);
+      background: var(--surface);
+      padding: 1px 4px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+    }
+    .wb-gates { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+    .wb-gate {
+      display: flex;
+      gap: 8px;
+      font-size: 10.5px;
+      line-height: 1.55;
+      color: var(--muted);
+      padding: 5px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--info);
+      border-radius: 2px;
+    }
+    .wb-gate-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .06em;
+      color: var(--info);
+      flex-shrink: 0;
+      padding-top: 1px;
+      min-width: 22px;
+    }
+    .wb-src {
+      font-size: 9px;
+      color: var(--faint);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -1043,22 +1147,172 @@ try { const s = localStorage.getItem('commons-mode'); if (s) setMode(s); } catch
 const WAVE_ORDER = ['D','R','W0','W1','W2','W3','W4','W5','W6','G','P'];
 const WAVE_LABELS = {
   D:'Decisions', R:'Ratifications',
-  W0:'Substrate', W1:'Coop core',
-  W2:'Hub layer', W3:'Public layer',
-  W4:'Finance', W5:'Integration',
-  W6:'Alpha ready', G:'Gates', P:'Practice'
+  W0:'Substrate', W1:'Shared core',
+  W2:'Hub operations', W3:'Capital accounts',
+  W4:'Governance', W5:'Lifecycle',
+  W6:'Full interface', G:'Gates', P:'Practice'
 };
 const WAVE_FULL = {
   D:'Decisions (D1–D10)',
   R:'Ratifications (R1–R2)',
-  W0:'W0 · Substrate',
-  W1:'W1 · Cooperative core',
-  W2:'W2 · Hub layer',
-  W3:'W3 · Public layer',
-  W4:'W4 · Finance & governance',
-  W5:'W5 · Integration',
-  W6:'W6 · Alpha ready',
+  W0:'W0 · Substrate · Foundation before any module',
+  W1:'W1 · Shared core · CIS Phase 01',
+  W2:'W2 · Hub operations · Greenfield pattern-setting',
+  W3:'W3 · Capital accounts · CIS Phase 02',
+  W4:'W4 · Governance · CIS Phase 03',
+  W5:'W5 · Lifecycle · CIS Phase 04',
+  W6:'W6 · Full interface · CIS Phase 05',
   G:'Gates', P:'Practice'
+};
+
+/* ── wave unlock content (source: wave-unlocks.html) ── */
+const WAVE_UNLOCKS = {
+  W0: {
+    name:'Substrate', phase:'Foundation · before any module',
+    member:{
+      unlocks:'Nothing a member touches yet — and that is the point. W0 lays the foundation: the database that will hold the records, the locked front door (invite-only sign-in with private-by-default records), and the rule that every table stays closed unless a policy opens it. Until this is solid and <strong>checked by an automated gate</strong>, no member-facing work begins.',
+      matters:'A cooperative\'s records are member property. If the foundation leaks or cannot be audited, every record built on top is suspect. W0 is the co-op choosing to <strong>earn trust before asking for it</strong>.',
+      rests:'The ten pre-build decisions (D1–D10), all recorded by the organizers in June 2026.',
+      sets:'The member layer (W1). The discipline holds the line: nothing downstream starts until W0 is verified.'
+    },
+    builder:{
+      unlocks:'Repo-as-ledger with a validator gating an acyclic dependency graph; one Supabase project-of-record with a migration + shadow-verify pipeline; <strong>default-deny, force-RLS</strong> with a citation comment on every policy as a permanent CI gate; the REA event envelope with audit triggers; the Edge-Function secrets boundary; two independent scheduling rails; design tokens; and the build-status mirror that renders the ledger\'s own state.',
+      matters:'On GitHub Pages there is no server runtime, so <strong>RLS is the entire authorization perimeter</strong> — the anon key ships in the public bundle by design. That converts policy completeness from a quality goal into a hard release gate.',
+      rests:'D3 → W0.1 (repo) · D1, D6 → W0.12 (portal) · D4 → W0.11 (email) · D7 → W0.6 (citation scheme).',
+      sets:'W1 shared core, behind the G0 security floor.'
+    },
+    src:'Implementation Plan v0.1 §2.3, §06 (W0.1–W0.18) · Member Guide §03'
+  },
+  W1: {
+    name:'Shared core', phase:'CIS Phase 01 · Agent & Agreement',
+    member:{
+      unlocks:'The first thing a member can actually use. A real invited member can <strong>sign in, read the documents that govern them, sign their membership agreement, and appear in the member directory</strong>. Nou can answer questions about those records and cite where each answer came from.',
+      matters:'This is where the co-op\'s records stop being a spreadsheet someone maintains and become a system the member can read for themselves — the member-information right made literal rather than promised.',
+      rests:'The substrate (W0) being verified — schema, auth, and the row-level rules.',
+      sets:'The alpha gate (G1), and everything downstream. Capital and governance both attach to these member and agreement records.'
+    },
+    builder:{
+      unlocks:'<code>memberships</code> + four-class model with derived good-standing and §18.1 scopes; <code>stock_ledger</code> enforcing one Patron share at the database; a populated, hashed, versioned agreements repository; signature capture as events; directory + profile on the three-part record pattern; admission run end-to-end on synthetic data; and Nou v1 — read-only, JWT-scoped, cited, fully logged.',
+      matters:'Scoped impersonation is <strong>structural, not promised</strong>: the gateway forwards the invoking member\'s token, so a query through Nou is refused exactly as a direct query would be.',
+      rests:'W0.7 (REA core) · W0.8 (roles) · W0.5 (auth) · W0.11 (email rail).',
+      sets:'G1. W2 inherits this admission pattern.'
+    },
+    src:'Implementation Plan v0.1 §06 (W1.1–W1.8) · Member Guide §08 · C8 (Nou gateway)'
+  },
+  W2: {
+    name:'Hub operations', phase:'Greenfield · pattern-setting',
+    member:{
+      unlocks:'The surface that runs the Boulder Ethereum Community Hub — applications, co-working seats, events, and the three grant <strong>metrics computed from real activity</strong>, plus a monthly impact report drafted from the event log and approved by a human.',
+      matters:'The co-op took a <strong>$20,000 Ethereum Everywhere grant</strong> (May–Dec 2026) whose second tranche depends on honest reporting. W2 is how those reports become trustworthy rather than improvised.',
+      rests:'The shared core (W1) — Hub access attaches to existing agents and agreements.',
+      sets:'The alpha gate (G1). W2.1–W2.6 are required for G1; W2.7–W2.9 proceed after it.',
+      gates:[{tag:'R2',text:'Hub access runs against an interim acceptable-use policy until the Hub Membership Agreement is ratified — and the interim state is itself recorded.'}]
+    },
+    builder:{
+      unlocks:'12 Hub tables with <code>grant:§</code> citations; the public application via the D2 anonymous-insert path — the single deliberate hole in default-deny, with its own probes; seat registry; events module; three KPI views per Hub §07 with drill-down to source rows; Nou-drafted impact report on the scheduled rail; cross-pollination registry; educational surface; grant lifecycle as events.',
+      matters:'<strong>"Computed rather than reported"</strong> is the module\'s whole point: the EE team can independently verify each figure down to the events that produced it.',
+      rests:'W0.6/0.7/0.8 · D2 (form host) · D9 (liaison form).',
+      sets:'G1.',
+      gates:[{tag:'R2',text:'Activation switches Hub access from the interim AUP to the ratified agreement; build is not blocked.'}]
+    },
+    src:'Implementation Plan v0.1 §06 (W2.1–W2.9) · Hub Ops PRD §07–§08 · C9 (KPI fixtures)'
+  },
+  G: {
+    name:'Alpha gate · G1', phase:'Composite gate · between W2 and W3',
+    member:{
+      unlocks:'The moment the co-op <strong>starts using the system on itself</strong>. When G1 passes, a real member can sign in, see what governs them, sign, appear in the directory, and ask Nou a cited question — and the Hub team can run operations against production data.',
+      matters:'G1 is not a finished product. It is the line where the system stops being an exercise and becomes the <em>operational record of a real cooperative</em>.',
+      rests:'All of W0; W1.1–W1.8; W2.1–W2.6; and decisions D1, D2, D3, D4, D6, D7 recorded.',
+      sets:'Capital (W3) and everything after — against the same ledger, after the gate.'
+    },
+    builder:{
+      unlocks:'A composite milestone whose file lists its required set, so the validator computes G1 status <strong>mechanically</strong> and the build panel shows distance-to-alpha as a single number.',
+      matters:'W2.7–W2.9 and all of W3 onward are explicitly <em>not</em> required for G1; they continue against the same ledger after it.',
+      rests:'The verified set above.',
+      sets:'W3 onward.'
+    },
+    src:'Implementation Plan v0.1 §07 · Member Guide §10'
+  },
+  W3: {
+    name:'Capital accounts', phase:'CIS Phase 02 · Resource & Value',
+    member:{
+      unlocks:'Your capital account as a live surface — contributions, allocations, balance — where the balance is <strong>not a stored number but the sum of a chain of recorded events</strong>, each citing the bylaw section that authorizes it.',
+      matters:'This is the financial architecture of ownership becoming legible to the owner. It is also where grant spending gets tagged at the transaction level for honest deployment reporting.',
+      rests:'The member and agreement records (W1); the alpha gate (G1).',
+      sets:'Governance (W4) and the full member interface (W6).',
+      gates:[
+        {tag:'R1',text:'Allocations are entered manually against the equal default until bylaws ratify — formula automation switches on only then.'},
+        {tag:'D10',text:'The lease-entity question blocks only the facility-obligation detail, not the wave.'}
+      ]
+    },
+    builder:{
+      unlocks:'<code>capital_accounts</code> + double-entry <code>capital_events</code> with book/tax distinction and balance-conservation tests; personal balance view with full history; manual allocation against the equal default; Mercury read-only ingestion on scheduled rails with hub-expenditure tagging; <code>tax_records</code> (encrypted identifiers, admin-only); treasury views and the distribution-event shape; grant tranches joined to W2.9.',
+      matters:'Treasury is a <strong>payment rail, never the system of record</strong> — conservation lives in the ledger, and multi-sig is a human banking action, not code.',
+      rests:'W3.0 authors the full briefs at the boundary · R1 activation · D10 detail.',
+      sets:'W4, W6.',
+      gates:[
+        {tag:'R1',text:'Activates allocation-formula automation and the citation freeze.'},
+        {tag:'D10',text:'Blocks specific treasury detail steps inside W3.6 only.'}
+      ]
+    },
+    src:'Implementation Plan v0.1 §06 (W3) · Member Guide §08 · CIS §17'
+  },
+  W4: {
+    name:'Governance', phase:'CIS Phase 03 · Decision',
+    member:{
+      unlocks:'Governance as a recorded system rather than a file in a folder — meetings with a live <strong>quorum view that always shows the rule</strong>, motions with immutable votes, consents, and minutes drafted then ratified by the Secretary.',
+      matters:'Participation in governance is a core member right. W4 makes every exercise of it an <strong>auditable record</strong> rather than a recollection.',
+      rests:'Member records (W1), and capital (W3) for some flows.',
+      sets:'The full member interface (W6) and the practice phase (P1).',
+      gates:[
+        {tag:'R1',text:'Binding electronic votes switch on only when bylaw semantics are final.'},
+        {tag:'D8',text:'Optional attestation of governance records waits on the attestation-scope decision.'}
+      ]
+    },
+    builder:{
+      unlocks:'Meetings/attendance/proxies with real-time quorum; motions + immutable votes with thresholds enforced as constraints; consents (§2.8, §3.15); Nou-drafted minutes with Secretary ratification; notices v2 receipt hardening; an open-source voting interface; and an optional attestation extension.',
+      matters:'Vote thresholds are <strong>database constraints</strong>, not interface checks — a vote that fails its threshold cannot be recorded as passed.',
+      rests:'W4.0 authors briefs at the boundary · R1 activation · D8.',
+      sets:'W6.',
+      gates:[
+        {tag:'R1',text:'Activates binding electronic votes.'},
+        {tag:'D8',text:'Gates the optional attestation extension (W4.7).'}
+      ]
+    },
+    src:'Implementation Plan v0.1 §06 (W4) · Member Guide §03, §09'
+  },
+  W5: {
+    name:'Lifecycle', phase:'CIS Phase 04 · Membership over time',
+    member:{
+      unlocks:'The full arc of membership over time — onboarding, suspension, <strong>withdrawal with the fourteen-day notice and equity calculation</strong>, termination support, and redemption schedules — every transition signed and logged.',
+      matters:'A cooperative has to handle members leaving as honestly as members joining. W5 makes the hard transitions a matter of record, not improvisation.',
+      rests:'Membership, capital, and governance being in place.',
+      sets:'The full interface (W6).'
+    },
+    builder:{
+      unlocks:'The membership state machine — application → active → suspended → withdrawn → terminated → former — with signed, logged transitions; withdrawal + equity calc; the suspension clock; termination-hearing support; and redemption schedules up to five years.',
+      matters:'Each transition is an <strong>event with an actor and a citation</strong>, so the membership history is reconstructable from the log alone.',
+      rests:'W5.0 authors briefs at the boundary.',
+      sets:'W6.'
+    },
+    src:'Implementation Plan v0.1 §06 (W5) · draft-bylaws §1.9.3'
+  },
+  W6: {
+    name:'Full interface', phase:'CIS Phase 05 · Public surface',
+    member:{
+      unlocks:'The complete member portal — derived analytics, the <strong>guaranteed public benefit report</strong> that anchors the co-op\'s open posture, audit-support surfaces, and member-exercisable data export. Plus the "walkaway" drill proven as a real, scheduled capability.',
+      matters:'This is the co-op\'s commitment to <em>portability and public accountability</em> made operational: a member can take their data, and the public can read the benefit report, by right.',
+      rests:'Everything before it.',
+      sets:'P1 — Practice. The architecture is done; the cultural work is not.'
+    },
+    builder:{
+      unlocks:'Derived analytics; benefit-report generation + the guaranteed public view; an audit-support surface; member-exercisable export; and the walkaway drill as a <strong>tested, scheduled capability</strong> building on W0.14 — portability proven rather than assumed.',
+      matters:'The public benefit view and member export are the O- and CR-pathway commitments turned into shipped, testable surfaces.',
+      rests:'W6.0 authors briefs at the boundary.',
+      sets:'P1 (human practice; no software).'
+    },
+    src:'Implementation Plan v0.1 §06 (W6, P1) · draft-bylaws §XV · CIS §16'
+  }
 };
 
 /* ── hub ops guide layer data ── */
@@ -1241,6 +1495,7 @@ let docMode = false;
 let docLens = 'phase';   // 'phase' | 'anchor'
 let docFilter = 'ALL';   // 'ALL' | standing key | 'unanchored'
 let docSelected = null;  // selected deliverable id
+let waveLens = 'member'; // 'member' | 'builder' — for wave brief panel
 
 /* ── computations ── */
 function enrich(nodes) {
@@ -1370,6 +1625,84 @@ function renderChips(nodes) {
   chips.innerHTML = h;
 }
 
+/* ── wave brief panel ── */
+function setWaveLens(l) {
+  waveLens = l;
+  const wb = document.getElementById('waveBrief');
+  if (wb) {
+    wb.querySelectorAll('.wb-lens-btn').forEach(b => b.classList.toggle('on', b.dataset.lens === l));
+    const content = wb.querySelector('.wb-content');
+    if (content) content.innerHTML = buildWaveBriefContent(WAVE_UNLOCKS[waveFilter]);
+  }
+}
+
+function buildWaveBriefContent(wu) {
+  if (!wu) return '';
+  const L = wu[waveLens] || {};
+  let h = '';
+
+  h += `<div class="wb-blocks">`;
+  if (L.unlocks) {
+    h += `<div class="wb-block">
+      <div class="wb-label">Unlocks</div>
+      <div class="wb-body">${L.unlocks}</div>
+    </div>`;
+  }
+  if (L.matters) {
+    h += `<div class="wb-block">
+      <div class="wb-label">Why it matters</div>
+      <div class="wb-body">${L.matters}</div>
+    </div>`;
+  }
+  if (L.rests) {
+    h += `<div class="wb-block">
+      <div class="wb-label">Rests on</div>
+      <div class="wb-body dim">${L.rests}</div>
+    </div>`;
+  }
+  if (L.sets) {
+    h += `<div class="wb-block">
+      <div class="wb-label">Sets up</div>
+      <div class="wb-body dim">${L.sets}</div>
+    </div>`;
+  }
+  if (L.gates && L.gates.length) {
+    h += `<div class="wb-block">
+      <div class="wb-label">Activation gates — built now, switched on later</div>
+      <div class="wb-gates">${L.gates.map(g =>
+        `<div class="wb-gate"><span class="wb-gate-tag">${g.tag}</span><span>${g.text}</span></div>`
+      ).join('')}</div>
+    </div>`;
+  }
+  h += `</div>`;
+
+  if (wu.src) {
+    h += `<div class="wb-src"><strong>Sources</strong> &nbsp;${wu.src}</div>`;
+  }
+  return h;
+}
+
+function renderWaveBrief(wave) {
+  const wu = WAVE_UNLOCKS[wave];
+  if (!wu) return '';
+
+  const lensH = `<div class="wb-lens-strip">
+    <button class="wb-lens-btn${waveLens==='member'?' on':''}" data-lens="member" onclick="setWaveLens('member')">Member</button>
+    <button class="wb-lens-btn${waveLens==='builder'?' on':''}" data-lens="builder" onclick="setWaveLens('builder')">Builder</button>
+  </div>`;
+
+  return `<div class="wb-panel" id="waveBrief">
+    <div class="wb-header">
+      <div>
+        <div class="wb-title">${wave} · ${wu.name}</div>
+        <div class="wb-phase">${wu.phase}</div>
+      </div>
+      ${lensH}
+    </div>
+    <div class="wb-content">${buildWaveBriefContent(wu)}</div>
+  </div>`;
+}
+
 /* ── main panel ── */
 function renderMain(nodes) {
   const filtered = waveFilter ? nodes.filter(n => n.wave === waveFilter) : nodes;
@@ -1402,6 +1735,9 @@ function renderMain(nodes) {
     <div class="prog-track"><div class="prog-fill" style="width:${Math.max(pct,0)}%"></div></div>
     <div class="wave-pills">${pillsH}</div>
   </div>`;
+
+  /* wave brief — shown when a specific wave is selected */
+  if (waveFilter) h += renderWaveBrief(waveFilter);
 
   /* blockers */
   const blockers = filtered.filter(n => n._isBlocker);
