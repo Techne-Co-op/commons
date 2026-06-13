@@ -210,10 +210,21 @@ code {
 footer { margin-top: 72px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
 /* ── responsive ── */
+@media (max-width: 640px) {
+  /* hide secondary metadata — whitespace:nowrap risks horizontal overflow */
+  .doc-meta  { display: none; }
+  .d-status  { display: none; }
+}
 @media (max-width: 560px) {
-  .pillars { grid-template-columns: 1fr; }
+  .pillars   { grid-template-columns: 1fr; }
   .wave-grid { grid-template-columns: 1fr 1fr; }
-  h1 { font-size: 26px; }
+  h1         { font-size: 26px; }
+}
+@media (max-width: 480px) {
+  h1         { font-size: 22px; }
+  .wave-grid { grid-template-columns: 1fr; }
+  /* loop-panels: auto-fill already handles collapse; ensure min not too wide */
+  .loop-panels { grid-template-columns: 1fr; }
 }
 </style>
 </head>

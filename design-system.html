@@ -701,11 +701,11 @@ footer {
   <p>Three layout grammars cover every surface in the commons. The grammar determines the navigation pattern, content width, and mode toggle placement. Choosing the wrong grammar for a surface type is the most common structural error.</p>
 
   <table class="spec">
-    <thead><tr><th>Grammar</th><th>Used for</th><th>Navigation</th><th>Max width</th></tr></thead>
+    <thead><tr><th>Grammar</th><th>Used for</th><th>Navigation</th><th>Max width</th><th>Mobile behavior</th></tr></thead>
     <tbody>
-      <tr><td>Index</td><td>Entry pages, overviews</td><td><code>.site-nav</code> sticky bar (commons.css), in-page anchor links</td><td>720px centered</td></tr>
-      <tr><td>Instrument</td><td>HUD, Loop, roadmap tools</td><td>Custom <code>.topbar</code> with back link and title; no <code>.site-nav</code></td><td>Full-bleed</td></tr>
-      <tr><td>Document</td><td>PRDs, design system, briefs</td><td>Inline header with title and mode toggle; no nav bar</td><td>760px centered</td></tr>
+      <tr><td>Landing</td><td>Root entry point</td><td><code>.site-nav</code> sticky bar; in-page anchor links; mode btn fixed top-right</td><td>720px centered</td><td>Nav links hidden ≤560px. Pillar grid 3→1 col ≤560px. Page gutter 24→16px ≤480px.</td></tr>
+      <tr><td>Instrument</td><td>HUD, Loop, Tree, roadmap tools</td><td>Custom <code>.topbar</code> with back link and title; mode btn inline right edge</td><td>Full-bleed</td><td>Side panels collapse at instrument-defined breakpoints. Topbar back link is the only wayfinding on mobile.</td></tr>
+      <tr><td>Document</td><td>PRDs, design system, guides, briefs</td><td>Inline <code>&lt;header&gt;</code> with title and mode toggle; no nav bar</td><td>760–860px centered</td><td>Page gutter 24→16px ≤480px. Tables scroll horizontally ≤640px. Stacked flex entries at ≤480px.</td></tr>
     </tbody>
   </table>
 
@@ -745,6 +745,19 @@ footer {
 })();</code></pre>
 
   <p>Footers follow the grammar. Index and document pages carry a three-element footer: repo name, GitHub link, cooperative attribution. Instrument pages carry a compact <code>inst-footer</code> strip — a single flex row in 10px monospace, border-top only, containing a back link, repo name, GitHub link, and attribution. Every page has a footer; the strip weight varies by grammar.</p>
+
+  <p><strong>Responsive standards.</strong> All commons pages apply the four-breakpoint system declared in <code>tree.manifest.json §layout</code> and enforced in <code>commons.css</code>. The shared rules handle page gutter, table overflow, touch targets, and footer stacking. Page-specific rules handle component-level layout (grid collapse, metadata hide). No page ships without a responsive section.</p>
+
+  <table class="spec">
+    <thead><tr><th>Breakpoint</th><th>Width</th><th>Shared rule (commons.css)</th></tr></thead>
+    <tbody>
+      <tr><td>desktop</td><td>≥ 1024px</td><td>Full layout. All columns visible.</td></tr>
+      <tr><td>tablet</td><td>≤ 768px</td><td>Page gutter → 20px. Footer stacks vertically.</td></tr>
+      <tr><td>mobile-l</td><td>≤ 640px</td><td>Tables scroll horizontally (<code>display:block; overflow-x:auto</code>). Secondary metadata hidden.</td></tr>
+      <tr><td>nav collapse</td><td>≤ 560px</td><td>Nav text links hidden; brand link only.</td></tr>
+      <tr><td>mobile-s</td><td>≤ 480px</td><td>16px font floor (iOS zoom prevention). Page gutter → 16px. <code>.mode-btn</code> min-height 44px (WCAG 2.5.5).</td></tr>
+    </tbody>
+  </table>
 </section>
 
 <section>

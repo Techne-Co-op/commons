@@ -135,6 +135,16 @@ code {
 .toc a { font-size: 14px; color: var(--muted); display: flex; gap: var(--s3); align-items: baseline; }
 .toc a:hover { color: var(--terra-text); }
 .toc a .toc-num { font-family: var(--font-mono); font-size: 11px; color: var(--faint); }
+
+/* ── responsive ── */
+@media (max-width: 640px) {
+  h1 { font-size: 26px; }
+}
+@media (max-width: 480px) {
+  h1 { font-size: 22px; }
+  /* rule list: stack label above rule text */
+  .rule-item { flex-direction: column; gap: var(--s2); }
+}
 </style>
 </head>
 <body>

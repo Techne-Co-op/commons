@@ -323,7 +323,72 @@ footer a:hover { color: var(--terra-text); }
 
 /* ============================================================
    Responsive (shared)
+   Breakpoint reference — see tree.manifest.json §layout:
+     mobile-s  ≤ 480px   font floor, minimal gutter, touch targets
+     mobile-l  ≤ 640px   table overflow, node meta collapse
+     tablet    ≤ 768px   gutter reduction, footer stack
+     desktop   ≥ 1024px  full layout
    ============================================================ */
+
+/* ── Nav: collapse text links at 560px ── */
 @media (max-width: 560px) {
   .nav-links { display: none; }
+}
+
+/* ── Tables: horizontal scroll on narrow viewports ── */
+/* Applies to all .spec, .table, and bare <table> elements.   */
+/* No wrapper element required.                               */
+@media (max-width: 640px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── Tablet (≤ 768px): gutter reduction + footer stack ── */
+@media (max-width: 768px) {
+  /* page column: reduce horizontal gutter */
+  /* !important overrides per-page .page definitions         */
+  .page {
+    padding-left:  20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* footer: stack elements vertically on narrow screens */
+  footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    align-items: flex-start;
+    padding-bottom: var(--s6);
+  }
+}
+
+/* ── Mobile-S (≤ 480px): floor values ── */
+@media (max-width: 480px) {
+  /* 16px font floor — prevents iOS WebKit zoom on inputs */
+  body { font-size: 16px; }
+
+  /* page: minimal gutter, reduced vertical padding */
+  .page {
+    padding-top:    32px !important;
+    padding-bottom: 48px !important;
+    padding-left:   16px !important;
+    padding-right:  16px !important;
+  }
+
+  /* touch targets: ≥ 44px height (WCAG 2.5.5) */
+  .mode-btn {
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  button {
+    min-height: 44px;
+  }
+
+  /* nav: ensure brand + height fits touch */
+  .site-nav-inner { height: 52px; }
 }

@@ -335,5 +335,73 @@
   },
   "derive": {
     "staleAfterCycles": 3
+  },
+  "layout": {
+    "note": "Best-practice layout, design, and sizing parameters for web and mobile. Applied via commons.css and per-page style blocks.",
+    "breakpoints": {
+      "mobile_s":  "480px",
+      "mobile_l":  "640px",
+      "tablet":    "768px",
+      "desktop":   "1024px"
+    },
+    "grammars": {
+      "landing": {
+        "maxWidth": "720px",
+        "columns": 1,
+        "padding": {
+          "desktop": "64px 24px 96px",
+          "tablet":  "40px 20px 64px",
+          "mobile":  "32px 16px 48px"
+        }
+      },
+      "document": {
+        "maxWidth": "760px–860px",
+        "columns": 1,
+        "padding": {
+          "desktop": "64px 24px 96px",
+          "tablet":  "40px 20px 64px",
+          "mobile":  "32px 16px 48px"
+        }
+      },
+      "instrument": {
+        "maxWidth": "full-bleed",
+        "columns": "layout-defined",
+        "note": "Column count set per instrument. Side panels collapse progressively with breakpoints. Topbar is the primary nav surface."
+      }
+    },
+    "typography": {
+      "minBodyFontSize": "16px",
+      "rationale": "Prevents iOS WebKit automatic zoom when font-size < 16px on inputs.",
+      "lineHeight": {
+        "body":       1.85,
+        "mono_dense": 1.60
+      },
+      "headingScale": {
+        "desktop": { "h1": "34px", "h2": "20px", "h3": "15px" },
+        "mobile":  { "h1": "26px", "h2": "18px", "h3": "14px" }
+      }
+    },
+    "touch": {
+      "minTargetSize": "44px",
+      "citation": "WCAG 2.5.5 Target Size (Enhanced)",
+      "applies_to": ["button", ".mode-btn", "nav links", "doc-item anchors"]
+    },
+    "tables": {
+      "overflowStrategy": "display:block + overflow-x:auto",
+      "breakpoint": "≤ 640px",
+      "note": "Handled universally in commons.css. No wrapper element required."
+    },
+    "nav": {
+      "primary": {
+        "collapseAt": "560px",
+        "fallback": "brand link only — full nav not present on mobile"
+      }
+    },
+    "components": {
+      "pillars_grid":  "3-col → 1-col at ≤ 560px",
+      "doc_meta":      "hidden at ≤ 640px (whitespace:nowrap overflow risk)",
+      "glossary_entry": "flex-row → flex-column at ≤ 480px",
+      "node_meta":     "hidden at ≤ 640px (tree.html)"
+    }
   }
 }
