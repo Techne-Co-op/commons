@@ -704,13 +704,27 @@ footer {
   <table class="spec">
     <thead><tr><th>Grammar</th><th>Used for</th><th>Navigation</th><th>Max width</th><th>Mobile behavior</th></tr></thead>
     <tbody>
-      <tr><td>Landing</td><td>Root entry point</td><td><code>.site-nav</code> sticky bar; in-page anchor links; mode btn fixed top-right</td><td>720px centered</td><td>Nav links hidden ≤560px. Pillar grid 3→1 col ≤560px. Page gutter 24→16px ≤480px.</td></tr>
-      <tr><td>Instrument</td><td>HUD, Loop, Tree, roadmap tools</td><td>Custom <code>.topbar</code> with back link and title; mode btn inline right edge</td><td>Full-bleed</td><td>Side panels collapse at instrument-defined breakpoints. Topbar back link is the only wayfinding on mobile.</td></tr>
-      <tr><td>Document</td><td>PRDs, design system, guides, briefs</td><td>Inline <code>&lt;header&gt;</code> with title and mode toggle; no nav bar</td><td>760–860px centered</td><td>Page gutter 24→16px ≤480px. Tables scroll horizontally ≤640px. Stacked flex entries at ≤480px.</td></tr>
+      <tr><td>Landing</td><td>Root entry point</td><td><code>.site-nav</code> sticky bar + <code>commons-nav.js</code> mobile toggle; mode btn fixed top-right</td><td>720px centered</td><td>Nav links collapse ≤560px; hamburger "menu" toggle appears. Pillar grid 3→1 col ≤560px. Page gutter 24→16px ≤480px.</td></tr>
+      <tr><td>Instrument</td><td>HUD, Loop, Tree, roadmap tools</td><td>Custom <code>.topbar</code> with back link and title; mode btn inline right edge</td><td>Full-bleed</td><td>Side panels collapse at instrument-defined breakpoints. Topbar back link is the only wayfinding on mobile. No commons-nav.js.</td></tr>
+      <tr><td>Document</td><td>PRDs, design system, guides, briefs</td><td>Inline <code>&lt;header&gt;</code> with title and mode toggle; no nav bar</td><td>760–860px centered</td><td>Page gutter 24→16px ≤480px. Tables scroll horizontally ≤640px. Stacked flex entries at ≤480px. No commons-nav.js.</td></tr>
     </tbody>
   </table>
 
   <p><strong>Index grammar</strong> uses <code>.site-nav</code> from <code>commons.css</code>, a centered <code>.page</code> column at 720px, and a footer. The mode button sits fixed at <code>top: 11px; right: 20px</code> outside the page flow. Suitable for any page that needs in-page section navigation alongside cross-site links.</p>
+
+  <p><strong>Mobile nav — commons-nav.js.</strong> Any page using Index grammar must include <code>&lt;script src="commons-nav.js" defer&gt;&lt;/script&gt;</code> before <code>&lt;/head&gt;</code>. The script auto-injects a "menu" / "close" toggle button into <code>.site-nav-inner</code> at runtime — no HTML change required in the page itself. On viewports ≤560px the nav links collapse; tapping "menu" opens a full-width panel pinned just below the sticky bar. The panel closes on link click, Escape, or outside tap. ARIA attributes (<code>aria-expanded</code>, <code>aria-controls</code>, <code>aria-label</code>) update with each state change.</p>
+
+  <p>Implementation notes for new pages:</p>
+  <table class="spec">
+    <thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Script tag</td><td><code>&lt;script src="commons-nav.js" defer&gt;&lt;/script&gt;</code> before <code>&lt;/head&gt;</code> — one line, no other change needed</td></tr>
+      <tr><td>HTML hook</td><td>Nav must use <code>.site-nav &gt; .site-nav-inner &gt; ul.nav-links</code> — the script selects these selectors. Any deviation requires a script update, not a workaround.</td></tr>
+      <tr><td>Dropdown positioning</td><td>Uses <code>position: fixed; top: 44px</code>, not <code>position: absolute; top: 100%</code>. This is intentional: <code>position: sticky</code> on <code>.site-nav</code> creates an unpredictable containing block across browsers; fixed avoids that entirely.</td></tr>
+      <tr><td>Instrument pages</td><td>Pages using <code>.topbar</code> (hud.html, loop.html, tree.html as instrument) do not use commons-nav.js. Their topbar back link is the mobile wayfinding. A separate mobile treatment is needed if full nav is required there.</td></tr>
+      <tr><td>Document pages</td><td>No nav bar — commons-nav.js does not apply. Document pages have no <code>.site-nav-inner</code> and the script exits silently if those selectors are absent.</td></tr>
+    </tbody>
+  </table>
 
   <p><strong>Instrument grammar</strong> uses a custom sticky <code>.topbar</code> with a back-to-commons link as the first element, a title, and the mode button inline at the right edge. The content area is full-bleed — no centered column. Instruments are full-height interactive surfaces; a traditional footer does not apply. The topbar back link is the only wayfinding required.</p>
 
@@ -755,7 +769,7 @@ footer {
       <tr><td>desktop</td><td>≥ 1024px</td><td>Full layout. All columns visible.</td></tr>
       <tr><td>tablet</td><td>≤ 768px</td><td>Page gutter → 20px. Footer stacks vertically.</td></tr>
       <tr><td>mobile-l</td><td>≤ 640px</td><td>Tables scroll horizontally (<code>display:block; overflow-x:auto</code>). Secondary metadata hidden.</td></tr>
-      <tr><td>nav collapse</td><td>≤ 560px</td><td>Nav text links hidden; brand link only.</td></tr>
+      <tr><td>nav collapse</td><td>≤ 560px</td><td>Nav text links hidden; "menu" toggle button appears (commons-nav.js). Brand link remains. Dropdown opens as fixed panel at top: 44px.</td></tr>
       <tr><td>mobile-s</td><td>≤ 480px</td><td>16px font floor (iOS zoom prevention). Page gutter → 16px. <code>.mode-btn</code> min-height 44px (WCAG 2.5.5).</td></tr>
     </tbody>
   </table>
