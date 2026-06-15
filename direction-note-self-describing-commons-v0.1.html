@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="Direction note companion to the pre-build audit. Names where consolidating documentation leads: a Commons that declares what it is and reconciles continuously.">
+<title>Direction Note · The Self-Describing Commons · RegenHub Commons</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="commons.css">
+<style>
+/* ── page-specific overrides ── */
+.site-nav-inner { max-width: 940px; }
+.page           { max-width: 940px; margin: 0 auto; padding: var(--s8) var(--s5) var(--s7); }
+.prose          { max-width: 700px; }
+
+.eyebrow        { font-family: var(--font-mono); font-size: 12px; letter-spacing: .18em;
+                  text-transform: uppercase; color: var(--terra-text); margin: 0 0 var(--s3); }
+h1              { font-size: 34px; line-height: 1.14; color: var(--heading); font-weight: 700;
+                  margin: 0 0 var(--s4); max-width: 18ch; }
+.standfirst     { font-style: italic; font-size: 18px; line-height: 1.62; color: var(--muted);
+                  max-width: 62ch; margin: 0 0 var(--s5); }
+.standfirst em  { color: var(--terra-text); font-style: italic; }
+
+hr.rule         { border: 0; border-top: 1px solid var(--border);
+                  margin: var(--s7) 0 var(--s6); max-width: 700px; }
+h2              { font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em;
+                  text-transform: uppercase; color: var(--terra-text); font-weight: 600;
+                  margin: 0 0 var(--s4); }
+.prose p        { margin: 0 0 var(--s4); }
+.prose p strong { color: var(--heading); font-weight: 700; }
+.prose p em     { font-style: italic; color: var(--terra-text); }
+.lead-in        { color: var(--heading); font-weight: 700; }
+
+/* ── four-pillar figure ── */
+.fig            { margin: var(--s6) 0; max-width: 940px; }
+.fig-cols       { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); }
+.col            { background: var(--surface-raised); border: 1px solid var(--border);
+                  border-top: 2px solid var(--border-strong); border-radius: 10px;
+                  padding: var(--s5) var(--s4) var(--s4); }
+.col-n          { font-family: var(--font-mono); font-size: 12px; color: var(--faint);
+                  letter-spacing: .06em; }
+.col-h          { font-family: var(--font-serif); font-size: 18px; color: var(--heading);
+                  font-weight: 700; margin: var(--s2) 0 var(--s1); }
+.col-role       { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em;
+                  text-transform: uppercase; color: var(--terra-text); margin: 0 0 var(--s3); }
+.col-mech       { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0; }
+
+.ticks          { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; height: var(--s5); }
+.ticks span     { justify-self: center; width: 1px; height: 100%;
+                  background: linear-gradient(var(--border-strong), var(--terra-dim)); }
+
+.band           { background: var(--surface); border: 1px solid var(--terra-dim);
+                  border-top: 2px solid var(--terra); border-radius: 10px; padding: var(--s5); }
+.band-head      { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
+.band-head .col-n    { color: var(--terra-text); opacity: .6; }
+.band-head .col-h    { margin: 0; }
+.band-head .col-role { margin: 0; }
+.band-mech      { font-size: 14px; line-height: 1.58; color: var(--text);
+                  margin: var(--s3) 0 var(--s5); max-width: 74ch; }
+.band-mech strong { color: var(--heading); }
+
+.recon          { display: flex; align-items: stretch; gap: var(--s3); flex-wrap: wrap; }
+.recon-node     { display: flex; flex-direction: column; gap: var(--s1);
+                  background: var(--surface-raised); border: 1px solid var(--border);
+                  border-radius: 8px; padding: var(--s3) var(--s4);
+                  font-family: var(--font-mono); font-size: 12.5px; color: var(--heading);
+                  min-width: 0; }
+.recon-node small { font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em;
+                    color: var(--faint); text-transform: uppercase; }
+.recon-out      { border-color: var(--terra-dim); }
+.recon-out small { color: var(--terra-text); }
+.recon-arrow    { align-self: center; font-family: var(--font-mono);
+                  font-size: 16px; color: var(--terra-text); }
+
+figcaption      { font-family: var(--font-mono); font-size: 11.5px; line-height: 1.6;
+                  color: var(--faint); margin-top: var(--s4); max-width: 80ch; }
+figcaption b    { color: var(--muted); font-weight: 500; }
+
+.colophon       { max-width: 700px; margin-top: var(--s7); padding-top: var(--s4);
+                  border-top: 1px solid var(--border); font-family: var(--font-mono);
+                  font-size: 11px; line-height: 1.7; color: var(--faint); }
+.colophon a     { color: var(--muted); }
+.colophon a:hover { color: var(--terra-text); }
+
+footer .footer-inner { max-width: 940px; margin: 0 auto; padding: var(--s5);
+                        font-family: var(--font-mono); font-size: 11.5px; color: var(--faint);
+                        display: flex; gap: var(--s2); flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  .fig-cols { grid-template-columns: 1fr; }
+  .ticks    { display: none; }
+  h1        { font-size: 28px; }
+  .page     { padding: var(--s6) var(--s5); }
+}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Index</a></li>
+      <li><a href="hud.html">HUD</a></li>
+      <li><a href="pre-build-audit-v0.1.html">Audit</a></li>
+      <li><a href="dev.html">Dev</a></li>
+      <li><a href="member-guide.html">Guide</a></li>
+    </ul>
+    <button class="mode-btn" id="modeBtn">light</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="prose">
+    <p class="eyebrow">Direction Note &middot; companion to the pre-build audit</p>
+    <h1>The Self-Describing Commons</h1>
+    <p class="standfirst">The audit found documentation to be an unconsolidated pillar &mdash; present everywhere, treated as the property of other things. This note names where consolidating it leads: a Commons that does not only record what is true, but <em>declares what it is</em>, and reconciles the two continuously. The move is from a system that is built and documented to one that is <em>declared and reconciled</em>.</p>
+  </div>
+
+  <hr class="rule">
+
+  <div class="prose">
+    <h2>Where this points</h2>
+    <p>The three pillars the cooperative already stands on are easy to name once documentation is set beside them. <strong>The Record</strong> holds what is true. <strong>The Surfaces</strong> &mdash; the portal and Nou &mdash; are how the record is reached. <strong>The Discipline</strong> &mdash; CROPS, the ledger, the gates &mdash; is how it stays honest. Each is mature or maturing. What the audit surfaced is that a fourth pillar, the system&rsquo;s account of itself, is already doing structural work but has never been stood up as one. Standing it up is the next evolution, and it is <em>connective</em>: the self-model is the layer through which the other three are described, related, and kept true to each other.</p>
+  </div>
+
+  <figure class="fig">
+    <div class="fig-cols">
+      <div class="col">
+        <span class="col-n">01</span>
+        <h3 class="col-h">The Record</h3>
+        <p class="col-role">what is true</p>
+        <p class="col-mech">The REA book of record &mdash; event log, conservation, audit trail. The layer an auditor queries; every other surface derives from it.</p>
+      </div>
+      <div class="col">
+        <span class="col-n">02</span>
+        <h3 class="col-h">The Surfaces</h3>
+        <p class="col-role">how it is reached</p>
+        <p class="col-mech">The portal and Nou &mdash; the graphical and natural-language faces of one state. Capability-equal; both scoped by the same governance.</p>
+      </div>
+      <div class="col">
+        <span class="col-n">03</span>
+        <h3 class="col-h">The Discipline</h3>
+        <p class="col-role">how it stays honest</p>
+        <p class="col-mech">CROPS, the milestone ledger, the gates. Verification before a dependent unlocks; citation before a claim is complete.</p>
+      </div>
+    </div>
+
+    <div class="ticks"><span></span><span></span><span></span></div>
+
+    <div class="band">
+      <div class="band-head">
+        <span class="col-n">04</span>
+        <h3 class="col-h">The Self-Model</h3>
+        <p class="col-role">what the system declares it is</p>
+      </div>
+      <p class="band-mech"><strong>Documentation as a structured, two-audience, cited declaration</strong> &mdash; the layer through which pillars 01&ndash;03 are described, related, and reconciled. Not a record beside the others, but the account that lets them be read together.</p>
+      <div class="recon">
+        <span class="recon-node">Declaration<small>the documentation</small></span>
+        <span class="recon-arrow">&#8644;</span>
+        <span class="recon-node">Observation<small>schema &middot; surfaces &middot; Nou</small></span>
+        <span class="recon-arrow">&rarr;</span>
+        <span class="recon-node recon-out">Derived signal<small>coverage &middot; staleness &middot; contradiction</small></span>
+      </div>
+    </div>
+
+    <figcaption><b>Three operational pillars, stood up on a fourth that binds them.</b> The self-model&rsquo;s engine is the Site Tree&rsquo;s own reconciliation pattern &mdash; declared against observed, the difference derived at render time, never stored, never an opinion &mdash; raised from pages to the system entire.</figcaption>
+  </figure>
+
+  <hr class="rule">
+
+  <div class="prose">
+    <h2>The mechanism &mdash; reconciliation, raised from pages to the whole</h2>
+    <p>The cooperative has already built this mechanism once, at the scale of pages. The Site Tree is a reconciled manifest: a declared map, a scheduled observation, and health derived at render time from the difference between them. The next evolution is that same pattern raised from pages to concepts, and then to the system entire. The documentation layer becomes the <em>declaration</em>. The schema, the interfaces, and Nou become the <em>observation</em>. Coverage, staleness, and contradiction become <em>derived signals</em> rather than things a person has to notice in time.</p>
+    <p>This is the cybernetic posture in plain form: a system holding a model of itself and steering on the gap between what it intends and what it is. The filing cabinet does not only hold the records; it holds an account of what the records are, and it can tell when the two have drifted apart.</p>
+  </div>
+
+  <hr class="rule">
+
+  <div class="prose">
+    <h2>What changes downstream</h2>
+    <p><span class="lead-in">Author once, surface everywhere.</span> A concept is declared a single time &mdash; its member lens, its builder lens, its schema, its governing clause &mdash; and the portal renders it, Nou grounds on it, the documentation publishes it, the coverage instrument tracks it. Today the member guide, the developer reference, and the specifications restate the same concepts in parallel. The evolution is one declared source, multiply rendered.</p>
+    <p><span class="lead-in">Documentation becomes specification, not description.</span> The verification contract cards already establish the habit: the documentation of a check precedes the check, so a success state is never circular. Generalized, the structured self-model becomes what the build <em>derives from</em> rather than what trails it &mdash; interaction maps, wave readers, and Nou&rsquo;s grounding context produced from the declaration.</p>
+    <p><span class="lead-in">Impact becomes navigable in both directions.</span> The citation register links a record to its authority one way. Closing the loop makes the reverse &mdash; what is affected if a clause changes &mdash; equally answerable. At that point the audit trail and the documentation are one structure, queryable from either end.</p>
+  </div>
+
+  <hr class="rule">
+
+  <div class="prose">
+    <h2>The member at the end of it</h2>
+    <p>The point of all of it is not a tidier architecture. It is that a member can interrogate the system&rsquo;s account of itself: <em>what does it not explain to me; what has changed since I last looked; show me everything that governs my situation, and where it is written.</em> A system that can answer those is legible about its own legibility &mdash; principle 02 carried to its edge. That is the difference between a filing cabinet and a vault, made true at the level of the whole.</p>
+  </div>
+
+  <hr class="rule">
+
+  <div class="prose">
+    <h2>What this is not</h2>
+    <p>Three cautions hold the direction honest. The self-model is <strong>written and kept true by people</strong>; generative is not autonomous, and a coverage gate with no authoring capacity behind it surfaces debt faster than anyone clears it &mdash; its purpose is to make the cost of legibility visible and budgeted, not to manufacture it. <strong>Not everything belongs in the model</strong>; some things are better left as prose and judgment, and the real failure mode is over-formalization &mdash; the model serving its own completeness rather than a member. And the phrase the work keeps reaching for &mdash; <em>a system that knows itself</em> &mdash; quietly seats the initiative in the system. It does not know itself. It holds a declaration the cooperative authors and governs, reconciled against a human question: <em>does a curious new member understand this?</em> The self-model is an instrument the organizers steer. Keeping it that way is the whole of the discipline.</p>
+
+    <p class="colophon">Companion to <a href="pre-build-audit-v0.1.html">the pre-build audit</a>. Rendered in the Commons document grammar; <code>commons.css</code> linked on integration, inline token block removed. Mode toggle uses the canonical <code>commons-mode</code> localStorage key; no icons (per Developer Reference &sect;06).</p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>Techne-Co-op/commons</span>
+    <span>&middot;</span>
+    <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+    <span>&middot;</span>
+    <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+  </div>
+</footer>
+
+<script defer src="commons-nav.js"></script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.getElementById('modeBtn');
+  var stored = null;
+  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  root.setAttribute('data-mode', m);
+  btn.textContent = m === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+  });
+})();
+</script>
+</body>
+</html>
