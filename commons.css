@@ -260,7 +260,8 @@ pre code {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 0;
   height: 44px;
 }
 
@@ -271,6 +272,13 @@ pre code {
   text-transform: uppercase;
   color: var(--terra-text);
   text-decoration: none;
+  margin-right: auto; /* pushes nav-links, mode-btn, toggle to the right */
+}
+
+/* mode button inside the nav bar — gap from nav-links */
+.site-nav-inner .mode-btn {
+  margin-left: 20px;
+  flex-shrink: 0;
 }
 
 .nav-links {

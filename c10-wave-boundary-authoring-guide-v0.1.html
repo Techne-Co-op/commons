@@ -93,6 +93,7 @@ padding-top:var(--s5);text-align:center;}
       <li><a href="dev.html">Dev</a></li>
       <li><a href="member-guide.html">Guide</a></li>
     </ul>
+    <button class="mode-btn" id="modeBtn">light</button>
   </div>
 </nav>
 <div class="page">
@@ -329,6 +330,23 @@ per matrix rows capital_accounts, capital_events.</pre>
   });
   btn.addEventListener('click', function () {
     apply(root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark', true);
+  });
+})();
+</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('modeBtn');
+  if (!btn) return;
+  var stored = localStorage.getItem('commons-mode');
+  if (stored) root.setAttribute('data-mode', stored);
+  function current() { return root.getAttribute('data-mode') || 'dark'; }
+  btn.textContent = current() === 'dark' ? 'light' : 'dark';
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-mode', next);
+    localStorage.setItem('commons-mode', next);
+    btn.textContent = next === 'dark' ? 'light' : 'dark';
   });
 })();
 </script>
