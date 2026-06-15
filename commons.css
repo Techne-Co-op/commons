@@ -307,6 +307,65 @@ footer a { color: var(--faint); text-decoration: none; }
 footer a:hover { color: var(--terra-text); }
 
 /* ============================================================
+   Site footer — grouped navigation
+   Used on all pages; replaces the minimal single-line footer.
+   ============================================================ */
+.site-footer {
+  padding: var(--s7) 0 var(--s8);
+}
+
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s4) var(--s6);
+  margin-bottom: var(--s6);
+}
+
+.footer-group-label {
+  font-size: 9.5px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--s3);
+}
+
+.footer-group ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.footer-group a {
+  color: var(--faint);
+  text-decoration: none;
+  line-height: 1.5;
+  transition: color var(--dur-micro) var(--ease);
+}
+
+.footer-group a:hover { color: var(--terra-text); }
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--border);
+}
+
+.footer-meta a { color: var(--faint); text-decoration: none; }
+.footer-meta a:hover { color: var(--terra-text); }
+
+.footer-sep { color: var(--border-strong); }
+
+/* Instrument pages: footer sits outside .page, needs horizontal padding */
+body > .site-footer {
+  padding-left: var(--s5);
+  padding-right: var(--s5);
+}
+
+/* ============================================================
    Accessibility
    ============================================================ */
 :focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
@@ -413,6 +472,15 @@ footer a:hover { color: var(--terra-text); }
     align-items: flex-start;
     padding-bottom: var(--s6);
   }
+
+  /* site-footer: override generic footer flex on tablet */
+  .site-footer { display: block; }
+  .footer-nav  { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Mobile (≤ 480px): single-column footer ── */
+@media (max-width: 480px) {
+  .footer-nav { grid-template-columns: 1fr; gap: var(--s5); }
 }
 
 /* ── Mobile-S (≤ 480px): floor values ── */

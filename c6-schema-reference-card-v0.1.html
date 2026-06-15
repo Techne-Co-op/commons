@@ -113,7 +113,10 @@ padding-top:var(--s5);text-align:center;}
     <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
     <ul class="nav-links">
       <li><a href="hud.html">HUD</a></li>
-      <li><a href="design-system.html">Design</a></li>
+      <li><a href="loop.html">Loop</a></li>
+      <li><a href="tree.html">Tree</a></li>
+      <li><a href="dev.html">Dev</a></li>
+      <li><a href="member-guide.html">Guide</a></li>
     </ul>
   </div>
 </nav>
@@ -131,7 +134,6 @@ padding-top:var(--s5);text-align:center;}
     </div>
   </div>
   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
-  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);text-decoration:none;letter-spacing:.1em;" onmouseover="this.style.color='var(--terra-text)'" onmouseout="this.style.color='var(--faint)'">&larr; commons</a>
   <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">
     <svg id="modeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
     <span id="modeLabel">dark</span>
@@ -415,10 +417,51 @@ padding-top:var(--s5);text-align:center;}
   <p>First, the <em>Conflict &amp; Disclosure module</em> (CIS &sect;08) has no table among the nineteen: director disclosures, recusal tracking, and dispute state need a home, most likely a <code>disclosures</code> table proposed at the W4 boundary. Second, the <em>lifecycle state machine</em> (CIS &sect;08, Phase 04) names states and clocks but no storage; whether status lives on memberships with transitions as events, or in a dedicated table, is a W5.0 authoring question. Third, <em>tax identifier encryption</em> is committed but the mechanism (pgcrypto column encryption versus application-layer envelope) is not; it touches the accountant's workflow and belongs beside W3.5 with a security review. Fourth, <em>notices &sect;X channels</em>: the multi-channel commitment is named while the channel set beyond email is not; schema should hold channel as open text until D-level work names the second rail. Fifth, <em>Preferred Stock fields</em> beyond existence are reserved with the investor framework (CIS &sect;17); the card deliberately proposes none.</p>
 </section>
 
-<footer>
-  <span>Techne-Co-op/commons</span>
-  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
-  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+<footer class="site-footer">
+  <nav class="footer-nav" aria-label="Site sections">
+    <div class="footer-group">
+      <div class="footer-group-label">Instruments</div>
+      <ul>
+        <li><a href="index.html">Index</a></li>
+        <li><a href="hud.html">HUD</a></li>
+        <li><a href="loop.html">Loop</a></li>
+        <li><a href="tree.html">Tree</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <div class="footer-group-label">Guides</div>
+      <ul>
+        <li><a href="member-guide.html">Member Guide</a></li>
+        <li><a href="dev.html">Dev Reference</a></li>
+        <li><a href="design-system.html">Design System</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <div class="footer-group-label">Documents</div>
+      <ul>
+        <li><a href="cis-prd-v0.2.html">CIS PRD</a></li>
+        <li><a href="hub-ops-prd-v0.1.html">Hub Ops PRD</a></li>
+        <li><a href="cis-hubops-private-alpha-implementation-plan-v0.1.html">Alpha Plan</a></li>
+        <li><a href="cis-build-roadmap-instrument-v0.2.html">Build Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <div class="footer-group-label">Artifacts</div>
+      <ul>
+        <li><a href="builders-collection-map-v0.1.html">Builder&#39;s Collection</a></li>
+        <li><a href="cis-hubops-progressive-definition-01-inception-v0_2.html">Prog. Def. 01</a></li>
+        <li><a href="cis-hubops-progressive-definition-02-discovery-v0_1.html">Prog. Def. 02</a></li>
+        <li><a href="pre-build-audit-v0.1.html">Pre-Build Audit</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="footer-meta">
+    <span>Techne-Co-op/commons</span>
+    <span class="footer-sep">&middot;</span>
+    <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+    <span class="footer-sep">&middot;</span>
+    <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+  </div>
 </footer>
 
 </div>

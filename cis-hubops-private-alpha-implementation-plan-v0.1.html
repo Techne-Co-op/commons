@@ -216,7 +216,10 @@ footer {
     <a class="nav-brand" href="index.html">CIS &middot; Commons</a>
     <ul class="nav-links">
       <li><a href="hud.html">HUD</a></li>
-      <li><a href="design-system.html">Design</a></li>
+      <li><a href="loop.html">Loop</a></li>
+      <li><a href="tree.html">Tree</a></li>
+      <li><a href="dev.html">Dev</a></li>
+      <li><a href="member-guide.html">Guide</a></li>
     </ul>
   </div>
 </nav>
@@ -700,10 +703,51 @@ Notes. Simplifications taken, tensions left open.</pre>
   <p>For an executing agent, the loop is: take the lowest-indexed <code>pending</code> step whose dependencies are <code>verified</code> and whose <code>decision_refs</code> are resolved; branch as <code>step/&lt;id&gt;</code>; do the Action; flip the status in the same PR; merge only when the named verification is green; the validator advances the board. For Todd, the loop is: STATUS.md or the /build panel for state, the D and R ledger for what is waiting on a human, and PR review wherever <code>verification: human</code> names a role. Anything an agent cannot complete becomes <code>blocked</code> with its reason written into the file rather than worked around, which keeps the dependency tree truthful. The plan itself is versioned: amendments to this document are commits like any other, so the history of the plan is part of the audit trail of the build.</p>
 </section>
 
-<footer>
-  <span>Techne-Co-op/commons</span>
-  <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
-  <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+<footer class="site-footer">
+  <nav class="footer-nav" aria-label="Site sections">
+    <div class="footer-group">
+      <div class="footer-group-label">Instruments</div>
+      <ul>
+        <li><a href="index.html">Index</a></li>
+        <li><a href="hud.html">HUD</a></li>
+        <li><a href="loop.html">Loop</a></li>
+        <li><a href="tree.html">Tree</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <div class="footer-group-label">Guides</div>
+      <ul>
+        <li><a href="member-guide.html">Member Guide</a></li>
+        <li><a href="dev.html">Dev Reference</a></li>
+        <li><a href="design-system.html">Design System</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <div class="footer-group-label">Documents</div>
+      <ul>
+        <li><a href="cis-prd-v0.2.html">CIS PRD</a></li>
+        <li><a href="hub-ops-prd-v0.1.html">Hub Ops PRD</a></li>
+        <li><a href="cis-hubops-private-alpha-implementation-plan-v0.1.html">Alpha Plan</a></li>
+        <li><a href="cis-build-roadmap-instrument-v0.2.html">Build Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <div class="footer-group-label">Artifacts</div>
+      <ul>
+        <li><a href="builders-collection-map-v0.1.html">Builder&#39;s Collection</a></li>
+        <li><a href="cis-hubops-progressive-definition-01-inception-v0_2.html">Prog. Def. 01</a></li>
+        <li><a href="cis-hubops-progressive-definition-02-discovery-v0_1.html">Prog. Def. 02</a></li>
+        <li><a href="pre-build-audit-v0.1.html">Pre-Build Audit</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="footer-meta">
+    <span>Techne-Co-op/commons</span>
+    <span class="footer-sep">&middot;</span>
+    <a href="https://github.com/Techne-Co-op/commons">github.com/Techne-Co-op/commons</a>
+    <span class="footer-sep">&middot;</span>
+    <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
+  </div>
 </footer>
 
 </div>
