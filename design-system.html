@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark light">
-<meta name="description" content="Techne Design System v3 — tokens, typography, components, layout grammars, and voice guidelines for the RegenHub Commons. Warm grayscale ground, terracotta accent, Libre Baskerville and IBM Plex Mono.">
+<meta name="description" content="Techne Design System v4 — tokens, typography, components, layout grammars, and voice guidelines for the RegenHub Commons. Warm grayscale ground, blue primary and ember secondary accents, sunset range. Libre Baskerville and IBM Plex Mono.">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://techne-co-op.github.io/commons/design-system.html">
-<meta property="og:title" content="Design System v3 · RegenHub Commons">
-<meta property="og:description" content="Tokens, typography, components, and voice guidelines for Techne and RegenHub Commons instruments.">
+<meta property="og:title" content="Design System v4 · RegenHub Commons">
+<meta property="og:description" content="Tokens, typography, components, and voice guidelines for Techne and RegenHub Commons instruments. v4 palette: blue primary, ember secondary, sunset range.">
 <meta property="og:site_name" content="RegenHub Commons">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Design System v3 · RegenHub Commons">
-<meta name="twitter:description" content="Tokens, typography, components, and voice guidelines for Techne and RegenHub Commons instruments.">
-<title>Design System v3 · RegenHub Commons</title>
+<meta name="twitter:title" content="Design System v4 · RegenHub Commons">
+<meta name="twitter:description" content="Tokens, typography, components, and voice guidelines for Techne and RegenHub Commons instruments. v4 palette: blue primary, ember secondary, sunset range.">
+<title>Design System v4 · RegenHub Commons</title>
 <link rel="canonical" href="https://techne-co-op.github.io/commons/design-system.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,115 +23,117 @@
 <link rel="stylesheet" href="commons.css">
 <style>
 /* ============================================================
-   co-op.us design system · token layer
+   co-op.us design system · token layer  v4
    Dark is the ground state. Light is the override.
+   Mode is driven by html[data-mode] attribute.
    ============================================================ */
- 
+
 :root {
-  color-scheme: dark;
- 
-  /* ground */
-  --bg: #0f0f0f;
-  --surface: #1a1a1a;
-  --surface-raised: #232220;
-  --border: #333333;
-  --border-strong: #4a4a4a;
- 
-  /* accent — decorative, singular */
-  --terra: #c4956a;
-  --terra-text: #c4956a;
-  --terra-dim: rgba(196, 149, 106, 0.12);
-  --terra-glow: rgba(196, 149, 106, 0.06);
- 
-  /* text ramp */
-  --heading: #e8e0d8;
-  --text: #d4d4d4;
-  --muted: #999999;
-  --faint: #666666;
- 
-  /* state — instrument surfaces only */
-  --ok: #94ae84;
-  --ok-dim: rgba(148, 174, 132, 0.14);
-  --info: #8da3b5;
-  --info-dim: rgba(141, 163, 181, 0.14);
-  --warn: #c0705c;
-  --warn-dim: rgba(192, 112, 92, 0.14);
- 
-  /* elevation (light-mode shadows resolve here too) */
-  --shadow-1: none;
-  --shadow-2: none;
- 
+  /* sunset range — canonical stops, mode-invariant */
+  --sun-gold:   #EAB668;
+  --sun-amber:  #E09A52;
+  --sun-coral:  #D1755A;
+  --sun-rose:   #B45C7C;
+  --sun-violet: #6E5494;
+  --sun-blue:   #5476B8;
+
   /* motion */
   --dur-mode: 400ms;
   --dur-micro: 160ms;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
- 
+
   /* spacing scale, base 4 */
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
 }
- 
-@media (prefers-color-scheme: light) {
-  :root:not([data-mode="dark"]) {
-    color-scheme: light;
-    --bg: #faf8f5;
-    --surface: #ffffff;
-    --surface-raised: #ffffff;
-    --border: #e2ddd5;
-    --border-strong: #c9c2b8;
-    --terra: #c4956a;
-    --terra-text: #96704a;
-    --terra-dim: rgba(196, 149, 106, 0.14);
-    --terra-glow: rgba(196, 149, 106, 0.08);
-    --heading: #2a2520;
-    --text: #3d3833;
-    --muted: #6e675f;
-    --faint: #a39b90;
-    --ok: #5f7a52;
-    --ok-dim: rgba(95, 122, 82, 0.12);
-    --info: #5b7286;
-    --info-dim: rgba(91, 114, 134, 0.12);
-    --warn: #9e4f3d;
-    --warn-dim: rgba(158, 79, 61, 0.12);
-    --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08);
-    --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
-  }
+
+html[data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ground */
+  --bg:      #0F0F12;
+  --inset:   #08080A;
+  --surface: #16161B;
+  --raised:  #232329;
+  --line:    #2A2A30;
+  --rule:    #3A3A42;
+
+  /* primary accent — blue: interaction, links, focus */
+  --blue:      #6A8AC4;
+  --blue-text: #97B5E8;
+  --blue-dim:  rgba(106, 138, 196, 0.14);
+
+  /* secondary accent — ember: structure, section marks, provenance */
+  --ember:      #C4956A;
+  --ember-text: #D4A57A;
+  --ember-dim:  rgba(196, 149, 106, 0.14);
+
+  /* text ramp */
+  --heading: #E8E4DF;
+  --text:    #CFCBC4;
+  --muted:   #8A857E;
+  --faint:   #5A554F;
+
+  /* state — instrument surfaces only */
+  --ok:       #6A9A6A;
+  --ok-dim:   rgba(106, 154, 106, 0.14);
+  --info:     #6A8AC4;
+  --info-dim: rgba(106, 138, 196, 0.14);
+  --warn:     #C46A6A;
+  --warn-dim: rgba(196, 106, 106, 0.14);
+
+  /* elevation (dark: no shadows — depth is value step) */
+  --shadow-1: none;
+  --shadow-2: none;
 }
- 
-[data-mode="light"] {
+
+html[data-mode="light"] {
   color-scheme: light;
-  --bg: #faf8f5;
-  --surface: #ffffff;
-  --surface-raised: #ffffff;
-  --border: #e2ddd5;
-  --border-strong: #c9c2b8;
-  --terra: #c4956a;
-  --terra-text: #96704a;
-  --terra-dim: rgba(196, 149, 106, 0.14);
-  --terra-glow: rgba(196, 149, 106, 0.08);
-  --heading: #2a2520;
-  --text: #3d3833;
-  --muted: #6e675f;
-  --faint: #a39b90;
-  --ok: #5f7a52;
-  --ok-dim: rgba(95, 122, 82, 0.12);
-  --info: #5b7286;
-  --info-dim: rgba(91, 114, 134, 0.12);
-  --warn: #9e4f3d;
-  --warn-dim: rgba(158, 79, 61, 0.12);
-  --shadow-1: 0 1px 3px rgba(42, 37, 32, 0.08);
-  --shadow-2: 0 4px 16px rgba(42, 37, 32, 0.10);
+
+  /* ground */
+  --bg:      #F7F5F0;
+  --inset:   #EBE7DF;
+  --surface: #FCFBF8;
+  --raised:  #FEFDFB;
+  --line:    #D8D3C8;
+  --rule:    #9A958A;
+
+  /* primary accent — blue */
+  --blue:      #4A6FB0;
+  --blue-text: #39588F;
+  --blue-dim:  rgba(74, 111, 176, 0.10);
+
+  /* secondary accent — ember */
+  --ember:      #8A6A4A;
+  --ember-text: #6F5436;
+  --ember-dim:  rgba(138, 106, 74, 0.10);
+
+  /* text ramp */
+  --heading: #1A1A1F;
+  --text:    #2E2C28;
+  --muted:   #646058;
+  --faint:   #A39E92;
+
+  /* state */
+  --ok:       #4A7A4A;
+  --ok-dim:   rgba(74, 122, 74, 0.12);
+  --info:     #4A6FB0;
+  --info-dim: rgba(74, 111, 176, 0.12);
+  --warn:     #A84F4C;
+  --warn-dim: rgba(168, 79, 76, 0.12);
+
+  /* elevation */
+  --shadow-1: 0 1px 3px rgba(26, 26, 31, 0.08);
+  --shadow-2: 0 4px 16px rgba(26, 26, 31, 0.10);
 }
- 
-[data-mode="dark"] { color-scheme: dark; }
- 
+
 /* ============================================================
    base
    ============================================================ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
- 
+
 html { background: var(--bg); }
- 
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -140,13 +142,13 @@ body {
   line-height: 1.85;
   transition: background-color var(--dur-mode) var(--ease), color var(--dur-mode) var(--ease);
 }
- 
+
 .page {
   max-width: 760px;
   margin: 0 auto;
   padding: var(--s8) var(--s5);
 }
- 
+
 /* ============================================================
    header
    ============================================================ */
@@ -156,7 +158,7 @@ header {
   align-items: flex-start;
   margin-bottom: var(--s7);
 }
- 
+
 h1 {
   font-size: 44px;
   font-weight: 700;
@@ -164,14 +166,14 @@ h1 {
   letter-spacing: -0.5px;
   line-height: 1.2;
 }
- 
+
 .version {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 14px;
   color: var(--muted);
   margin-top: var(--s2);
 }
- 
+
 .lede {
   font-size: 19px;
   line-height: 1.7;
@@ -179,36 +181,36 @@ h1 {
   margin-bottom: var(--s8);
   max-width: 60ch;
 }
- 
+
 /* ============================================================
    section grammar — label + fading rule
    ============================================================ */
 section { margin-bottom: var(--s8); }
- 
+
 .label {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--terra-text);
+  color: var(--ember-text);
 }
- 
+
 .rule {
   width: 48px;
   height: 1px;
-  background: linear-gradient(to right, var(--terra), transparent);
+  background: linear-gradient(to right, var(--ember), transparent);
   margin: var(--s3) 0 var(--s6);
 }
- 
+
 p { margin-bottom: 20px; }
 p:last-child { margin-bottom: 0; }
 em { font-style: italic; }
- 
+
 code {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 0.85em;
-  color: var(--terra-text);
-  background: var(--terra-dim);
+  color: var(--ember-text);
+  background: var(--ember-dim);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -219,8 +221,8 @@ pre {
   line-height: 1.7;
   color: var(--text);
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--terra);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ember);
   border-radius: 6px;
   padding: var(--s4) var(--s5);
   margin: var(--s5) 0;
@@ -233,28 +235,28 @@ pre code {
   font-size: inherit;
   color: inherit;
 }
- 
+
 /* ============================================================
    components
    ============================================================ */
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: var(--s5) var(--s6);
   transition: border-color var(--dur-micro) var(--ease),
               background-color var(--dur-mode) var(--ease);
   box-shadow: var(--shadow-1);
 }
-.card:hover { border-color: var(--terra); }
- 
+.card:hover { border-color: var(--ember); }
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--s4);
   margin: var(--s5) 0;
 }
- 
+
 .card .ctitle {
   display: flex;
   align-items: center;
@@ -264,22 +266,22 @@ pre code {
 .card .ctitle .ico {
   width: 34px; height: 34px;
   border-radius: 8px;
-  background: var(--terra-dim);
+  background: var(--ember-dim);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.card .ctitle .ico svg { width: 18px; height: 18px; stroke: var(--terra-text); }
+.card .ctitle .ico svg { width: 18px; height: 18px; stroke: var(--ember-text); }
 .card .ctitle h3 { font-size: 18px; color: var(--heading); font-weight: 700; }
- 
+
 .card .desc {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 13px;
   line-height: 1.7;
   color: var(--muted);
 }
- 
+
 .feature-panel {
-  background: linear-gradient(135deg, var(--surface), var(--terra-glow));
+  background: linear-gradient(135deg, var(--surface), var(--ember-dim));
   border: 1px solid rgba(196, 149, 106, 0.35);
   border-radius: 16px;
   padding: var(--s6);
@@ -288,7 +290,7 @@ pre code {
 }
 .feature-panel .label { margin-bottom: var(--s4); }
 .feature-panel p { font-size: 16px; }
- 
+
 /* swatch grid */
 .swatches {
   display: grid;
@@ -297,7 +299,7 @@ pre code {
   margin: var(--s5) 0;
 }
 .swatch {
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
   background: var(--surface);
@@ -308,7 +310,7 @@ pre code {
   font-family: 'Libre Baskerville', serif;
   font-size: 20px;
 }
-.swatch .meta { padding: var(--s2) var(--s3); border-top: 1px solid var(--border); }
+.swatch .meta { padding: var(--s2) var(--s3); border-top: 1px solid var(--line); }
 .swatch .meta .tok {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11.5px; color: var(--heading); display: block;
@@ -317,7 +319,7 @@ pre code {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 10.5px; color: var(--faint);
 }
- 
+
 /* status chip */
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -329,24 +331,24 @@ pre code {
 .chip.ok   { color: var(--ok);   background: var(--ok-dim);   border-color: var(--ok); }
 .chip.info { color: var(--info); background: var(--info-dim); border-color: var(--info); }
 .chip.warn { color: var(--warn); background: var(--warn-dim); border-color: var(--warn); }
- 
+
 /* provenance chip */
 .prov {
   display: inline-flex; align-items: baseline; gap: var(--s2);
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11.5px; color: var(--muted);
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--terra);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--ember);
   border-radius: 6px; padding: 5px 12px;
   transition: border-color var(--dur-micro) var(--ease);
 }
-.prov:hover { border-color: var(--terra); border-left-color: var(--terra); }
-.prov .cite { color: var(--terra-text); }
+.prov:hover { border-color: var(--ember); border-left-color: var(--ember); }
+.prov .cite { color: var(--ember-text); }
 .prov .sep { color: var(--faint); }
- 
+
 .chip-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin: var(--s5) 0; align-items: center; }
- 
+
 /* instrument tile */
 .instrument-demo {
   display: grid;
@@ -355,7 +357,7 @@ pre code {
 }
 .tile {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: var(--s4) var(--s4) var(--s3);
 }
@@ -375,7 +377,7 @@ pre code {
   font-variant-numeric: tabular-nums;
   font-size: 11.5px; color: var(--muted); margin-top: var(--s1);
 }
- 
+
 /* numeric table */
 .numtable {
   width: 100%; border-collapse: collapse;
@@ -386,12 +388,12 @@ pre code {
 .numtable th {
   font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
   font-weight: 400; color: var(--faint); text-align: left;
-  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border-strong);
+  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--rule);
 }
 .numtable th.num, .numtable td.num { text-align: right; }
-.numtable td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border); color: var(--text); }
+.numtable td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--line); color: var(--text); }
 .numtable td:first-child { color: var(--muted); }
- 
+
 /* spec tables */
 .spec {
   width: 100%; border-collapse: collapse;
@@ -401,14 +403,14 @@ pre code {
 .spec th {
   font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
   font-weight: 400; color: var(--faint); text-align: left;
-  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border-strong);
+  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--rule);
 }
 .spec td {
-  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border);
+  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--line);
   color: var(--text); vertical-align: top;
 }
-.spec td:first-child { color: var(--terra-text); white-space: nowrap; }
- 
+.spec td:first-child { color: var(--ember-text); white-space: nowrap; }
+
 /* elevation */
 .elev-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--s4); margin: var(--s5) 0; }
 .elev {
@@ -417,10 +419,10 @@ pre code {
   font-size: 11.5px; color: var(--muted);
 }
 .elev .lv { color: var(--heading); display: block; margin-bottom: var(--s1); }
-.elev-0 { background: var(--bg); border: 1px solid var(--border); }
-.elev-1 { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-1); }
-.elev-2 { background: var(--surface-raised); border: 1px solid var(--border-strong); box-shadow: var(--shadow-2); }
- 
+.elev-0 { background: var(--bg); border: 1px solid var(--line); }
+.elev-1 { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
+.elev-2 { background: var(--raised); border: 1px solid var(--rule); box-shadow: var(--shadow-2); }
+
 /* iconography */
 .icon-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
@@ -429,15 +431,15 @@ pre code {
 .icon-cell { text-align: center; }
 .icon-cell .box {
   width: 44px; height: 44px; margin: 0 auto var(--s2);
-  border-radius: 8px; background: var(--terra-dim);
+  border-radius: 8px; background: var(--ember-dim);
   display: flex; align-items: center; justify-content: center;
 }
-.icon-cell .box svg { width: 20px; height: 20px; stroke: var(--terra-text); }
+.icon-cell .box svg { width: 20px; height: 20px; stroke: var(--ember-text); }
 .icon-cell .nm { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--muted); }
- 
+
 /* voice pairs */
 .voice-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); margin: var(--s4) 0; }
-.voice-box { border: 1px solid var(--border); border-radius: 10px; padding: var(--s4); background: var(--surface); }
+.voice-box { border: 1px solid var(--line); border-radius: 10px; padding: var(--s4); background: var(--surface); }
 .voice-box .vlabel {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 10px; letter-spacing: 0.18em; margin-bottom: var(--s2);
@@ -445,20 +447,20 @@ pre code {
 .voice-box.yes .vlabel { color: var(--ok); }
 .voice-box.no .vlabel { color: var(--warn); }
 .voice-box p { font-size: 14.5px; margin: 0; }
- 
+
 footer {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11.5px; color: var(--faint);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--line);
   padding-top: var(--s5); text-align: center;
 }
- 
+
 @media (max-width: 560px) {
   h1 { font-size: 34px; }
   .lede { font-size: 17px; }
   .voice-pair { grid-template-columns: 1fr; }
 }
- 
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0ms !important; animation: none !important; }
 }
@@ -484,48 +486,61 @@ footer {
 <header>
   <div>
     <h1>commons</h1>
-    <div class="version">Design System v3 · adopted from co-op.us</div>
+    <div class="version">Design System v4 · adopted from co-op.us</div>
   </div>
-  
+
 </header>
- 
+
 <p class="lede">A reference specification for the visual artifacts of a cooperative: the documents it writes to govern itself, and the instruments it builds to watch itself. This document holds the tokens, type, components, layout, and voice that make those artifacts recognizably ours, and includes the instructions an agent needs to produce them on our behalf.</p>
- 
+
 <section>
   <div class="label">First Principles</div>
   <div class="rule"></div>
   <p>The system rests on a small number of commitments, and most of what follows is their consequence.</p>
-  <p>Terracotta is the only decorative color. Everything else lives on a warm grayscale ramp, and hierarchy is carried by weight and value rather than by hue. The accent is a condiment, not a wash: one well-placed terracotta border does more than a full panel of color.</p>
+  <p>Two accents hold the palette. Blue is the primary: the color of what a reader does, carried on links, focus rings, and primary controls. Ember is the secondary: the cooperative's own mark, carried on section boundaries, provenance edges, and structure. Both sit against a warm grayscale ground, and hierarchy is carried by weight and value rather than by hue. The accents are condiments, not washes: one well-placed ember border or blue focus ring does more than a full panel of color.</p>
   <p>Two faces carry the whole system. A serif for reading and a monospace for everything technical. There is no third.</p>
   <p>State is not decoration. A separate, narrow palette exists for signaling condition, and it appears only where the work is being watched, never where it is being read.</p>
   <p>Authority is shown, not assumed. Any figure, permission, or rule can name its source on the surface, because in this cooperative authority is event-based, time-bound, and citation-bound. A number without provenance is a rumor.</p>
   <p>The voice is part of the design. An artifact with the right colors and the wrong voice is off-brand. The tone is grounded, unhurried, editorial, and slightly etymological. It never shouts and it never sells.</p>
 </section>
- 
+
 <section>
   <div class="label">Color Tokens</div>
   <div class="rule"></div>
   <p>The system runs in two modes, dark and light, driven by the reader's system preference with a manual override. Both modes share the same token names; components reference <code>var(--token-name)</code> and the active mode resolves the value. Dark is the ground state. The toggle in the header is a working example.</p>
-  <p>The core palette is the warm grayscale ramp plus the single terracotta accent. Two terracotta tokens exist because the same hue cannot both decorate and be read: <code>--terra</code> for borders and fills, <code>--terra-text</code> for type. In light mode the readable token darkens to hold contrast on parchment.</p>
+  <p>The core palette is the warm grayscale ramp plus two accents: blue primary and ember secondary. Two readable text tokens exist for each accent because the same hue cannot both decorate and be read: <code>--blue</code> and <code>--ember</code> for borders and fills, <code>--blue-text</code> and <code>--ember-text</code> for type. In light mode both readable tokens deepen to hold contrast on parchment. A new <code>--inset</code> token provides the deepest ground for wells and recessed elements.</p>
   <div class="swatches">
     <div class="swatch"><div class="chip-area" style="background:var(--bg)"></div><div class="meta"><span class="tok">--bg</span><span class="use">page background</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--inset)"></div><div class="meta"><span class="tok">--inset</span><span class="use">recessed wells</span></div></div>
     <div class="swatch"><div class="chip-area" style="background:var(--surface)"></div><div class="meta"><span class="tok">--surface</span><span class="use">card / panel fill</span></div></div>
-    <div class="swatch"><div class="chip-area" style="background:var(--surface-raised)"></div><div class="meta"><span class="tok">--surface-raised</span><span class="use">raised surfaces</span></div></div>
-    <div class="swatch"><div class="chip-area" style="background:var(--terra)"></div><div class="meta"><span class="tok">--terra</span><span class="use">accent, decorative</span></div></div>
-    <div class="swatch"><div class="chip-area" style="color:var(--terra-text)">Aa</div><div class="meta"><span class="tok">--terra-text</span><span class="use">accent, readable</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--raised)"></div><div class="meta"><span class="tok">--raised</span><span class="use">raised surfaces</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--blue)"></div><div class="meta"><span class="tok">--blue</span><span class="use">primary, decorative</span></div></div>
+    <div class="swatch"><div class="chip-area" style="color:var(--blue-text)">Aa</div><div class="meta"><span class="tok">--blue-text</span><span class="use">primary, readable</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--ember)"></div><div class="meta"><span class="tok">--ember</span><span class="use">secondary, decorative</span></div></div>
+    <div class="swatch"><div class="chip-area" style="color:var(--ember-text)">Aa</div><div class="meta"><span class="tok">--ember-text</span><span class="use">secondary, readable</span></div></div>
     <div class="swatch"><div class="chip-area" style="color:var(--heading)">Aa</div><div class="meta"><span class="tok">--heading</span><span class="use">primary headings</span></div></div>
     <div class="swatch"><div class="chip-area" style="color:var(--text)">Aa</div><div class="meta"><span class="tok">--text</span><span class="use">body text</span></div></div>
     <div class="swatch"><div class="chip-area" style="color:var(--muted)">Aa</div><div class="meta"><span class="tok">--muted</span><span class="use">secondary text</span></div></div>
   </div>
- 
-  <p>Alongside the core palette sits a narrow set of <em>state colors</em>, and the rule that governs them matters more than the colors themselves. They express condition: <em>moss</em> for what is operational or ratified, <em>slate</em> for what is simulated or in review, <em>clay</em> for what is pending or wants attention. They appear only on instrument surfaces, as chips, sparkline accents, and threshold markers. They never tint a panel, color a heading, or enter a document. Terracotta remains the only accent because these are not accents; they are signals. The trio stays inside the earth register, and there is deliberately no dashboard green and no alarm red.</p>
+
+  <p>Alongside the core palette sits a narrow set of <em>state colors</em>, and the rule that governs them matters more than the colors themselves. They express condition: <em>green</em> for what is operational or ratified, <em>blue</em> for what is simulated or in review, <em>red</em> for what is pending or wants attention. They appear only on instrument surfaces, as chips, sparkline accents, and threshold markers. They never tint a panel, color a heading, or enter a document. The blue state shares hue with the primary accent deliberately: simulated data and interactive affordances read from the same register, and the word always clarifies which is which.</p>
   <div class="swatches">
-    <div class="swatch"><div class="chip-area" style="background:var(--ok-dim);color:var(--ok)">Aa</div><div class="meta"><span class="tok">--ok</span><span class="use">moss · operational</span></div></div>
-    <div class="swatch"><div class="chip-area" style="background:var(--info-dim);color:var(--info)">Aa</div><div class="meta"><span class="tok">--info</span><span class="use">slate · simulated</span></div></div>
-    <div class="swatch"><div class="chip-area" style="background:var(--warn-dim);color:var(--warn)">Aa</div><div class="meta"><span class="tok">--warn</span><span class="use">clay · pending</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--ok-dim);color:var(--ok)">Aa</div><div class="meta"><span class="tok">--ok</span><span class="use">green · operational</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--info-dim);color:var(--info)">Aa</div><div class="meta"><span class="tok">--info</span><span class="use">blue · simulated</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--warn-dim);color:var(--warn)">Aa</div><div class="meta"><span class="tok">--warn</span><span class="use">red · pending</span></div></div>
+  </div>
+
+  <p>A <em>sunset range</em> completes the palette. Six stops from twilight blue through violet, rose, coral, amber, and gold — ordered by luminance so a sequential scale degrades to grayscale for colorblind viewers. As atmosphere it can tint section structure; as encoding the warm five stops form a magnitude scale. It never colors a control and never carries the sign of a number. The tokens are mode-invariant: the same hex in dark and light.</p>
+  <div class="swatches">
+    <div class="swatch"><div class="chip-area" style="background:var(--sun-blue)"></div><div class="meta"><span class="tok">--sun-blue</span><span class="use">twilight</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--sun-violet)"></div><div class="meta"><span class="tok">--sun-violet</span><span class="use">violet</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--sun-rose)"></div><div class="meta"><span class="tok">--sun-rose</span><span class="use">rose</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--sun-coral)"></div><div class="meta"><span class="tok">--sun-coral</span><span class="use">coral</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--sun-amber)"></div><div class="meta"><span class="tok">--sun-amber</span><span class="use">amber</span></div></div>
+    <div class="swatch"><div class="chip-area" style="background:var(--sun-gold)"></div><div class="meta"><span class="tok">--sun-gold</span><span class="use">last light</span></div></div>
   </div>
 </section>
- 
+
 <section>
   <div class="label">Typography</div>
   <div class="rule"></div>
@@ -542,12 +557,12 @@ footer {
   </table>
   <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)">Figures are illustrative, not drawn from the books.</p>
 </section>
- 
+
 <section>
   <div class="label">Two Layout Grammars</div>
   <div class="rule"></div>
   <p>Our surfaces come in two kinds, and each has its own layout. Naming both keeps a layout choice auditable rather than habitual.</p>
-  <p>The <em>Document grammar</em> is for reading: governance texts, briefs, this specification. A single centered column at 760 pixels, serif-dominant, with vertical scroll as the natural gesture. Sections open with a monospace label in terracotta followed by a short rule that fades from terracotta to transparent; together they are the section boundary marker.</p>
+  <p>The <em>Document grammar</em> is for reading: governance texts, briefs, this specification. A single centered column at 760 pixels, serif-dominant, with vertical scroll as the natural gesture. Sections open with a monospace label in ember followed by a short rule that fades from ember to transparent; together they are the section boundary marker.</p>
   <p>The <em>Instrument grammar</em> is for watching: the live panels, the sensing surfaces, the pricing tools. Widescreen, no-scroll where the viewport allows, a twelve-column grid of tiles and panels with nested detail views in place of new pages. Mono-dominant; the serif appears only in panel titles and any embedded reading pane. Density is bounded on purpose. An instrument that needs scrolling to be understood has outgrown one screen and should split into views.</p>
   <table class="spec">
     <thead><tr><th>Property</th><th>Document</th><th>Instrument</th></tr></thead>
@@ -561,11 +576,11 @@ footer {
     </tbody>
   </table>
 </section>
- 
+
 <section>
   <div class="label">Components</div>
   <div class="rule"></div>
-  <p>The <em>Card</em> is the standard content container. A gray border by default, warming to terracotta on hover, a 12-pixel radius, and generous padding. Cards lay out in an auto-fitting grid.</p>
+  <p>The <em>Card</em> is the standard content container. A gray border by default, warming to ember on hover, a 12-pixel radius, and generous padding. Cards lay out in an auto-fitting grid.</p>
   <div class="card-grid">
     <div class="card">
       <div class="ctitle">
@@ -589,13 +604,13 @@ footer {
       <p class="desc">Operating agreements, member commitments, and the governance documents that bind them.</p>
     </div>
   </div>
- 
-  <p>The <em>Feature Panel</em> is a lifted variant for a central insight. A diagonal gradient from surface to a faint terracotta glow, with a terracotta border at reduced opacity.</p>
+
+  <p>The <em>Feature Panel</em> is a lifted variant for a central insight. A diagonal gradient from surface to a faint ember glow, with an ember border at reduced opacity.</p>
   <div class="feature-panel">
     <div class="label">Design Principle</div>
-    <p>Terracotta is a condiment, not a wash. One well-placed accent border does more work than a full colored panel. The grayscale ramp carries the hierarchy. Vary text weight across <em>heading</em>, <em>text</em>, <em>muted</em>, and <em>faint</em> to build reading depth without chromatic noise.</p>
+    <p>Blue and ember are condiments, not washes. One well-placed accent border does more work than a full colored panel. The grayscale ramp carries the hierarchy. Vary text weight across <em>heading</em>, <em>text</em>, <em>muted</em>, and <em>faint</em> to build reading depth without chromatic noise.</p>
   </div>
- 
+
   <p style="margin-top:var(--s6)">The <em>Status Chip</em> names the condition of a thing in one mono word. The taxonomy is the cooperative's own: <em>operational</em> for systems doing real work, <em>simulated</em> for surfaces showing modeled data, <em>ratified</em> and <em>in review</em> for governance instruments, <em>pending</em> for anything awaiting an act of the board. Honest status labeling is a principle, not a nicety, and the chip is how an interface keeps the promise.</p>
   <div class="chip-row">
     <span class="chip ok"><span class="dot"></span>operational</span>
@@ -604,13 +619,13 @@ footer {
     <span class="chip info"><span class="dot"></span>in review</span>
     <span class="chip warn"><span class="dot"></span>pending</span>
   </div>
- 
-  <p>The <em>Provenance Chip</em> is the system's signature. <em>Provenance</em>, from the Latin <em>provenire</em>, to come forth, says where a claim comes from. A figure or rule on any surface can carry its citation, a bylaw section, an event identifier, a ratification date, in a small mono chip with a terracotta left edge. It makes the deepest commitment visible: authority is event-based, time-bound, and citation-bound.</p>
+
+  <p>The <em>Provenance Chip</em> is the system's signature. <em>Provenance</em>, from the Latin <em>provenire</em>, to come forth, says where a claim comes from. A figure or rule on any surface can carry its citation, a bylaw section, an event identifier, a ratification date, in a small mono chip with an ember left edge. It makes the deepest commitment visible: authority is event-based, time-bound, and citation-bound.</p>
   <div class="chip-row">
     <span class="prov"><span class="cite">&sect;5.3.2</span><span class="sep">&middot;</span>patronage formula<span class="sep">&middot;</span>pending ratification</span>
     <span class="prov"><span class="cite">EVT-2026-0412</span><span class="sep">&middot;</span>board action<span class="sep">&middot;</span>2026-04-12</span>
   </div>
- 
+
   <p>The <em>Instrument Tile</em> is the atomic unit of the instrument grammar: a faint mono label, a tabular figure, a quiet sub-line, an optional status chip. Tiles compose into panels, and panels compose into instruments.</p>
   <div class="instrument-demo">
     <div class="tile">
@@ -630,7 +645,7 @@ footer {
     </div>
   </div>
 </section>
- 
+
 <section>
   <div class="label">Elevation</div>
   <div class="rule"></div>
@@ -638,14 +653,14 @@ footer {
   <div class="elev-row">
     <div class="elev elev-0"><span class="lv">Level 0</span>page ground, --bg</div>
     <div class="elev elev-1"><span class="lv">Level 1</span>cards, --surface + shadow-1</div>
-    <div class="elev elev-2"><span class="lv">Level 2</span>overlays, --surface-raised + shadow-2</div>
+    <div class="elev elev-2"><span class="lv">Level 2</span>overlays, --raised + shadow-2</div>
   </div>
 </section>
- 
+
 <section>
   <div class="label">Iconography</div>
   <div class="rule"></div>
-  <p>All icons come from the <em>lucide</em> set, drawn at a 1.5 stroke and sized 18 to 20 pixels. An icon sits inside an 8-pixel-radius box filled with <code>--terra-dim</code>, which is the only place terracotta appears as a background. Icons label; they do not decorate, and a surface with no concept to mark carries no icon.</p>
+  <p>All icons come from the <em>lucide</em> set, drawn at a 1.5 stroke and sized 18 to 20 pixels. An icon sits inside an 8-pixel-radius box filled with <code>--ember-dim</code>, which is the only place ember appears as a background. Icons label; they do not decorate, and a surface with no concept to mark carries no icon.</p>
   <div class="icon-grid">
     <div class="icon-cell"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span><span class="nm">Wallet</span></div>
     <div class="icon-cell"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="nm">Users</span></div>
@@ -655,7 +670,7 @@ footer {
     <div class="icon-cell"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><path d="M5 7c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v12H7a2 2 0 0 1-2-2V7Z"/></svg></span><span class="nm">Vote</span></div>
   </div>
 </section>
- 
+
 <section>
   <div class="label">Voice and Tone</div>
   <div class="rule"></div>
@@ -675,7 +690,7 @@ footer {
   </div>
   <p>Forbidden patterns, without exception: em dashes, emoji, bold inside running prose, exclamation points outside direct quotes, the word <em>leverage</em> as a verb, the phrase <em>at the intersection of</em>, and buzzwords from the Web3 lexicon.</p>
 </section>
- 
+
 <section>
   <div class="label">Motion and Spacing</div>
   <div class="rule"></div>
@@ -693,11 +708,11 @@ footer {
     </tbody>
   </table>
 </section>
- 
+
 <section>
   <div class="label">Accessibility</div>
   <div class="rule"></div>
-  <p>Contrast is verified in both modes. Body text exceeds AAA, and the readable terracotta token holds AA at label sizes on parchment. The state colors are tuned per mode to hold AA at chip sizes, and no condition is ever signaled by color alone: every chip pairs its color with a word and a dot. Faint text is decorative in both modes and never carries critical information. The mode toggle includes an <code>aria-label</code>, visible keyboard focus, and the reduced-motion override, and <code>color-scheme</code> is declared so form controls and scrollbars render correctly in dark mode.</p>
+  <p>Contrast is verified in both modes. Body text exceeds AAA, and the readable ember token holds AA at label sizes on parchment. The blue primary token exceeds AA on both grounds. The state colors are tuned per mode to hold AA at chip sizes, and no condition is ever signaled by color alone: every chip pairs its color with a word and a dot. Faint text is decorative in both modes and never carries critical information. The mode toggle includes an <code>aria-label</code>, visible keyboard focus, and the reduced-motion override, and <code>color-scheme</code> is declared so form controls and scrollbars render correctly in dark mode.</p>
 </section>
 
 <section>
@@ -739,19 +754,19 @@ footer {
   <table class="spec">
     <thead><tr><th>Mode toggle requirement</th><th>Value</th></tr></thead>
     <tbody>
-      <tr><td>localStorage key</td><td><code>commons-mode</code> — shared across all pages so the user's choice persists when navigating</td></tr>
+      <tr><td>localStorage key</td><td><code>commons-mode</code> — shared across all commons pages so the user's choice persists when navigating. Also written to <code>cis-theme</code> for compatibility with the CIS intranet layer.</td></tr>
       <tr><td>Button label</td><td>Shows the mode you will switch to: displays "light" when current mode is dark, "dark" when light. Never use emoji or icons.</td></tr>
-      <tr><td>Init order</td><td>Read <code>commons-mode</code> first; fall back to <code>prefers-color-scheme</code>; apply before first paint</td></tr>
-      <tr><td>html attribute</td><td><code>data-mode="dark"</code> on <code>&lt;html&gt;</code> — all token overrides key on this attribute</td></tr>
+      <tr><td>Init order</td><td>Read <code>cis-theme</code> first, then <code>commons-mode</code>, then fall back to <code>prefers-color-scheme</code>; apply before first paint</td></tr>
+      <tr><td>html attribute</td><td><code>data-mode="dark"</code> on <code>&lt;html&gt;</code> — all token overrides key on this attribute via <code>html[data-mode="dark"]</code> and <code>html[data-mode="light"]</code> selectors</td></tr>
     </tbody>
   </table>
 
-  <p>The canonical mode toggle script — three lines, no dependencies:</p>
+  <p>The canonical mode toggle script — reads both localStorage keys, writes both on toggle:</p>
   <pre><code>(function () {
   var root = document.documentElement;
   var btn  = document.getElementById('modeBtn');
   var stored = null;
-  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  try { stored = localStorage.getItem('cis-theme') || localStorage.getItem('commons-mode'); } catch(e) {}
   var m = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
   root.setAttribute('data-mode', m);
   btn.textContent = m === 'dark' ? 'light' : 'dark';
@@ -759,7 +774,7 @@ footer {
     var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-mode', next);
     btn.textContent = next === 'dark' ? 'light' : 'dark';
-    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+    try { localStorage.setItem('commons-mode', next); localStorage.setItem('cis-theme', next); } catch(e) {}
   });
 })();</code></pre>
 
@@ -954,15 +969,15 @@ footer {
     <span>RegenHub, LCA &middot; Boulder, Colorado &middot; 2026</span>
   </div>
 </footer>
- 
+
 </div>
- 
+
 <script>
 (function () {
   var root = document.documentElement;
   var btn  = document.getElementById('modeBtn');
   var stored;
-  try { stored = localStorage.getItem('commons-mode'); } catch(e) {}
+  try { stored = localStorage.getItem('cis-theme') || localStorage.getItem('commons-mode'); } catch(e) {}
   var m = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   root.setAttribute('data-mode', m);
   btn.textContent = m === 'dark' ? 'light' : 'dark';
@@ -970,7 +985,7 @@ footer {
     var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-mode', next);
     btn.textContent = next === 'dark' ? 'light' : 'dark';
-    try { localStorage.setItem('commons-mode', next); } catch(e) {}
+    try { localStorage.setItem('commons-mode', next); localStorage.setItem('cis-theme', next); } catch(e) {}
   });
 })();
 </script>
